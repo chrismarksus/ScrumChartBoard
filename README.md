@@ -171,6 +171,7 @@ The ```intervals.json``` contains the interval *(or Sprint)* relate data. The on
 * [blanket](http://blanketjs.org/) - Client side code coverage tool
 * [gulp](http://gulpjs.com/) - Task manager
 * [browser-sync](https://browsersync.io/) - Browser synchronizer
+* [generator-webapp](https://github.com/yeoman/generator-webapp) - Yeoman Generator WebApp
 
 ## Contributing
 
