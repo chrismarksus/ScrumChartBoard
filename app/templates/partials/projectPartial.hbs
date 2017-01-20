@@ -1,0 +1,17 @@
+<div class="row">
+  <div class="twelve columns">
+    <h4 class="chart title">Project</h4>
+    {{> chartGroupPartial tagname="h5" label="burndown" title="Burnup"}}
+  </div>
+</div>
+<div class="row">
+  <div id="estimatedCards" class="four columns">
+    {{> estimatedCards}}
+  </div>
+  <div class="four columns">
+    {{> chartGroupPartial tagname="h4" label="status" title="Status"}}
+  </div>
+  <div class="four columns">
+    {{> chartGroupPartial tagname="h4" label="cardTypes" title="Types"}}
+  </div>
+</div>

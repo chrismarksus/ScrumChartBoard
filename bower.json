@@ -1,0 +1,17 @@
+{
+  "name": "scrum",
+  "private": true,
+  "dependencies": {
+    "jquery": "~2.1.1",
+    "handlebars": "3.0.0",
+    "skeleton": "^2.0.4",
+    "sinon-browser-only": "^1.17.1",
+    "flotr2": "*",
+    "markdown-it": "^8.2.2"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
+    "blanket": "https://github.com/alex-seville/blanket.git#^1.1.7"
+  }
+}

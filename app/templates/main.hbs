@@ -1,0 +1,116 @@
+<div class="container">
+
+  {{> dashboardHeader}}
+
+  <div class="row">
+    <div class="twelve columns ">
+      <h3 class="chart header title">Sprint Reviews</h3>
+      <div id="slideDecks" class="slidedecks">
+        {{#each intervals}}
+          {{> deckLinkPartial}}
+        {{/each}}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="twelve columns">
+      <h3 class="chart header title">Project</h3>
+      {{> chartGroupPartial tagname="h5" label="burndown" title="Burnup"}}
+    </div>
+  </div>
+
+  {{#if timelines}}
+  <div class="row">
+    <div class="twelve columns">
+      <h5 class="chart title">Timelines
+        <a class="description" id="timelinesClosed" href="#timelinesDescription">i</a>
+      </h5>
+      {{#each timelines}}
+        {{> chartGroupPartial tagname="h6" label=this.label title=this.title nodescription="true"}}
+      {{/each}}
+    </div>
+  </div>
+  {{/if}}
+
+  <div class="row">
+    <div id="estimatedCards" class="five columns">
+      {{> estimatedCards}}
+    </div>
+    <div class="three columns">
+      {{> chartGroupPartial tagname="h4" label="status" title="Status"}}
+    </div>
+    <div class="four columns">
+      {{> chartGroupPartial tagname="h4" label="cardTypes" title="Types"}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="twelve columns">
+      <h3 class="chart header title">Team</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div id="velocity" class="six columns">
+      {{> velocity}}
+    </div>
+    <div id="daysCapacity" class="six columns">
+      {{> capacity}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="twelve columns">
+      {{> chartGroupPartial tagname="h4" label="daysWorked" title="Capacity"}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{> chartGroupPartial tagname="h4" label="pointsgoals" title="Points Sprint Goals"}}
+    </div>
+    <div class="six columns">
+      {{> chartGroupPartial tagname="h4" label="commitedvscompleted" title="Points Commited <small>VS</small> Completed"}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{> chartGroupPartial tagname="h4" label="cardsgoals" title="Cards Sprint Goals"}}
+    </div>
+    <div class="six columns">
+      {{> chartGroupPartial tagname="h4" label="cardscommitedvscompleted" title="Cards Commited <small>VS</small> Completed"}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="six columns">
+      {{> chartGroupPartial tagname="h4" label="issuesPerInterval" title="Issues Per Sprint"}}
+    </div>
+    <div class="six columns">
+      {{> chartGroupPartial tagname="h4" label="cardsBlocked" title="Cards Blocked"}}
+    </div>
+  </div>
+  <div class="row">
+    <div class="twelve columns">
+      {{> chartGroupPartial tagname="h4" label="satisfaction" title="Satisfaction"}}
+    </div>
+  </div>
+  {{#if backlog}}
+     {{> backlogPartial}}
+  {{/if}}
+  {{#if updatedName}}
+    {{> updatedPartial}}
+  {{/if}}
+
+  {{#if popups}}
+    <div id="popupContainer">
+      {{#each popups}}
+        {{> popupPartial}}
+      {{/each}}
+    </div>
+  {{/if}}
+
+  <div id="notesDescription" class="overlay">
+    <div class="popup">
+      <h3 class="title">Notes</h3>
+      <a class="close" href="#notesClosed">×</a>
+      <div class="content">content here</div>
+    </div>
+  </div>
+
+</div>

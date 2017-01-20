@@ -1,0 +1,8 @@
+{{#if title}}
+  <{{tagname}} class="chart title">{{{title}}}
+    {{#unless nodescription}}
+    <a class="description" id="{{label}}Closed" href="#{{label}}Description">i</a>
+    {{/unless}}
+  </{{tagname}}>
+{{/if}}
+<div id="{{label}}" class="chart"></div>

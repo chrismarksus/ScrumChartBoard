@@ -1,0 +1,24 @@
+<div class="container">
+  <div class="row">
+    <div class="twelve columns">
+      <h1 style="color:#666;">DOH! <small>There is not data available!</small></h1>
+
+      {{#if links}}
+
+        <p>But it looks like I found some projects that that you looked at before.
+        <ul>
+        {{#each links}}
+          <li>
+            <a href="./?team={{team}}&project={{project}}">
+              Team: {{team}} Project: {{project}}
+            </a>
+          </li>
+        {{/each}}
+        </ul>
+      {{else}}
+        <p>Either there are missing parameters in the url or ther json file file are not on the server. Please view the <a href="./?team=sample&project=sample">sample data</a>.
+      {{/if}}
+      </ul>
+    </div>
+  </div>
+</div>

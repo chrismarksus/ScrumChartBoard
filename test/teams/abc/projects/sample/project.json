@@ -1,0 +1,51 @@
+{
+  "project": {
+    "name": "Sample Project",
+    "cardTypes": {
+      "Stories": 10,
+      "Spikes": 10,
+      "Improvements": 10,
+      "Testing": 10,
+      "Issues": 10,
+      "Defects": 10
+    },
+    "cardStatus": {
+      "In-Progress": 10,
+      "Done": 10,
+      "Todo": 10,
+      "Blocked": 10
+    },
+    "timelines": [{
+      "title": "Timeline 1",
+      "timeline": [{
+        "label": "Theme group 1",
+        "status": "inprogress",
+        "days": 30,
+        "start": 0
+      },{
+        "label": "Theme group 2",
+        "status": "todo",
+        "days": 20,
+        "start": 30
+      }]
+    },{
+      "title": "Timeline 2",
+      "timeline": [{
+        "label": "Theme 1.1",
+        "status": "done",
+        "days": 10,
+        "start": 0
+      },{
+        "label": "Theme 1.2",
+        "status": "inprogress",
+        "days": 20,
+        "start": 10
+      },{
+        "label": "Theme 1.3",
+        "status": "todo",
+        "days": 10,
+        "start": 30
+      }]
+    }]
+  }
+}

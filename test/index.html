@@ -1,0 +1,89 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Spec Runner</title>
+  <link rel="stylesheet" href="../bower_components/mocha/mocha.css">
+  <style>
+  .chart {
+    height: 100px;
+  }
+  </style>
+</head>
+<body>
+  <div id="mocha"></div>
+  <div id="sandbox"></div>
+  <script src="../bower_components/mocha/mocha.js"></script>
+  <script>mocha.setup('bdd');</script>
+  <script src="../bower_components/chai/chai.js"></script>
+  <script>
+    var assert = chai.assert;
+    var expect = chai.expect;
+    var should = chai.should();
+  </script>
+  <!-- bower:js -->
+  <script src="../bower_components/sinon-browser-only/sinon.js"></script>
+  <script src="../bower_components/jquery/dist/jquery.js"></script>
+  <script src="../bower_components/flotr2/flotr2.min.js"></script>
+  <script src="../bower_components/handlebars/handlebars.js"></script>
+  <script src="../bower_components/markdown-it/dist/markdown-it.js"></script>
+  <!---->
+  <script src="../bower_components/blanket2/dist/mocha/blanket_mocha.js"
+          data-cover-adapter="../bower_components/blanket2/src/adapters/mocha-blanket.js">
+  </script>
+
+  <!-- endbower -->
+  <script src="data.js"></script>
+  <script src="templates/main.js"></script>
+  <script src="templates/partials/dashboardHeader.js"></script>
+  <script src="templates/partials/chartGroupPartial.js"></script>
+  <script src="templates/partials/popupPartial.js"></script>
+  <script src="templates/partials/deckLinkPartial.js"></script>
+  <script src="templates/partials/backlogPartial.js"></script>
+  <script src="templates/partials/updatedPartial.js"></script>
+  <script src="templates/partials/velocity.js"></script>
+  <script src="templates/partials/workdays.js"></script>
+  <script src="templates/partials/capacity.js"></script>
+  <script src="templates/partials/blockTitleWithCount.js"></script>
+  <script src="templates/partials/estimatedCards.js"></script>
+  <!-- include source files here... -->
+  <script src="scripts/Helper.js" data-cover></script>
+  <script src="scripts/charts/Charts.js" data-cover></script>
+  <script src="scripts/charts/Satisfaction.js" data-cover></script>
+  <script src="scripts/charts/TwoBars.js" data-cover></script>
+  <script src="scripts/charts/Line.js" data-cover></script>
+  <script src="scripts/charts/Lines.js" data-cover></script>
+  <script src="scripts/charts/Pie.js" data-cover></script>
+  <script src="scripts/charts/Status.js" data-cover></script>
+  <script src="scripts/charts/Types.js" data-cover></script>
+  <script src="scripts/charts/Burndown.js" data-cover></script>
+  <script src="scripts/charts/Timelines.js" data-cover></script>
+  <script src="scripts/Colors.js" data-cover></script>
+  <script src="scripts/GetData.js" data-cover></script>
+  <script src="scripts/Model.js" data-cover></script>
+  <script src="scripts/Scrum.js" data-cover></script>
+  <!-- include spec files here... -->
+  <script src="spec/Helper.js"></script>
+  <script src="spec/charts/Charts.js"></script>
+  <script src="spec/charts/Satisfaction.js"></script>
+  <script src="spec/charts/TwoBars.js"></script>
+  <script src="spec/charts/Line.js"></script>
+  <script src="spec/charts/Lines.js"></script>
+  <script src="spec/charts/Pie.js"></script>
+  <script src="spec/charts/Status.js"></script>
+  <script src="spec/charts/Types.js"></script>
+  <script src="spec/charts/Burndown.js"></script>
+  <script src="spec/charts/Timelines.js"></script>
+  <script src="spec/Colors.js"></script>
+  <script src="spec/GetData.js"></script>
+  <script src="spec/Model.js"></script>
+  <script src="spec/Scrum.js"></script>
+  <script>
+  /*
+    if (navigator.userAgent.indexOf('PhantomJS') === -1) {
+      mocha.run();
+    }
+  */
+  </script>
+</body>
+</html>

@@ -1,0 +1,118 @@
+<div class="row" id="intervalFormContainer">
+  <div class="twelve columns">
+    <form id="intervalForm">
+      <div class="row">
+        <div class="eight columns">
+          <label for="label">Interval Label</label>
+          <input class="u-full-width" type="text" placeholder="Sprint 0" id="label" required>
+        </div>
+        <div class="four columns">
+          <label for="teamMembersCount">Current Total Members</label>
+          <select class="u-full-width" id="teamMembersCount">
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </div>
+      </div>
+    <fieldset>
+      <legend>Interval Dates:</legend>
+      <div class="row">
+        <div class="six columns">
+          <label for="dateStart">Start</label>
+          <input class="u-full-width" type="date" placeholder="02/02/2000" id="dateStart" required>
+        </div>
+        <div class="six columns">
+          <label for="dateEnd">End</label>
+          <input class="u-full-width" type="date" placeholder="02/02/2000" id="dateEnd" required>
+        </div>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Satisfaction Score:</legend>
+        <div class="row">
+          <div class="six columns">
+            <label for="satisfactionTeam">Team</label>
+            <input class="u-full-width" type="text" placeholder="1,2,3" id="satisfactionTeam">
+          </div>
+          <div class="six columns">
+            <label for="satisfactionShareholders">Shareholders</label>
+            <input class="u-full-width" type="text" placeholder="1,2,3" id="satisfactionShareholders">
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Points:</legend>
+        <div class="row">
+          <div class="four columns">
+            <label for="pointsCommited">Commited</label>
+            <input class="u-full-width" type="number" placeholder="10" id="pointsCommited">
+          </div>
+          <div class="four columns">
+            <label for="pointsCompleted">Completed</label>
+            <input class="u-full-width" type="number" placeholder="8" id="pointsCompleted">
+          </div>
+          <div class="four columns">
+            <label for="pointsEstimated">Estimated</label>
+            <input class="u-full-width" type="number" placeholder="8" id="pointsEstimated">
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Cards:</legend>
+        <div class="row">
+          <div class="two columns">
+            <label for="cardsCommited">Commited</label>
+            <input class="u-full-width" type="number" placeholder="10" id="cardsCommited">
+          </div>
+          <div class="two columns">
+            <label for="cardsCompleted">Completed</label>
+            <input class="u-full-width" type="number" placeholder="8" id="cardsCompleted">
+          </div>
+          <div class="two columns">
+            <label for="cardsEstimated">Estimated</label>
+            <input class="u-full-width" type="number" placeholder="8" id="cardsEstimated">
+          </div>
+          <div class="two columns">
+            <label for="cardsUnestimated">Unestimated</label>
+            <input class="u-full-width" type="number" placeholder="10" id="cardsUnestimated">
+          </div>
+          <div class="two columns">
+            <label for="cardsBlocked">Blocked</label>
+            <input class="u-full-width" type="number" placeholder="8" id="cardsBlocked">
+          </div>
+          <div class="two columns">
+            <label for="issuesPerInterval">Issues Per Interval</label>
+            <input class="u-full-width" type="number" placeholder="8" id="issuesPerInterval">
+          </div>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>Time:</legend>
+        <div class="row">
+          <div class="three columns">
+            <label for="daysTimebox">Timesboxes</label>
+            <input class="u-full-width" type="number" placeholder="1" id="daysTimebox">
+          </div>
+          <div class="three columns">
+            <label for="daysOutHolidays">Holidays</label>
+            <input class="u-full-width" type="number" placeholder="1" id="daysOutHolidays">
+          </div>
+          <div class="three columns">
+            <label for="daysOutPlanned">Planned Days Out</label>
+            <input class="u-full-width" type="number" placeholder="1" id="daysOutPlanned">
+          </div>
+          <div class="three columns">
+            <label for="daysOutUnplanned">Unplanned Days Out</label>
+            <input class="u-full-width" type="number" placeholder="1" id="daysOutUnplanned">
+          </div>
+        </div>
+      </fieldset>
+      <input class="button-primary u-pull-right" type="submit" value="Submit">
+    </form>
+  </div>
+</div>
