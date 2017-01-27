@@ -7,6 +7,7 @@ const mockData = {
   'project'                  : {
     'name'           : 'TestProject',
     'intervals'      : 'testIntervals.json',
+    'cardTypeLabel'  : 'Cards',
     'cardTypes'      : {
       'Stories'      : 10,
       'Spikes'       : 10,
@@ -15,7 +16,8 @@ const mockData = {
       'Issues'       : 10,
       'Defects'      : 10
     },
-    cardStatus      : {
+    'cardStatusLabel': 'Cards',
+    'cardStatus'      : {
       'In-Progress' : 10,
       'Done'        : 10,
       'Todo'        : 10,

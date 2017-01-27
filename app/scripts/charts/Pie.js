@@ -37,8 +37,11 @@ class Pie extends Charts{
     return `${d.series.label} ${Math.round(d.y)} ${this.mLabel}`;
   }
   formatMouselabelPoint(d){
-    return `${d.series.label}  ${Math.round(d.y)} ${this.mLabel}`;
+    return `${d.series.label} ${Math.round(d.y)} ${this.mLabel}`;
   };
+  setTypeValue(label){
+    this.mLabel = label;
+  }
   setData(data){
     let status = [];
     let count = 0;

@@ -97,15 +97,21 @@ class Scrum {
     chart.render();
     return chart;
   }
-  status(data){
+  status(data, typeValue){
     const chart = new Status('status');
     chart.setData(this.model.d.project.cardStatus);
+    if(typeValue){
+      chart.setTypeValue(typeValue);
+    }
     chart.render();
     return chart;
   }
-  cardTypes(data){
+  cardTypes(data, typeValue){
     const chart = new Types('cardTypes');
     chart.setData(data);
+    if(typeValue){
+      chart.setTypeValue(typeValue);
+    }
     chart.render();
     return chart;
   }
@@ -201,12 +207,14 @@ class Scrum {
     }
     if(this.model.d.project.cardStatus){
       this.status(
-        this.model.d.project.cardStatus
+        this.model.d.project.cardStatus,
+        this.model.d.project.cardStatusLabel || null
       );
     }
     if(this.model.d.project.cardTypes){
       this.cardTypes(
-        this.model.d.project.cardTypes
+        this.model.d.project.cardTypes,
+        this.model.d.project.cardTypeLabel || null
       );
     }
 

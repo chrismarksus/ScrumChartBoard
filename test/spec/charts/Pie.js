@@ -20,6 +20,22 @@
         });
         expect(result).to.eql('Bob 220 Cat');
       });
+      it('should formatMouselabelPoint to return with label', function () {
+        let result = chart.formatMouselabelPoint({
+          'y': '20',
+          'series': { 'label': 'Bill' }
+        });
+        expect(result).to.eql('Bill 20 Cat');
+      });
+      it('should formatMouselabelPoint to return with label', function () {
+        let result;
+        chart.setTypeValue('Cow');
+        result = chart.formatMouselabelPoint({
+          'y': '30',
+          'series': { 'label': 'Bee' }
+        });
+        expect(result).to.eql('Bee 30 Cow');
+      });
     });
 
     describe('The Pie chart', () => {

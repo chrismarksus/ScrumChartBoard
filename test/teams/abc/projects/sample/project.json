@@ -1,6 +1,7 @@
 {
   "project": {
     "name": "Sample Project",
+    "cardTypeLabel": "Cards",
     "cardTypes": {
       "Stories": 10,
       "Spikes": 10,
@@ -9,6 +10,7 @@
       "Issues": 10,
       "Defects": 10
     },
+    "cardStatusLabel": "Cards",
     "cardStatus": {
       "In-Progress": 10,
       "Done": 10,

@@ -102,9 +102,11 @@ The timelines are optional and you have as many as you want. Just add add more o
 {
   "project": {
     "name": "Sample Project",
+    "cardTypeLabel": "VALUE LABEL HERE", // Optional defaults to 'points'
     "cardTypes": {
       // TYPE HERE
     },
+    "cardStatusLabel": "VALUE LABEL HERE", // Optional defaults to 'points'
     "cardStatus": {
       // STATUS HERE
     },
@@ -161,19 +163,19 @@ The ```intervals.json``` contains the interval *(or Sprint)* relate data. The on
 ### Interval Key descriptions
 
 ##### label
-*(String)* - The name or identifier for an interval. This can be what ever you what but it is meant to be a hunam readable value. 
+*(String)* - The name or identifier for an interval. This can be what ever you what but it is meant to be a hunam readable value.
 
 ##### dateStart
-*(String)* - This is the date that the interval started. It can be in any format but mm/dd/yy or mm/dd/yyyy is that better format. Since this is used for the label on the charts. 
+*(String)* - This is the date that the interval started. It can be in any format but mm/dd/yy or mm/dd/yyyy is that better format. Since this is used for the label on the charts.
 
 ##### dateEnd
 *(String)* - This is the date that the interval ended. It can be in any format but mm/dd/yy or mm/dd/yyyy is that better format. Since this is used for the label on the charts.
 
 ##### teamMembersCount
-*(Number)* - This is the number of people on the team during the interval. This is a repeatative value that doesn't change often but it a person is add or removed from the team you will want to track that in the capacity charts. 
+*(Number)* - This is the number of people on the team during the interval. This is a repeatative value that doesn't change often but it a person is add or removed from the team you will want to track that in the capacity charts.
 
 ##### satisfactionTeam
-*(Number)* - This is like a happiness score but more specific. This is how satisfied the team is with the work they as a team and as individuals during the interval. This is a score from 1-10. 
+*(Number)* - This is like a happiness score but more specific. This is how satisfied the team is with the work they as a team and as individuals during the interval. This is a score from 1-10.
 
 ##### satisfactionShareholders
 *(Number)* - This is like the team satisfaction score for the shareholders. How satisfaied are the shareholders with the work that the team did for the interval. Not are they pleased witht he results but with the teams effort. This is a score from 1-10.
@@ -182,17 +184,17 @@ The ```intervals.json``` contains the interval *(or Sprint)* relate data. The on
 *(Number)* - This is the total point completed during the sprint.
 
 ##### pointsCommited
-*(Number)* - This is the total point that the team commited to during the sprint. 
+*(Number)* - This is the total point that the team commited to during the sprint.
 
 ##### pointsEstimated
-*(Number)* - This is the total estimated points for the whole project at this interval. This is used for the scope line in the burnup chart. 
+*(Number)* - This is the total estimated points for the whole project at this interval. This is used for the scope line in the burnup chart.
 
 ##### cardsCompleted
 *(Number)* - This is total cards completed during the sprint.
 
 ##### cardsCommited
-*(Number)* - This is the total cards that the team commited to during the sprint. 
- 
+*(Number)* - This is the total cards that the team commited to during the sprint.
+
 ##### cardsEstimated
 *(Number)* - This is the total number of cards that have an estimate.
 
@@ -200,22 +202,22 @@ The ```intervals.json``` contains the interval *(or Sprint)* relate data. The on
 *(Number)* - This is total number of cards that do not have an estimate.
 
 ##### cardsBlocked
-*(Number)* - This is an open metric an can be used for the number a things that block a cards on the board. But if it stops a card for some reason then you should count it here and add a note to your interval notes. 
+*(Number)* - This is an open metric an can be used for the number a things that block a cards on the board. But if it stops a card for some reason then you should count it here and add a note to your interval notes.
 
 ##### issuesPerInterval
-*(Number)* - Like the *cardsBlocked* value this is open for interpretation. Any issue the team has should be counted and a note add to the iterval notes. 
+*(Number)* - Like the *cardsBlocked* value this is open for interpretation. Any issue the team has should be counted and a note add to the iterval notes.
 
 ##### daysTimebox
-*(Array)* - This is the number of timeboxes in an interval. These will be subtracted from the capacity to give a predicted velocity. 
+*(Array)* - This is the number of timeboxes in an interval. These will be subtracted from the capacity to give a predicted velocity.
 
 ##### daysOutHolidays
-*(Number)* - This is the number of holidays in an interval. These will be multipled by the team member count then subtracted from the capacity to give a predicted velocity. 
+*(Number)* - This is the number of holidays in an interval. These will be multipled by the team member count then subtracted from the capacity to give a predicted velocity.
 
 ##### daysOutPlanned
 *(Array)* - This is known days off.  These will be subtracted from the capacity to give a predicted velocity. Please add notes about vacation and PTO to the interval notes.
 
 ##### daysOutUnplanned
-*(Number)* - This are unexpected days off (sick days, etc..). These will be subtracted from the capacity to give a predicted velocity. Please add notes about sick days or  to the interval notes. 
+*(Number)* - This are unexpected days off (sick days, etc..). These will be subtracted from the capacity to give a predicted velocity. Please add notes about sick days or  to the interval notes.
 
 ##### notesInterval
 *(String)* - This is is the url or path to the notes for this interval. These note must be in markdown format.
@@ -248,4 +250,3 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 * **Chris Marks** - *Initial work* - [chrismarksus](https://github.com/chrismarksus)
 
 See also the list of [contributors](https://github.com/chrismarksus/ScrumChartBoard) who participated in this project.
-
