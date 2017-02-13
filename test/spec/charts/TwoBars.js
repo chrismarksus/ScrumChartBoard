@@ -46,12 +46,14 @@
         ]);
       });
       it('should have a tooltip', function () {
+        chart.setLabels(['Sprint 1']);
         expect(chart.tooltip({
+          index: 0,
           series: {
             label: 'bob'
           },
           y: 10
-        })).to.eql('bob 10 points');
+        })).to.eql('bob 10 points for Sprint 1');
       });
     });
 

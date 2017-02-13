@@ -41,7 +41,7 @@ class TwoBars extends Charts{
     };
   }
   tooltip(obj){
-    return `${obj.series.label} ${Math.round(obj.y)} ${this.yLabel.toLowerCase()}`;
+    return `${obj.series.label} ${Math.round(obj.y)} ${this.yLabel.toLowerCase()} for ${this.labels[obj.index]}`;
   }
   tickFormatLabels(d){
     let num = parseInt(d,10) + 1;
