@@ -113,6 +113,14 @@ class Model{
     }
     return 0;
   }
+  cardsEstimatedPercentage(label = 'none'){
+    const i = this.findByIntervalLabel(label);
+    if(i.cardsEstimated && i.cardsUnestimated && typeof i.cardsEstimated === 'number' && typeof i.cardsUnestimated === 'number'){
+      console.log(i.cardsUnestimated , i.cardsEstimated);
+      return Math.round(100 - ((i.cardsUnestimated / i.cardsEstimated) * 100));
+    }
+    return 0;
+  }
   cardsTotal(label){
     const i = this.findByIntervalLabel(label);
     if(i.cardsEstimated && typeof i.cardsEstimated === 'number'){
@@ -219,6 +227,7 @@ class Model{
     data.totalAverageVelocity = this.totalAverageVelocity();
     data.cardsEstimated = this.cardsEstimated(label);
     data.cardsUnestimated = this.cardsUnestimated(label);
+    data.cardsEstimatedPercentage = this.cardsEstimatedPercentage(label);
     data.cardsTotal = this.cardsTotal(label);
     data.personWorkDays = this.personWorkDays(label);
     data.timeboxes = this.timeboxes(label);

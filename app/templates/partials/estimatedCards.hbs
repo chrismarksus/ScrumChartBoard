@@ -1,9 +1,7 @@
 <div class="textChart cardsestimated">
   <div class="head">{{> blockTitleWithCount tagname="h4" label="cards" title="Cards" count=cardsTotal}}</div>
   <div class="body">
-    <p class="number">
-      <span class="estimated">{{cardsEstimated}}</span>/<span class="unestimated">{{cardsUnestimated}}</span>
-    </p>
+    <p class="number">{{cardsEstimatedPercentage}}%</p>
   </div>
-  <div class="foot"><h5>Estimated / Unestimated</h5></div>
+  <div class="foot"><h5>Estimated ({{cardsEstimated}}) / Unestimated ({{cardsUnestimated}})</h5></div>
 </div>

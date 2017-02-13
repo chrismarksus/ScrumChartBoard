@@ -75,7 +75,7 @@
       it('should Add estimated cards', () => {
         scrum.setup();
         expect($('#sandbox #estimatedCards').text()).to.contain('Cards (10)');
-        expect($('#sandbox #estimatedCards').text()).to.contain('6/4');
+        expect($('#sandbox #estimatedCards').text()).to.contain('60%');
       });
       it('should Add velocity', () => {
         scrum.setup();
