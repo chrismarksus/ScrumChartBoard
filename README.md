@@ -2,6 +2,31 @@
 
 A no database web page that renders charts to visualize data a scrum master would care about. It does this by loading 3 json files into the browser via ajax request.
 
+## Using the project
+
+:file_folder: [Get the latest release](https://github.com/chrismarksus/ScrumChartBoard/releases)
+
+### First time
+
+The starter release file has a ```teams/``` folder with sample data. Use that as a model for creating you own team data. 
+
+1. Use the starter release 
+1. Download a copy
+1. Uncompress the tar file in a utility of your choice
+1. Copy the files to a folder in a web server
+1. Use your browser to naigate that location
+
+### Updating to a Newer Release
+
+The update release file doesn't have a ```teams/``` folder with sample data. 
+
+1. Use the update release 
+1. Download a copy
+1. Uncompress the tar file in a utility of your choice
+1. Copy and overwrite the files to a folder in a web server
+
+Remember copy the contents of the uncompressed folder. Don't copy over the folder or you will overwrite the ```teams/``` inside and delete your data.
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
