@@ -2,6 +2,11 @@
 
 A no database web page that renders charts to visualize data a scrum master would care about. It does this by loading 3 json files into the browser via ajax request.
 
+This project started as a single html page with links to images that I generated in excel. At the time I was reading [ 	
+Data Visualization with JavaScript](https://www.nostarch.com/datavisualization) by Stephen A. Thomas and dedcided to start filling out JSON file and have the javascript figure out the charts. I still use excel to generate a backlog and data that I transfer to json files in the web server's ```teams/``` folder manually. 
+
+I am currently using this to track team stats at work, a practice project so I can stay current in javascript development, and to est best practice in Scrum, DevOps, and Continuious Delivery.
+
 ## Using the project
 
 :file_folder: [Get the latest release](https://github.com/chrismarksus/ScrumChartBoard/releases)
