@@ -5,11 +5,65 @@ const browserSync = require('browser-sync').create();
 const del = require('del');
 const wiredep = require('wiredep').stream;
 const runSequence = require('run-sequence');
+const fs = require("fs");
+const plato = require('es6-plato');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
 var dev = true;
+
+function getFiles (dir, files_){
+    files_ = files_ || [];
+    var files = fs.readdirSync(dir);
+    for (var i in files){
+        var name = dir + '/' + files[i];
+        if (fs.statSync(name).isDirectory()){
+            getFiles(name, files_);
+        } else {
+            files_.push(name);
+        }
+    }
+    return files_;
+}
+
+gulp.task('plato', () => {
+  let input = getFiles(__dirname+'/app/scripts/');
+  let output = './artifacts/plato';
+  let options = {
+    'title': 'ScrumChartBoard',
+    'recurse': true,
+    'noempty': true,
+    'eslint': {
+      "ecmaVersion": 6,
+      "sourceType": "module"
+    }
+  };
+  function callback(reports){
+    let overview = plato.getOverviewReport(reports);
+
+    let {
+      total,
+      average
+    } = overview.summary;
+
+    let output = `total
+      ----------------------
+      eslint: ${total.eslint}
+      sloc: ${total.sloc}
+      maintainability: ${total.maintainability}
+      average
+      ----------------------
+      eslint: ${average.eslint}
+      sloc: ${average.sloc}
+      maintainability: ${average.maintainability}`;
+
+    console.log(output);
+  }
+
+  plato.inspect(input, output, options, callback);
+
+});
 
 gulp.task('styles', () => {
   return gulp.src('app/styles/*.less')
@@ -189,6 +243,8 @@ gulp.task('wiredep', () => {
 gulp.task('build', ['lint', 'html', 'images', 'fonts', 'extras'], () => {
   return gulp.src('dist/**/*').pipe($.size({title: 'build', gzip: true}));
 });
+
+gulp.task('stats', ['plato']);
 
 gulp.task('default', () => {
   return new Promise(resolve => {
