@@ -37,7 +37,7 @@ class Timelines extends Charts{
   intervalFormatter(d){
     // Intervals on the bottom text
     let num = parseInt(d, 10);
-    let label = this.labels[num];
+    let label = this.labels[num] || 'N/A';
     return label || '';
   }
   processData(data){

@@ -22,6 +22,25 @@
         let result = helper.queryString('test', winMock);
         expect(result).to.eql('tom');
       });
+      it('should calcPercentage 200', function () {
+        let result = helper.calcPercentage(100, 50);
+        expect(result).to.eql(200);
+      });
+      it('should calcPercentage 50', function () {
+        let result = helper.calcPercentage(50, 100);
+        expect(result).to.eql(50);
+      });
+      it('should calcPercentage 25 ', function () {
+        let result = helper.calcPercentage(25, 100);
+        expect(result).to.eql(25);
+      });
+      it('should calcPercentage zero ', function () {
+        let result = helper.calcPercentage(0, 25);
+        expect(result).to.eql(0);
+      });
+      it('should calcPercentage 2500 ', function () {
+        let result = helper.calcPercentage(25, 0);
+        expect(result).to.eql(2500);
+      });
     });
-
 })();

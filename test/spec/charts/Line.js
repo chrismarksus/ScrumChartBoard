@@ -1,7 +1,7 @@
 (function () {
   'use strict';
 
-  let chart;
+  let chart, helper;
     beforeEach(() => {
       $('#sandbox').append('<p id="charts" style="height:100px;"></p>');
       chart = new Line('charts');

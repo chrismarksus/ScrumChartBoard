@@ -38,10 +38,11 @@ class Line extends Charts{
     };
   }
   setData(data){
+    let helper = new Helper();
     let d1 = [];
 
     for(let i = 0; i < data[0].data.length; i++){
-      d1.push([i, Math.round((data[1].data[i] / data[0].data[i]) * 100)]);
+      d1.push([i, helper.calcPercentage(data[1].data[i] , data[0].data[i])]);
     }
 
     this.data = [{
