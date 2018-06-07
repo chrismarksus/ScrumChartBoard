@@ -75,6 +75,29 @@ http://localhost:9000?team=abc&project=sample
 gulp serve:test
 ```
 
+## Using docker with the project
+
+```bash
+docker run -it --rm --name scrumchartboard -v $(pwd):/myproject -p 9000:9000 node bash
+```
+
+## Running the project on windows
+
+If you are using vagrant or docker on windows you my see a symlink error that prevents you from run the commands (Ex. ```gulp serve:test```). This is because windows sucks! Try the fllowing when installing npm dependencies.
+
+```bash
+cd myproject
+npm --no-bin-links i -g gulp bower
+npm --no-bin-links i
+```
+#### Don't Forget:
+
+For docker on window run the command below to find the localhost ip address
+
+```bash
+docker machine ip
+```
+
 ### And coding style tests
 
 Right the coding style is a mess, the architecture and design are a mess, basically the project is a mess. So, yeah.
