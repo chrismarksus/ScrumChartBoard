@@ -46,5 +46,13 @@
         "single"
       ]
     }
+  },
+  "scripts": {
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true,
+  "dependencies": {
+    "snyk": "^1.88.0"
   }
 }
