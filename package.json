@@ -19,7 +19,7 @@
     "gulp-define-module": "^0.1.5",
     "gulp-eslint": "^3.0.1",
     "gulp-filter": "^5.0.0",
-    "gulp-handlebars": "^4.0.0",
+    "gulp-handlebars": "^5.0.0",
     "gulp-htmlmin": "^3.0.0",
     "gulp-if": "^2.0.2",
     "gulp-imagemin": "^3.2.0",
