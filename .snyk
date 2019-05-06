@@ -13,3 +13,6 @@ patch:
         patched: '2019-04-03T15:46:39.949Z'
     - gulp > vinyl-fs > glob-watcher > gaze > globule > glob > minimatch:
         patched: '2019-04-03T15:46:39.949Z'
+  SNYK-JS-AXIOS-174505:
+    - browser-sync > localtunnel > axios:
+        patched: '2019-05-06T04:52:21.454Z'
