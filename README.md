@@ -278,7 +278,7 @@ The ```intervals.json``` contains the interval *(or Sprint)* relate data. The on
 ## Built With
 
 * [Node](https://nodejs.org/en/) - The build framework and back-end dependencies management
-* [Bower](https://bower.io/) - Fornt-end dependencies management
+* [Bower](https://bower.io/) - Front-end dependencies management
 * [flotr2](http://www.humblesoftware.com/flotr2/) - Chart library
 * [jquery](http://www.dropwizard.io/1.0.2/docs/) - Client library
 * [handlebars](http://handlebarsjs.com/) - Template engine
