@@ -22,7 +22,7 @@
     "gulp-handlebars": "^5.0.0",
     "gulp-htmlmin": "^4.0.0",
     "gulp-if": "^2.0.2",
-    "gulp-imagemin": "^8.0.0",
+    "gulp-imagemin": "^9.1.0",
     "gulp-less": "^5.0.0",
     "gulp-load-plugins": "^2.0.1",
     "gulp-plumber": "^1.1.0",
