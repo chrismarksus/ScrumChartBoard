@@ -7,7 +7,7 @@
     "babel-core": "^6.24.1",
     "babel-preset-es2015": "^6.24.1",
     "babel-register": "^6.24.1",
-    "browser-sync": "^3.0.0",
+    "browser-sync": "^3.0.3",
     "del": "^2.2.2",
     "es6-plato": "^1.0.14",
     "gulp": "^5.0.0",
