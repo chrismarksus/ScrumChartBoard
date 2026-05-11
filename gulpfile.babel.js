@@ -53,7 +53,7 @@ function defineTemplate() {
   return through2.obj((file, enc, cb) => {
     const name = path.basename(file.path, '.js');
     const content = file.contents.toString();
-    const ns = `this["App"] = this["App"] || {};\nthis["App"]["templates"] = this["App"]["templates"] || {};\nthis["App"]["templates"]["${name}"] = ${content};\n`;
+    const ns = `this["App"] = this["App"] || {};\nthis["App"]["templates"] = this["App"]["templates"] || {};\nthis["App"]["templates"]["${name}"] = Handlebars.template(${content});\n`;
     file.contents = Buffer.from(ns);
     cb(null, file);
   });
