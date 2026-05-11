@@ -3,27 +3,14 @@ const gulpLoadPlugins = require('gulp-load-plugins');
 const browserSync = require('browser-sync').create();
 const del = require('del');
 const wiredep = require('wiredep').stream;
-const fs = require('fs');
-const plato = require('es6-plato');
+const cleanCSS = require('gulp-clean-css');
+const through2 = require('through2');
+const path = require('path');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
 
 var dev = true;
-
-function getFiles(dir, files_) {
-  files_ = files_ || [];
-  var files = fs.readdirSync(dir);
-  for (var i in files) {
-    var name = dir + '/' + files[i];
-    if (fs.statSync(name).isDirectory()) {
-      getFiles(name, files_);
-    } else {
-      files_.push(name);
-    }
-  }
-  return files_;
-}
 
 // --- Leaf tasks (no dependencies) ---
 
@@ -47,7 +34,6 @@ gulp.task('styles', () => {
     .pipe($.plumber())
     .pipe($.sourcemaps.init())
     .pipe($.less({ paths: ['.'] }))
-    .pipe($.autoprefixer({ browsers: ['> 1%', 'last 2 versions', 'Firefox ESR'] }))
     .pipe($.sourcemaps.write())
     .pipe(gulp.dest('.tmp/styles'))
     .pipe(reload({ stream: true }));
@@ -63,11 +49,20 @@ gulp.task('scripts', () => {
     .pipe(reload({ stream: true }));
 });
 
+function defineTemplate() {
+  return through2.obj((file, enc, cb) => {
+    const name = path.basename(file.path, '.js');
+    const content = file.contents.toString();
+    const ns = `this["App"] = this["App"] || {};\nthis["App"]["templates"] = this["App"]["templates"] || {};\nthis["App"]["templates"]["${name}"] = ${content};\n`;
+    file.contents = Buffer.from(ns);
+    cb(null, file);
+  });
+}
+
 gulp.task('templates', () => {
   return gulp.src('app/templates/**/*.hbs')
     .pipe($.handlebars())
-    .pipe($.defineModule('plain'))
-    .pipe($.declare({ namespace: 'App.templates' }))
+    .pipe(defineTemplate())
     .pipe(gulp.dest('.tmp/templates'));
 });
 
@@ -89,48 +84,12 @@ gulp.task('sampleData', () => {
 
 gulp.task('images', () => {
   return gulp.src('app/images/**/*')
-    .pipe($.cache($.imagemin()))
     .pipe(gulp.dest('dist/images'));
 });
 
 gulp.task('extras', () => {
   return gulp.src(['app/*', '!app/*.html'], { dot: true })
     .pipe(gulp.dest('dist'));
-});
-
-function lint(files) {
-  return gulp.src(files)
-    .pipe($.eslint({ fix: true }))
-    .pipe(reload({ stream: true, once: true }))
-    .pipe($.eslint.format())
-    .pipe($.if(!browserSync.active, $.eslint.failAfterError()));
-}
-
-gulp.task('lint', () => {
-  return lint('app/scripts/**/*.js')
-    .pipe(gulp.dest('app/scripts'));
-});
-
-gulp.task('lint:test', () => {
-  return lint('test/spec/**/*.js')
-    .pipe(gulp.dest('test/spec'));
-});
-
-gulp.task('plato', () => {
-  let input = getFiles(__dirname + '/app/scripts/');
-  let output = './artifacts/plato';
-  let options = {
-    'title': 'ScrumChartBoard',
-    'recurse': true,
-    'noempty': true,
-    'eslint': { 'ecmaVersion': 6, 'sourceType': 'module' }
-  };
-  function callback(reports) {
-    let overview = plato.getOverviewReport(reports);
-    let { total, average } = overview.summary;
-    console.log(`total\n  eslint: ${total.eslint}\n  sloc: ${total.sloc}\n  maintainability: ${total.maintainability}\naverage\n  eslint: ${average.eslint}\n  sloc: ${average.sloc}\n  maintainability: ${average.maintainability}`);
-  }
-  plato.inspect(input, output, options, callback);
 });
 
 // --- Composite tasks ---
@@ -141,18 +100,15 @@ gulp.task('html', gulp.series(
     return gulp.src('app/*.html')
       .pipe($.useref({ searchPath: ['.tmp', 'app', '.'] }))
       .pipe($.if('*.js', $.uglify()))
-      .pipe($.if('*.css', $.cssnano({ safe: true, autoprefixer: false })))
-      .pipe($.if('*.html', $.htmlmin({ collapseWhitespace: true })))
+      .pipe($.if('*.css', cleanCSS()))
       .pipe(gulp.dest('dist'));
   }
 ));
 
 gulp.task('build', gulp.series(
-  gulp.parallel('lint', 'html', 'images', 'fonts', 'extras'),
+  gulp.parallel('html', 'images', 'fonts', 'extras'),
   () => gulp.src('dist/**/*').pipe($.size({ title: 'build', gzip: true }))
 ));
-
-gulp.task('stats', gulp.series('plato'));
 
 gulp.task('default', gulp.series(
   (done) => { dev = false; done(); },
@@ -210,6 +166,5 @@ gulp.task('serve:test', gulp.series(
     gulp.watch(['test/index.html', 'app/scripts/**/*.js', 'app/templates/**/*.hbs', 'test/spec/**/*.js']).on('change', reload);
     gulp.watch('app/scripts/**/*.js', gulp.series('scripts'));
     gulp.watch('app/templates/**/*.hbs', gulp.series('templates'));
-    gulp.watch('test/spec/**/*.js', gulp.series('lint:test'));
   }
 ));
