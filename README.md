@@ -1,11 +1,10 @@
 # ScrumChartBoard
 
-A no database web page that renders charts to visualize data a scrum master would care about. It does this by loading 3 json files into the browser via ajax request.
+A no-database web page that renders charts to visualize data a scrum master would care about. It loads 3 JSON files into the browser via Ajax request.
 
-This project started as a single html page with links to images that I generated in excel. At the time I was reading [ 	
-Data Visualization with JavaScript](https://www.nostarch.com/datavisualization) by Stephen A. Thomas and dedcided to start filling out JSON file and have the javascript figure out the charts. I still use excel to generate a backlog and data that I transfer to json files in the web server's ```teams/``` folder manually. 
+This project started as a single HTML page with links to images generated in Excel. I eventually started filling out JSON files and having JavaScript render the charts. I still use Excel to generate backlog data that I transfer to JSON files in the `teams/` folder manually.
 
-I am currently using this to track team stats at work, a practice project so I can stay current in javascript development, and to est best practice in Scrum, DevOps, and Continuious Delivery.
+I use this to track team stats at work, as a practice project to stay current in JavaScript development, and to explore best practices in Scrum, DevOps, and Continuous Delivery.
 
 ## Using the project
 
@@ -13,293 +12,164 @@ I am currently using this to track team stats at work, a practice project so I c
 
 ### First time
 
-The starter release file has a ```teams/``` folder with sample data. Use that as a model for creating you own team data. 
+The starter release includes a `teams/` folder with sample data. Use that as a model for your own team data.
 
-1. Use the starter release 
-1. Download a copy
-1. Uncompress the tar file in a utility of your choice
-1. Copy the files to a folder in a web server
-1. Use your browser to naigate that location
+1. Download the starter release
+1. Uncompress the archive
+1. Copy the files to a folder on a web server
+1. Navigate to that location in your browser
 
 ### Updating to a Newer Release
 
-The update release file doesn't have a ```teams/``` folder with sample data. 
+The update release does not include a `teams/` folder.
 
-1. Use the update release 
-1. Download a copy
-1. Uncompress the tar file in a utility of your choice
-1. Copy and overwrite the files to a folder in a web server
+1. Download the update release
+1. Uncompress the archive
+1. Copy and overwrite the files in your web server folder
 
-Remember copy the contents of the uncompressed folder. Don't copy over the folder or you will overwrite the ```teams/``` inside and delete your data.
+Copy the **contents** of the uncompressed folder — do not copy over the folder itself or you will overwrite the `teams/` directory and lose your data.
+
+---
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get the project running locally for development and testing. See [Deployment](#deployment) for production notes.
 
 ### Prerequisites
 
-You need to be comfortable a text editor so you can edit the json files and markdown. You will also need to be comfortable with path and file management. The project depends on files being located in the predictable way so the webpage knows were to look for the files. Also for the note feature in the project it will help if you know markdown but you can get by with out it.
+- Node.js 16 or higher
+- npm
+- Bower (`npm install -g bower`) — manages front-end runtime dependencies
+- Chrome — required for the full browser test suite
 
-To contribute to the project you will node.js installed. You will need to how to write unit tests and write in *ES6*.
+To contribute you should be comfortable writing ES6 and unit tests.
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+Clone the project:
 
-Clone the project
-
-```
+```bash
 cd my/projects
 git clone https://github.com/chrismarksus/ScrumChartBoard.git
+cd ScrumChartBoard
 ```
 
-Download dependencies
+Install dependencies:
 
-```
+```bash
 npm install && bower install
 ```
 
-To run dev
+### Running the dev server
+
+```bash
+npx gulp serve
 ```
-gulp serve
-```
-A browser will launch and if it is the first time you will see the no data page. This has a link to the sample data at the end. If you have set up the team folder correctly. Then you will just need to add two get parameter to the url to see your charts. the team and the project values. These will be the same as the name on the folder that storage the data.
+
+BrowserSync will start and print the local URL (typically `http://localhost:9000`). On first run you will see the no-data page. Add `team` and `project` query parameters matching your `teams/` folder structure to load your data:
 
 ```
 http://localhost:9000?team=abc&project=sample
 ```
 
+---
+
 ## Running the tests
 
-```
-gulp serve:test
+See [CONTRIBUTIONS.md](CONTRIBUTIONS.md) for full details including Claude Code instructions and Linux/WSL Chrome setup.
+
+### Full browser suite
+
+```bash
+# Terminal 1
+npx gulp serve:test
+
+# Terminal 2 — use the port printed by BrowserSync
+npx mocha-headless-chrome -f http://localhost:9000/
 ```
 
-## Using docker with the project
+### Non-DOM tests (no browser required)
+
+```bash
+node test/node-runner.js
+```
+
+---
+
+## Using Docker
 
 ```bash
 docker run -it --rm --name scrumchartboard -v $(pwd):/myproject -p 9000:9000 node bash
 ```
 
-## Running the project on windows
-
-If you are using vagrant or docker on windows you my see a symlink error that prevents you from run the commands (Ex. ```gulp serve:test```). This is because windows sucks! Try the fllowing when installing npm dependencies.
+**On Windows** with Vagrant or Docker you may see a symlink error. Install dependencies with:
 
 ```bash
-cd myproject
 npm --no-bin-links i -g gulp bower
 npm --no-bin-links i
 ```
-#### Don't Forget:
 
-For docker on window run the command below to find the localhost ip address
+To find the container's IP address on Windows:
 
 ```bash
-docker machine ip
+docker-machine ip
 ```
 
-### And coding style tests
-
-Right the coding style is a mess, the architecture and design are a mess, basically the project is a mess. So, yeah.
+---
 
 ## Deployment
 
-The dist command will create a folder name ```./dist``` in the root directory. You can copy or ftp these files anywhere you want.
+Build to `./dist/`:
+
+```bash
+npx gulp
+```
+
+Copy or FTP the `dist/` contents to your web server. The expected folder structure is:
 
 ```
-gulp serve:dist
-```
-
-If this is the first time using the project there is a folder that you will need to add to the you project folder and that is the ```teams``` folder.
-
-```
-dist or project root
-  scripts
-  styles
-  teams
-  template
+dist/
+  scripts/
+  styles/
+  teams/
+  template/
   favicon.ico
   index.html
   robots.txt
 ```
-In the teams folder will be folders named after your scrum teams. Use web safe names like *myTeamName* or *my_team_name*. No spaces or weird characters.
 
-Inside each of these folders will be one json file *dashboard.json* and a folder named ```/projects```.
+The `teams/` folder is not included in the build output — copy it separately from your working directory.
 
-The ```dashboard.json``` contain the teams board information. This is not a file you will changing a lot.
+See [DATA_FORMAT.md](DATA_FORMAT.md) for the full JSON schema for `dashboard.json`, `project.json`, and `intervals.json`.
 
-```
-{
-	"dashboardName": "Sample Dashboard",
-	"teamName": "Sample Team",
-	"updatedName": "Sample person",
-	"daysInInterval": 10
-}
-```
-
-In the project folder there should be a folder with the name of your projects that that team is working or has worked on. Again use web safe names like *myTeamName* or *my_team_name*. No spaces or weird characters.
-
-```
-./projects
-  ./myProject_1
-  ./or_my_project_2
-```
-
-Inside each project folder will need to be at a minimum two json files. ```intervals.json``` and ```project.json```.
-
-The ```project.json``` contains the data for the non-team, non-interval (or sprint) data. The status, types of cards, the project timelines. The status and card types can have as many value as you want but it to have a number as a value.
-
-The timelines are optional and you have as many as you want. Just add add more objects to array and follow the format below.
-
-```
-{
-  "project": {
-    "name": "Sample Project",
-    "cardTypeLabel": "VALUE LABEL HERE", // Optional defaults to 'points'
-    "cardTypes": {
-      // TYPE HERE
-    },
-    "cardStatusLabel": "VALUE LABEL HERE", // Optional defaults to 'points'
-    "cardStatus": {
-      // STATUS HERE
-    },
-    "timelines": [{
-      "title": "Timeline 1",
-      "timeline": [{
-        "label": "Theme group 1",
-        "status": "inprogress",
-        "days": 30,
-        "start": 0
-      },{
-        "label": "Theme group 2",
-        "status": "todo",
-        "days": 20,
-        "start": 30
-      }]
-    }]
-  }
-}
-
-```
-
-The ```intervals.json``` contains the interval *(or Sprint)* relate data. The only values that are optional are *review* and *notesInterval*.
-
-```
-{
-	"intervals": [{
-		"label"                    : "Sprint 1",
-    "review"                   : "url/to/review",
-		"dateStart"                : "10/12/2016",
-		"dateEnd"                  : "10/13/2016",
-		"teamMembersCount"         : 5,
-		"satisfactionTeam"         : [2, 5],
-		"satisfactionShareholders" : [9, 6],
-		"pointsCommited"           : 10,
-		"pointsCompleted"          : 10,
-		"pointsEstimated"          : 50,
-		"cardsCommited"            : 4,
-		"cardsCompleted"           : 4,
-		"cardsEstimated"           : 10,
-		"cardsUnestimated"         : 4,
-		"cardsBlocked"             : 2,
-		"daysTimebox"              : [1],
-		"daysOutHolidays"          : 1,
-		"daysOutPlanned"           : [2],
-		"daysOutUnplanned"         : [1],
-		"issuesPerInterval"        : 1,
-		"notesInterval"            : "url/to/md"
-	}]
-}
-
-```
-
-### Interval Key descriptions
-
-##### label
-*(String)* - The name or identifier for an interval. This can be what ever you what but it is meant to be a hunam readable value.
-
-##### dateStart
-*(String)* - This is the date that the interval started. It can be in any format but mm/dd/yy or mm/dd/yyyy is that better format. Since this is used for the label on the charts.
-
-##### dateEnd
-*(String)* - This is the date that the interval ended. It can be in any format but mm/dd/yy or mm/dd/yyyy is that better format. Since this is used for the label on the charts.
-
-##### teamMembersCount
-*(Number)* - This is the number of people on the team during the interval. This is a repeatative value that doesn't change often but it a person is add or removed from the team you will want to track that in the capacity charts.
-
-##### satisfactionTeam
-*(Number)* - This is like a happiness score but more specific. This is how satisfied the team is with the work they as a team and as individuals during the interval. This is a score from 1-10.
-
-##### satisfactionShareholders
-*(Number)* - This is like the team satisfaction score for the shareholders. How satisfaied are the shareholders with the work that the team did for the interval. Not are they pleased witht he results but with the teams effort. This is a score from 1-10.
-
-##### pointsCompleted
-*(Number)* - This is the total point completed during the sprint.
-
-##### pointsCommited
-*(Number)* - This is the total point that the team commited to during the sprint.
-
-##### pointsEstimated
-*(Number)* - This is the total estimated points for the whole project at this interval. This is used for the scope line in the burnup chart.
-
-##### cardsCompleted
-*(Number)* - This is total cards completed during the sprint.
-
-##### cardsCommited
-*(Number)* - This is the total cards that the team commited to during the sprint.
-
-##### cardsEstimated
-*(Number)* - This is the total number of cards that have an estimate.
-
-##### cardsUnestimated
-*(Number)* - This is total number of cards that do not have an estimate.
-
-##### cardsBlocked
-*(Number)* - This is an open metric an can be used for the number a things that block a cards on the board. But if it stops a card for some reason then you should count it here and add a note to your interval notes.
-
-##### issuesPerInterval
-*(Number)* - Like the *cardsBlocked* value this is open for interpretation. Any issue the team has should be counted and a note add to the iterval notes.
-
-##### daysTimebox
-*(Array)* - This is the number of timeboxes in an interval. These will be subtracted from the capacity to give a predicted velocity.
-
-##### daysOutHolidays
-*(Number)* - This is the number of holidays in an interval. These will be multipled by the team member count then subtracted from the capacity to give a predicted velocity.
-
-##### daysOutPlanned
-*(Array)* - This is known days off.  These will be subtracted from the capacity to give a predicted velocity. Please add notes about vacation and PTO to the interval notes.
-
-##### daysOutUnplanned
-*(Number)* - This are unexpected days off (sick days, etc..). These will be subtracted from the capacity to give a predicted velocity. Please add notes about sick days or  to the interval notes.
-
-##### notesInterval
-*(String)* - This is is the url or path to the notes for this interval. These note must be in markdown format.
+---
 
 ## Built With
 
-* [Node](https://nodejs.org/en/) - The build framework and back-end dependencies management
-* [Bower](https://bower.io/) - Front-end dependencies management
+* [Node](https://nodejs.org/en/) - Build tooling and dependency management
+* [Bower](https://bower.io/) - Front-end dependency management
 * [flotr2](http://www.humblesoftware.com/flotr2/) - Chart library
-* [jquery](http://www.dropwizard.io/1.0.2/docs/) - Client library
-* [handlebars](http://handlebarsjs.com/) - Template engine
-* [skeleton](http://getskeleton.com/) - Grid and css framework
-* [markdown-it](https://github.com/markdown-it/markdown-it) - Client side markdown renderer
-* [mocha](https://mochajs.org/) - Unit testing framework
-* [blanket](http://blanketjs.org/) - Client side code coverage tool
-* [gulp](http://gulpjs.com/) - Task manager
-* [browser-sync](https://browsersync.io/) - Browser synchronizer
-* [generator-webapp](https://github.com/yeoman/generator-webapp) - Yeoman Generator WebApp
+* [jQuery](https://jquery.com/) - DOM and Ajax
+* [Handlebars](http://handlebarsjs.com/) - Template engine
+* [Skeleton](http://getskeleton.com/) - CSS grid framework
+* [markdown-it](https://github.com/markdown-it/markdown-it) - Client-side Markdown renderer
+* [Mocha](https://mochajs.org/) - Test framework
+* [Blanket](http://blanketjs.org/) - Client-side code coverage
+* [Gulp](http://gulpjs.com/) - Task runner
+* [BrowserSync](https://browsersync.io/) - Dev server with live reload
+
+---
 
 ## Contributing
 
-Please read [CONTRIBUTING.md](https://gist.github.com/chrismarksus/b4cbebbe93a7269b69a73af7cc4c22be) for details on our code of conduct, and the process for submitting pull requests to us.
+Please read [CONTRIBUTIONS.md](CONTRIBUTIONS.md) for dev setup, how to run the tests, and how to submit pull requests.
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [ScrumChartBoard](https://github.com/chrismarksus/ScrumChartBoard/tags).
+[SemVer](http://semver.org/). See [tags](https://github.com/chrismarksus/ScrumChartBoard/tags) for available versions.
 
 ## Authors
 
-* **Chris Marks** - *Initial work* - [chrismarksus](https://github.com/chrismarksus)
+* **Chris Marks** - [chrismarksus](https://github.com/chrismarksus)
 
-See also the list of [contributors](https://github.com/chrismarksus/ScrumChartBoard) who participated in this project.
+See also the list of [contributors](https://github.com/chrismarksus/ScrumChartBoard/graphs/contributors).
