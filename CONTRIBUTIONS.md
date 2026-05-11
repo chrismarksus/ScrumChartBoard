@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-- Node.js 4+
+- Node.js 16+
 - npm
 - Bower (`npm install -g bower`)
 - Chrome (for running the full browser test suite)
@@ -75,21 +75,23 @@ node test/node-runner.js
 
 ### Claude Code
 
-Start the test server in the conversation:
+**Option 1 — full browser suite.** Start the test server, then run `mocha-headless-chrome` against the URL BrowserSync prints:
 
 ```
-! npx gulp serve
+! npx gulp serve:test
 ```
 
-Wait for BrowserSync to print its URL, then ask Claude to run the tests:
+Once BrowserSync prints its URL (e.g. `http://localhost:9000`), ask Claude:
 
-> "Run the tests against http://localhost:9000"
+> "Run `npx mocha-headless-chrome -f http://localhost:9000/` and report the results"
 
-Claude will use its browser tools to navigate to the test page, wait for Mocha to finish, and report the pass/fail summary. Alternatively, Claude can run the Node.js runner directly:
+**Option 2 — Node.js runner (no browser needed).** Ask Claude to run:
 
 ```
 ! node test/node-runner.js
 ```
+
+This covers Colors, Helper, GetData, and Model specs instantly without starting a server.
 
 ---
 
