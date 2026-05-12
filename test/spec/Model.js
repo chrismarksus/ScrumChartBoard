@@ -51,6 +51,13 @@
     it('should provide total unestimated cards',()=>{
       expect(model.cardsUnestimated('Sprint 1')).to.eql(4);
     });
+    it('should provide estimated cards percentage',()=>{
+      expect(model.cardsEstimatedPercentage('Sprint 1')).to.eql(60);
+    });
+    it('should return 0 for estimated cards percentage when data is missing',()=>{
+      const m = new Model({ intervals: [{ label: 'S1' }] }, () => {});
+      expect(m.cardsEstimatedPercentage('S1')).to.eql(0);
+    });
     it('should provide total average velocity',()=>{
       expect(model.totalAverageVelocity('Sprint 1')).to.eql(15);
     });
@@ -99,6 +106,13 @@
         'thing 1': 3,
         'thing 2': 4
       }])).to.eql({'thing 1':[1,3],'thing 2':[2,4]});
+    });
+    it('should find a prop by name and return null for missing or falsy values',()=>{
+      expect(model.getObjectPropInArrayByNameOrNull('thing', [
+        { 'thing': 'a' },
+        { 'thing': null },
+        {}
+      ])).to.eql({ 'thing': ['a', null, null] });
     });
     describe('Call an onchange callback', () => {
       it('after update', function () {

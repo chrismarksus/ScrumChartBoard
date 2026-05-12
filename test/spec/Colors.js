@@ -123,10 +123,10 @@
         expect(colors.projection()).to.eql(['#e46c0a', '#77933c', '#b8cce4']);
       });
       it('should have a progress array', function () {
-        expect(colors.projection()).to.eql(['#e46c0a', '#77933c', '#b8cce4']);
+        expect(colors.progress()).to.eql(['#e46c0a', '#376092', '#77933c', '#c0504d']);
       });
       it('should have a progress array in reverse', function () {
-        expect(colors.projection(true)).to.eql(['#e46c0a', '#77933c', '#b8cce4']);
+        expect(colors.progress(true)).to.eql(['#c0504d', '#77933c', '#376092', '#e46c0a']);
       });
       it('should have a statusToColor of default', function () {
         expect(colors.statusToColor('oFf-tEaM')).to.eql('#4bacc6');

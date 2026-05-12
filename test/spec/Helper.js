@@ -22,6 +22,16 @@
         let result = helper.queryString('test', winMock);
         expect(result).to.eql('tom');
       });
+      it('should return null when the query parameter is not found', function () {
+        let winMock = {
+          removeEventListener: () => {},
+          location: {
+            search: '?test=tom'
+          }
+        };
+        let result = helper.queryString('missing', winMock);
+        expect(result).to.eql(null);
+      });
       it('should calcPercentage 200', function () {
         let result = helper.calcPercentage(100, 50);
         expect(result).to.eql(200);
