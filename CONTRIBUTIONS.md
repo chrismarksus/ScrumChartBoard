@@ -65,13 +65,15 @@ npx mocha-headless-chrome -f http://localhost:9000/
 
 BrowserSync may pick a different port if 9000 is busy — check its startup output for the actual URL.
 
-### Non-DOM tests only (Bash / Linux)
+### Node.js runner (Bash / Linux)
 
-Runs Colors, Helper, GetData, and Model specs in Node.js without a browser. Useful in headless environments where Chrome is not available:
+Runs all specs — Colors, Helper, GetData, Model, and all chart classes — in Node.js without a browser. Uses [jsdom](https://github.com/jsdom/jsdom) for the DOM environment and bower's jQuery 2.1 for jQuery compatibility. This is the fastest way to get signal during development:
 
 ```bash
 node test/node-runner.js
 ```
+
+The only specs not covered by this runner are `Scrum.js` (requires Handlebars + full app bootstrap).
 
 ### Claude Code
 
@@ -91,7 +93,7 @@ Once BrowserSync prints its URL (e.g. `http://localhost:9000`), ask Claude:
 ! node test/node-runner.js
 ```
 
-This covers Colors, Helper, GetData, and Model specs instantly without starting a server.
+This covers all chart and model specs instantly without starting a server.
 
 ---
 
