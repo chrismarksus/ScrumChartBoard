@@ -78,7 +78,17 @@ http://localhost:9000?team=abc&project=sample
 
 See [CONTRIBUTIONS.md](CONTRIBUTIONS.md) for full details including Claude Code instructions and Linux/WSL Chrome setup.
 
+### Node.js runner (no browser required)
+
+Covers all chart and model specs using jsdom. The fastest way to get feedback during development:
+
+```bash
+node test/node-runner.js
+```
+
 ### Full browser suite
+
+Requires Chrome. Covers the complete suite including Scrum integration:
 
 ```bash
 # Terminal 1
@@ -86,12 +96,6 @@ npx gulp serve:test
 
 # Terminal 2 — use the port printed by BrowserSync
 npx mocha-headless-chrome -f http://localhost:9000/
-```
-
-### Non-DOM tests (no browser required)
-
-```bash
-node test/node-runner.js
 ```
 
 ---
