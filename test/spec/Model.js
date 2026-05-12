@@ -193,6 +193,19 @@
         let result = model.lastIntervalLabel();
         expect(result).to.eql('Sprint 3');
       });
+      it('should include timelines when present', function () {
+        const data = model.dashboard('Sprint 1');
+        expect(data.timelines).to.be.an('array');
+        expect(data.timelines[0].title).to.eql('Timeline 1');
+        expect(data.timelines[0].label).to.eql('timeline_0');
+      });
+      it('should include updatedName and formatted updatedDate when present', function () {
+        const d = Object.assign({}, mockData, { updatedName: 'Alice' });
+        const m = new Model(d, () => {});
+        const data = m.dashboard('Sprint 1');
+        expect(data.updatedName).to.eql('Alice');
+        expect(data.updatedDate).to.eql('12/20/2016');
+      });
 
     });
   });

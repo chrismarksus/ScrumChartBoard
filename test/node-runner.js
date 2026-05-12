@@ -1,37 +1,67 @@
 #!/usr/bin/env node
 'use strict';
 
-// Set up globals that would normally come from the browser environment
-const vm = require('vm');
-const fs = require('fs');
+const vm   = require('vm');
+const fs   = require('fs');
 const path = require('path');
 
-// Set up chai globals
-const chai = require('chai');
+// --- DOM environment via jsdom ---
+const { JSDOM } = require('jsdom');
+const dom = new JSDOM(
+  '<!DOCTYPE html><html><body><div id="sandbox"></div></body></html>',
+  { url: 'http://localhost', runScripts: 'dangerously' }
+);
+global.window   = dom.window;
+global.document = dom.window.document;
+global.location = dom.window.location;
+
+// --- jQuery 2.1 from bower (matches the browser runtime; has .complete() which the source uses) ---
+dom.window.eval(
+  fs.readFileSync(
+    path.join(__dirname, '../bower_components/jquery/dist/jquery.js'), 'utf8'
+  )
+);
+global.$      = dom.window.$;
+global.jQuery = dom.window.jQuery;
+
+// --- Chai ---
+const chai    = require('chai');
 global.assert = chai.assert;
 global.expect = chai.expect;
 global.should = chai.should();
 
-// Set up sinon
-const sinon = require('sinon');
+// --- Sinon ---
+const sinon  = require('sinon');
 global.sinon = sinon;
 
-// Minimal jQuery stub for GetData (only path tests run, not $.getJSON)
-global.$ = {
-  when: () => ({ done: () => {} }),
-  getJSON: () => ({})
+// --- Flotr stub (canvas charting library — not usable in jsdom) ---
+global.Flotr = {
+  draw: () => ({ hit: { hit: () => ({ index: 0 }) } }),
+  EventAdapter: { observe: () => {} }
 };
 
-// Minimal window stub
-global.window = { location: { search: '' } };
+// --- markdown-it (pure-JS UMD build from bower) ---
+global.markdownit = require(
+  path.join(__dirname, '../bower_components/markdown-it/dist/markdown-it.js')
+);
 
-// Load source files into global scope
-const srcDir = path.join(__dirname, '../app/scripts');
+// --- Source files ---
+const srcDir   = path.join(__dirname, '../app/scripts');
 const srcFiles = [
   'Colors.js',
   'Helper.js',
   'GetData.js',
   'Model.js',
+  'charts/Charts.js',
+  'charts/Burndown.js',
+  'charts/Line.js',
+  'charts/Lines.js',
+  'charts/Pie.js',
+  'charts/Satisfaction.js',
+  'charts/Status.js',
+  'charts/Timelines.js',
+  'charts/TwoBars.js',
+  'charts/Types.js',
 ];
 
 for (const file of srcFiles) {
@@ -39,31 +69,34 @@ for (const file of srcFiles) {
   vm.runInThisContext(code, { filename: file });
 }
 
-// Load mock data
+// --- Mock data ---
 const dataCode = fs.readFileSync(path.join(__dirname, 'data.js'), 'utf8');
 vm.runInThisContext(dataCode, { filename: 'data.js' });
 
-// Now run mocha programmatically
+// --- Mocha ---
 const Mocha = require('mocha');
 const mocha = new Mocha({ reporter: 'spec' });
 
-// Add spec files (skip Scrum.js and chart specs that require full browser/DOM)
 const specFiles = [
   'spec/Colors.js',
   'spec/Helper.js',
   'spec/GetData.js',
   'spec/Model.js',
+  'spec/charts/Charts.js',
+  'spec/charts/Burndown.js',
+  'spec/charts/Line.js',
+  'spec/charts/Lines.js',
+  'spec/charts/Pie.js',
+  'spec/charts/Satisfaction.js',
+  'spec/charts/Status.js',
+  'spec/charts/Timelines.js',
+  'spec/charts/TwoBars.js',
+  'spec/charts/Types.js',
 ];
 
 for (const file of specFiles) {
   const fullPath = path.join(__dirname, file);
-  const code = fs.readFileSync(fullPath, 'utf8');
-  // Wrap in a module that exposes describe/it/beforeEach/afterEach
-  const wrappedCode = `
-    const { describe, it, beforeEach, afterEach } = mocha;
-    ${code}
-  `;
-  // Use addFile with a root suite trick: evaluate the IIFE with mocha context
+  const code     = fs.readFileSync(fullPath, 'utf8');
   mocha.suite.emit('pre-require', global, fullPath, mocha);
   vm.runInThisContext(code, { filename: file });
   mocha.suite.emit('require', null, fullPath, mocha);

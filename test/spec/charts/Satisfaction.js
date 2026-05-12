@@ -11,6 +11,18 @@
     });
 
     describe('The Satisfaction chart', () => {
+      it('should format the tick as the date at that index', function () {
+        chart.setDates(['2/22/2000', '3/1/2001']);
+        expect(chart.tickFormatter(0)).to.eql('2/22/2000');
+        expect(chart.tickFormatter(1)).to.eql('3/1/2001');
+      });
+      it('should return the raw index when no dates are set', function () {
+        expect(chart.tickFormatter(5)).to.eql(5);
+      });
+      it('should render without throwing', function () {
+        chart.setData([{ label: 'team', scores: [5, 7] }]);
+        expect(() => chart.render()).to.not.throw();
+      });
       it('should format data', function () {
         chart.setLabels(['Spint 1']);
         chart.setDates(['2/22/2000']);

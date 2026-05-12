@@ -67,6 +67,7 @@
         expect(expected[0].id).to.eql('charts');
         expect(expected[1]).to.eql(data);
         expect(expected[2]).to.eql(conf);
+        Flotr.draw.restore();
       });
       it('should set the labels prop for tick format', () => {
         const labels = ['bob', 'tim', 'sue'];
@@ -120,6 +121,7 @@
         expect(expected.args[0].getAttribute('id')).to.eql('charts');
         expect(expected.args[1]).to.eql('flotr:click');
         expect(expected.args[2].name).to.eql('bound getNoteMarkdown');
+        Flotr.EventAdapter.observe.restore();
       });
       it('should set the dates prop for tick format', () => {
         const dates = ['11/6', '12/6', '01/6'];
@@ -132,6 +134,14 @@
         const notes = ['# note 1', null, '# note 3'];
         let data = charts.processMarkdown('# note 1');
         expect(data.replace(/(\r\n|\n|\r)/gm,'')).to.eql('<h1>note 1</h1>');
+      });
+      it('should set the location hash', () => {
+        charts.setHash('#test');
+        expect(location.hash).to.eql('#test');
+      });
+      it('should get the note index from the chart reference', () => {
+        charts.render();
+        expect(charts.getNoteIndex({})).to.eql(0);
       });
     });
 

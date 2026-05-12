@@ -45,6 +45,25 @@
           [6,[6,5]]
         ]);
       });
+      it('should map adjacent x values to the same sprint label', function () {
+        chart.setLabels(['Sprint 1', 'Sprint 2', 'Sprint 3']);
+        expect(chart.tickFormatLabels(-1)).to.eql('Sprint 1');
+        expect(chart.tickFormatLabels(0)).to.eql('Sprint 1');
+        expect(chart.tickFormatLabels(1)).to.eql('Sprint 2');
+        expect(chart.tickFormatLabels(2)).to.eql('Sprint 2');
+        expect(chart.tickFormatLabels(3)).to.eql('Sprint 3');
+      });
+      it('should return raw sprint index when no labels are set', function () {
+        expect(chart.tickFormatLabels(0)).to.eql(0);
+        expect(chart.tickFormatLabels(1)).to.eql(1);
+      });
+      it('should render without throwing', function () {
+        chart.setData([
+          { label: 'Commited', data: [[0, 5]] },
+          { label: 'Completed', data: [[1, 3]] }
+        ]);
+        expect(() => chart.render()).to.not.throw();
+      });
       it('should have a tooltip', function () {
         chart.setLabels(['Sprint 1']);
         expect(chart.tooltip({

@@ -11,6 +11,24 @@
     });
 
     describe('The Line chart', () => {
+      it('should have the correct default configuration', function () {
+        expect(chart.conf.yaxis.title).to.eql('Percentage');
+        expect(chart.conf.grid.verticalLines).to.eql(false);
+      });
+      it('should handle zero values', function () {
+        chart.setData([
+          { label: 'Commited', data: [0] },
+          { label: 'Completed', data: [0] }
+        ]);
+        expect(chart.getData()[0].data).to.eql([[0, 0]]);
+      });
+      it('should render without throwing', function () {
+        chart.setData([
+          { label: 'Commited', data: [5, 7] },
+          { label: 'Completed', data: [3, 9] }
+        ]);
+        expect(() => chart.render()).to.not.throw();
+      });
       it('should format data', function () {
         chart.setData([{
             label: 'Completed',

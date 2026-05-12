@@ -48,6 +48,9 @@
       it('should have a dark background', function () {
         expect(colors.background()).to.eql('#002b36');
       });
+      it('should have a light label for dark background', function () {
+        expect(colors.getLabel()).to.eql('#eee8d5');
+      });
       it('should have a theme with a dark background', function () {
         expect(colors.getTheme()).to.eql([
           '#77933c',

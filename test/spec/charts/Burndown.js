@@ -83,6 +83,16 @@
         let d = chart.getData();
         expect(result[1].data).to.eql([[0,20],[1,45],[2,70],[3,100]]);
       });
+      it('should have the correct default configuration', function () {
+        expect(chart.conf.xaxis.title).to.eql('Sprints');
+        expect(chart.conf.xaxis.tickDecimals).to.eql(0);
+        expect(chart.conf.yaxis.tickDecimals).to.eql(0);
+        expect(chart.conf.mouse.relative).to.eql(true);
+      });
+      it('should render without throwing', function () {
+        chart.setData([[10, 20], [5, 15]]);
+        expect(() => chart.render()).to.not.throw();
+      });
       it('should have the correct data', function () {
         chart.setData([[20,25,25,30],[5,12,18,22]]);
         let d = chart.getData();

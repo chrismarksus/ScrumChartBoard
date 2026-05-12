@@ -25,6 +25,10 @@
         expect(d[0].lines.show).to.eql(true);
         expect(d[0].points.show).to.eql(true);
       });
+      it('should render without throwing', function () {
+        chart.setData({ 'a': [1, 2] }, { 'a': 'Label' });
+        expect(() => chart.render()).to.not.throw();
+      });
       it('should create one series per key in the data object', function () {
         chart.setData({
           'a': [1, 2],

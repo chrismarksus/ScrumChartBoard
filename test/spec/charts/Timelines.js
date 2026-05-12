@@ -11,6 +11,17 @@
     });
 
     describe('The Timelines chart', () => {
+      it('should extract labels from the data array', function () {
+        let result = chart.processBarLabels([
+          { label: 'Feature A', status: 'done',      days: 10, start: 0  },
+          { label: 'Feature B', status: 'todo',      days: 5,  start: 10 }
+        ]);
+        expect(result).to.eql(['Feature A', 'Feature B']);
+      });
+      it('should render without throwing', function () {
+        chart.setData([{ label: 'A', status: 'done', days: 10, start: 0 }]);
+        expect(() => chart.render()).to.not.throw();
+      });
       it('should provide the correct config', function () {
         expect(chart.conf.timeline).to.eql({
           barWidth: .95,
