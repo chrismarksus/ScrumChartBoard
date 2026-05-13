@@ -1,64 +1,34 @@
-class Lines extends Charts{
-  constructor(el, yLabel){
+class Lines extends Charts {
+  constructor(el, yLabel) {
     super(el);
-    this.labels = [];
-    this.dates = [];
     this.yLabel = yLabel;
     this.conf = {
-      colors: this.clr.getTheme(),
-      HtmlText: false,
-      yaxis: {
-        tickDecimals: 0,
-        margin: true,
-        autoscale: true,
-        autoscaleMargin: 0.5,
-        title: this.yLabel,
-        min: -1.5
-      },
-      xaxis: {
-        tickDecimals: 0,
-        margin: true,
-        autoscale: true,
-        autoscaleMargin: 0.5,
-        min: -0.5
-      },
-      grid: {
-        minorHorizontalLines: true,
-        verticalLines : false,
-        horizontalLines : true,
-        outlineWidth: 0,
-        color: this.clr.grid(),
-        tickColor: this.clr.grid()
-      },
-      mouse : {
-        lineColor: this.clr.hover(),
-        sensibility: 30,
-        relative: true,
-        track : false
+      type: 'line',
+      data: { labels: [], datasets: [] },
+      options: {
+        scales: {
+          x: { ticks: { callback: (d) => this.tickFormatLabels(d) } },
+          y: {
+            title: { display: !!yLabel, text: yLabel },
+            ticks: { precision: 0 }
+          }
+        }
       }
     };
   }
-  setData(data, names){
-    let d1 = [];
-    for(let d in data){
-      let label = names[d];
-      d1.push({
-        'data': data[d].map((val, idx) => {
-          return [idx, val];
-        }),
-        'label': label,
-        'lines': {
-          'show': true
-        },
-        'points': {
-          'show': true
-        }
-      });
-    }
-    this.data = d1;
+  setData(data, names) {
+    this.data = Object.keys(data).map((key, idx) => ({
+      label: names[key],
+      data: data[key],
+      borderColor: this.clr.getTheme()[idx],
+      backgroundColor: 'transparent',
+      pointRadius: 4,
+      tension: 0
+    }));
+    this.conf.data.datasets = this.data;
   }
-  render(){
-    this.conf.xaxis.tickFormatter  = this.tickFormatLabels.bind(this);
+  render() {
+    this.conf.data.labels = this.labels;
     super.render();
   }
 }

@@ -125,7 +125,7 @@ gulp.task('serve', gulp.series(
       port: 9000,
       server: {
         baseDir: ['.tmp', 'app'],
-        routes: { '/bower_components': 'bower_components' }
+        routes: { '/bower_components': 'bower_components', '/node_modules': 'node_modules' }
       }
     });
 
@@ -158,7 +158,8 @@ gulp.task('serve:test', gulp.series(
         routes: {
           '/scripts': '.tmp/scripts',
           '/templates': '.tmp/templates',
-          '/bower_components': 'bower_components'
+          '/bower_components': 'bower_components',
+          '/node_modules': 'node_modules'
         }
       }
     });

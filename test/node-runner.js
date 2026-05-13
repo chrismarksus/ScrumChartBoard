@@ -34,11 +34,11 @@ global.should = chai.should();
 const sinon  = require('sinon');
 global.sinon = sinon;
 
-// --- Flotr stub (canvas charting library — not usable in jsdom) ---
-global.Flotr = {
-  draw: () => ({ hit: { hit: () => ({ index: 0 }) } }),
-  EventAdapter: { observe: () => {} }
+// --- Chart.js stub (canvas charting library — not usable in jsdom) ---
+global.Chart = function Chart(el, conf) {
+  this.destroy = function() {};
 };
+global.Chart.register = function() {};
 
 // --- markdown-it (pure-JS UMD build from bower) ---
 global.markdownit = require(

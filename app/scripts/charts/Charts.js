@@ -1,86 +1,83 @@
-class Charts{
-  constructor(el){
-    this.el = document.getElementById(el);
+class Charts {
+  constructor(el) {
+    const container = document.getElementById(el);
+    let canvas = container.querySelector('canvas');
+    if (!canvas) {
+      canvas = document.createElement('canvas');
+      container.appendChild(canvas);
+    }
+    this.el = canvas;
     this.clr = new Colors();
     this.labels = [];
     this.dates = [];
     this.notes = [];
     this.data = {};
     this.conf = {};
-    this.listener;
+    this.chartRef = null;
   }
-  getConf(){
+  getConf() {
     return this.conf;
   }
-  setConf(conf){
-    return this.conf = conf;
+  setConf(conf) {
+    this.conf = conf;
   }
-  setNotes(notes){
+  setNotes(notes) {
     this.notes = notes;
-    if(!this.listener){
-      this.listener = Flotr.EventAdapter.observe(
-        this.el,
-        'flotr:click',
-        this.getNoteMarkdown.bind(this)
-      );
-    }
   }
-  getNotes(notes){
+  getNotes() {
     return this.notes;
   }
-  getNoteIndex(position){
-    return this.chartRef.hit.hit(position).index;
-  }
-  getNoteMarkdown(position){
-    let index = this.getNoteIndex(position);
-    if(this.notes[index]){
-      return $.getJSON(
-        this.notes[index]
-      ).complete(
-        this.processResponse.bind(this)
-      );
+  getNoteMarkdown(index) {
+    if (this.notes[index]) {
+      return $.getJSON(this.notes[index]).complete(this.processResponse.bind(this));
     }
     return null;
   }
-  processResponse(data){
-    if(data.status === 200 && data.responseText){
-      let md = this.processMarkdown(data.responseText);
+  processResponse(data) {
+    if (data.status === 200 && data.responseText) {
       this.setHash('#notesDescription');
-      this.setMarkdownContent(md);
+      this.setMarkdownContent(this.processMarkdown(data.responseText));
     }
   }
-  processMarkdown(data){
-    let parser = new markdownit();
-    let md = parser.render(data);
-    return md;
+  processMarkdown(data) {
+    return new markdownit().render(data);
   }
-  setMarkdownContent(html){
+  setMarkdownContent(html) {
     $('#notesDescription .content').html(html);
   }
-  setHash(str){
+  setHash(str) {
     location.hash = str;
   }
-  setData(data){
+  setData(data) {
     this.data = data;
   }
-  getData(data){
+  getData() {
     return this.data;
   }
-  setLabels(labels){
+  setLabels(labels) {
     this.labels = labels;
   }
-  setDates(dates){
+  setDates(dates) {
     this.dates = dates;
   }
-  tickFormatLabels(d){
-    let label = (this.labels && this.labels.length > 0) ? this.labels[d] : d
-    return label || '';
+  tickFormatLabels(d) {
+    const i = parseInt(d, 10);
+    return (this.labels && this.labels.length > 0) ? (this.labels[i] || '') : d;
   }
-  tickFormatDates(d){
-    let dates = (this.dates && this.dates.length > 0) ? this.dates[d] : d;
-    return dates || '';
+  tickFormatDates(d) {
+    const i = parseInt(d, 10);
+    return (this.dates && this.dates.length > 0) ? (this.dates[i] || '') : d;
   }
-  render(){
-    this.chartRef = Flotr.draw(this.el, this.data, this.conf);
+  render() {
+    if (this.chartRef) { this.chartRef.destroy(); }
+    if (this.notes.length > 0) {
+      const options = this.conf.options = this.conf.options || {};
+      const prev = options.onClick;
+      options.onClick = (event, elements) => {
+        if (elements.length > 0) this.getNoteMarkdown(elements[0].index);
+        if (prev) prev(event, elements);
+      };
+    }
+    this.chartRef = new Chart(this.el, this.conf);
   }
 }

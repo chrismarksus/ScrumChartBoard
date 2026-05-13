@@ -6,7 +6,6 @@
     "handlebars": "^4.7.8",
     "skeleton": "^2.0.4",
     "sinon-browser-only": "^1.17.1",
-    "flotr2": "*",
     "markdown-it": "^8.2.2"
   },
   "devDependencies": {

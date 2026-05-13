@@ -1,70 +1,39 @@
-class Timelines extends Charts{
-  constructor(el){
+class Timelines extends Charts {
+  constructor(el) {
     super(el);
-    this.barLabels = [];
     this.conf = {
-      timeline: {
-        barWidth: .95,
-        show:true,
-      },
-      markers: {
-        show: true,
-        position: 'rm',
-        fontSize: 9,
-        stacked: true,
-        stackingType: 'a',
-        color: this.clr.grid()
-      },
-      xaxis: {
-        title: 'Sprint',
-        noTicks: 10,
-        tickDecimals: 0
-      },
-      yaxis: {
-        showLabels : false
-      },
-      grid: {
-        horizontalLines : false,
-        color: this.clr.grid(),
-        tickColor: this.clr.grid()
+      type: 'bar',
+      data: { labels: [], datasets: [] },
+      options: {
+        indexAxis: 'y',
+        scales: {
+          x: {
+            title: { display: true, text: 'Sprint' },
+            ticks: { callback: (d) => this.intervalFormatter(d) }
+          }
+        },
+        plugins: { legend: { display: false } }
       }
     };
   }
-  labelFormatter(d){
-    // Stacked bars text
-    return this.barLabels[d.y];
+  intervalFormatter(d) {
+    return this.labels[parseInt(d, 10)] || '';
   }
-  intervalFormatter(d){
-    // Intervals on the bottom text
-    let num = parseInt(d, 10);
-    let label = this.labels[num] || 'N/A';
-    return label || '';
+  processBarLabels(data) {
+    return data.map(item => item.label);
   }
-  processData(data){
-    return data.map((item, index) => {
-      let color = this.clr.statusToColor(item.status);
-      return {
-        color: color,
-        data: [[
-          (parseInt(item.start, 10) * 0.1),
-          index,
-          (parseInt(item.days, 10) * 0.1)
-        ]]
-      }
-    });
-  }
-  processBarLabels(data){
-    return data.map((item) => {
-      return item.label;
-    });
-  }
-  setData(data){
-    this.barLabels = this.processBarLabels(data);
-    this.data = this.processData(data);
-  }
-  render(){
-    this.conf.markers.labelFormatter = this.labelFormatter.bind(this);
-    this.conf.xaxis.tickFormatter = this.intervalFormatter.bind(this);
-    super.render();
+  setData(data) {
+    this.data = data.map(item => ({
+      label: item.label,
+      start: parseInt(item.start, 10) * 0.1,
+      end: (parseInt(item.start, 10) + parseInt(item.days, 10)) * 0.1,
+      color: this.clr.statusToColor(item.status)
+    }));
+    this.conf.data.labels = this.data.map(d => d.label);
+    this.conf.data.datasets = [{
+      data: this.data.map(d => [d.start, d.end]),
+      backgroundColor: this.data.map(d => d.color),
+      borderWidth: 0
+    }];
   }
 }
