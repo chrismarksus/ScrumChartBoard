@@ -13,7 +13,7 @@
     describe('The Status chart', () => {
       it('should filter out zero values from data', function () {
         chart.setData({ 'Done': 10, 'Todo': 0, 'In-Progress': 5 });
-        let d = chart.getData();
+        const d = chart.getData();
         expect(d.length).to.eql(2);
         expect(d[0].label).to.eql('Done');
         expect(d[1].label).to.eql('In-Progress');
@@ -22,13 +22,11 @@
         chart.setData({ 'Done': 10, 'In-Progress': 5 });
         expect(() => chart.render()).to.not.throw();
       });
-      it('should set color to a progress array', function () {
-        let result = chart.conf.colors;
-        expect(result).to.eql(['#e46c0a', '#376092', '#77933c', '#c0504d']);
+      it('should use progress colors', function () {
+        expect(chart.getColors()).to.eql(chart.clr.progress());
       });
       it('should have an mLabel of Cat', function () {
-        let result = chart.mLabel;
-        expect(result).to.eql('Cat');
+        expect(chart.mLabel).to.eql('Cat');
       });
     });
 

@@ -3,7 +3,7 @@
 
   let chart;
     beforeEach(() => {
-      $('#sandbox').append('<p id="charts" style="height:100px;"></p>');
+      $('#sandbox').append('<div id="charts" style="height:100px;"></div>');
       chart = new Burndown('charts');
     });
     afterEach(() => {
@@ -11,110 +11,32 @@
     });
 
     describe('The Burndown chart', () => {
-      it('should makeDataLine false', function () {
-        let results = chart.makeDataLine([0,1], false);
-
-        expect(results).to.eql({
-          'data': [0,1],
-          'points' : {
-            'show' : false,
-            'lineWidth': 1
-          },
-          'lines' : {
-            'show' : true,
-            'lineWidth': 1
-          },
-          'mouse': {
-            'track': false
-          }
-        });
+      it('should have line chart type', function () {
+        expect(chart.conf.type).to.eql('line');
+        expect(chart.conf.options.scales.y.ticks.precision).to.eql(0);
       });
-      it('should makeDataLine true', function () {
-        let results = chart.makeDataLine([0,1], true);
-
-        expect(results).to.eql({
-          'data': [0,1],
-          'points' : {
-            'show' : true,
-            'lineWidth': 1
-          },
-          'lines' : {
-            'show' : true,
-            'lineWidth': 1
-          },
-          'mouse': {
-            'track': false
-          }
-        });
+      it('should format tooltip for estimated series', function () {
+        expect(chart.tooltipLabel({ datasetIndex: 0, parsed: { y: 5 }, dataIndex: 0 }))
+          .to.eql('Project Estimate: 5');
       });
-      it('should makeDataLine true with formater', function () {
-        let formatter = () => {};
-        let results = chart.makeDataLine([0,1], true, formatter);
-
-        expect(results).to.eql({
-          'data': [0,1],
-          'points' : {
-            'show' : true,
-            'lineWidth': 1
-          },
-          'lines' : {
-            'show' : true,
-            'lineWidth': 1
-          },
-          'mouse': {
-            'trackFormatter': formatter
-          }
-        });
-      });
-      it('should estimatedMouseOver', function () {
-        chart.setData([[20,25,25,30],[5,12,18,22]]);
-        let d = chart.getData();
-        let f1 = d[0].mouse.trackFormatter({ 'y': '5'});
-        expect(f1).to.eql('Project Estimate: 5');
-      });
-      it('should completedMouseOver', function () {
-        chart.setData([[20,25,25,30],[5,12,18,22]]);
-        let d = chart.getData();
-        let f1 = d[1].mouse.trackFormatter({ 'x': '5', 'y': 10});
-        expect(f1).to.eql('10 points completed in sprint 5');
-      });
-      it('should processData', function () {
-        let result = chart.processData([[0,5],[1,12],[2,18],[3,22]], null ,[[0,20],[1,45],[2,70],[3,100]]);
-        let d = chart.getData();
-        expect(result[1].data).to.eql([[0,20],[1,45],[2,70],[3,100]]);
-      });
-      it('should have the correct default configuration', function () {
-        expect(chart.conf.xaxis.title).to.eql('Sprints');
-        expect(chart.conf.xaxis.tickDecimals).to.eql(0);
-        expect(chart.conf.yaxis.tickDecimals).to.eql(0);
-        expect(chart.conf.mouse.relative).to.eql(true);
+      it('should format tooltip for completed series', function () {
+        expect(chart.tooltipLabel({ datasetIndex: 1, parsed: { y: 10 }, dataIndex: 4 }))
+          .to.eql('10 points completed in sprint 5');
       });
       it('should render without throwing', function () {
         chart.setData([[10, 20], [5, 15]]);
         expect(() => chart.render()).to.not.throw();
       });
       it('should have the correct data', function () {
-        chart.setData([[20,25,25,30],[5,12,18,22]]);
-        let d = chart.getData();
-        expect(d[0].points).to.eql({
-          'show' : true,
-          'lineWidth': 1
-        });
-        expect(d[1].points).to.eql({
-          'show' : true,
-          'lineWidth': 1
-        });
-        expect(d[0].lines).to.eql({
-          'show' : true,
-          'lineWidth': 1
-        });
-        expect(d[1].lines).to.eql({
-          'show' : true,
-          'lineWidth': 1
-        });
-        expect(d[0].data).to.eql([[0,5],[1,12],[2,18],[3,22]]);
-        expect(d[1].data).to.eql([[0,20],[1,45],[2,70],[3,100]]);
-
+        chart.setData([[20, 25, 25, 30], [5, 12, 18, 22]]);
+        const d = chart.getData();
+        expect(d[0].data).to.eql([5, 12, 18, 22]);
+        expect(d[1].data).to.eql([20, 45, 70, 100]);
+      });
+      it('should accumulate completed points', function () {
+        chart.setData([[10, 5, 15], [30, 30, 30]]);
+        const d = chart.getData();
+        expect(d[1].data).to.eql([10, 15, 30]);
       });
     });
 

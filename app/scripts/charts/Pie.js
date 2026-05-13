@@ -1,64 +1,45 @@
-class Pie extends Charts{
-  constructor(el, mLabel = 'points'){
+class Pie extends Charts {
+  constructor(el, mLabel = 'points') {
     super(el);
     this.mLabel = mLabel;
     this.conf = {
-      colors: this.clr.getTheme(),
-      HtmlText : false,
-      grid : {
-        verticalLines : false,
-        horizontalLines : false,
-        outlineWidth: 0
+      type: 'pie',
+      data: {
+        labels: [],
+        datasets: [{ data: [], backgroundColor: [] }]
       },
-      xaxis : {
-        showLabels : false
-      },
-      yaxis : {
-        showLabels : false
-      },
-      pie : {
-        show : true,
-        explode : 6,
-        startAngle: .73,
-        lineWidth: 2
-      },
-      mouse : {
-        track : true,
-        lineColor: this.clr.hover()
-      },
-      legend : {
-        position : 'nw',
-        backgroundColor : null,
-        labelBoxBorderColor: this.clr.legend()
+      options: {
+        plugins: {
+          legend: { position: 'left' },
+          tooltip: {
+            callbacks: { label: (ctx) => this.formatTooltip(ctx) }
+          }
+        }
       }
     };
   }
-  formatTickLabelPoint(d){
-    return `${d.series.label} ${Math.round(d.y)} ${this.mLabel}`;
+  formatTooltip(ctx) {
+    return `${ctx.label} ${Math.round(ctx.parsed)} ${this.mLabel}`;
   }
-  formatMouselabelPoint(d){
-    return `${d.series.label} ${Math.round(d.y)} ${this.mLabel}`;
-  };
-  setTypeValue(label){
+  setTypeValue(label) {
     this.mLabel = label;
   }
-  setData(data){
-    let status = [];
-    let count = 0;
-
-    for(let name in data){
-      if(data[name] > 0){
-        status.push({
-          'data' : [[count++, data[name]]],
-          'label' : name
-        });
+  getColors() {
+    return this.clr.getTheme();
+  }
+  setData(data) {
+    this.data = [];
+    for (let name in data) {
+      if (data[name] > 0) {
+        this.data.push({ label: name, value: data[name] });
       }
     }
-
-    this.data = status;
+    const colors = this.getColors();
+    this.conf.data.labels = this.data.map(d => d.label);
+    this.conf.data.datasets[0].data = this.data.map(d => d.value);
+    this.conf.data.datasets[0].backgroundColor = colors.slice(0, this.data.length);
   }
-  render(){
-    this.conf.mouse.trackFormatter  = this.formatMouselabelPoint.bind(this);
+  render() {
     super.render();
   }
 }

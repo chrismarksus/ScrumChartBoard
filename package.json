@@ -47,5 +47,8 @@
   },
   "overrides": {
     "serialize-javascript": "^7.0.5"
+  },
+  "dependencies": {
+    "chart.js": "^4.5.1"
   }
 }

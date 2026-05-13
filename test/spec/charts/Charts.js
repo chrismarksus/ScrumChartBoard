@@ -4,7 +4,7 @@
   let charts;
     beforeEach(() => {
       $('#sandbox').append('<div id="charts" style="height:100px;"></div>');
-        charts = new Charts('charts');
+      charts = new Charts('charts');
     });
     afterEach(() => {
       $('#sandbox #charts').remove();
@@ -39,35 +39,25 @@
     });
     describe('The Charts', () => {
       it('should set the config object', () => {
-        const conf = {
-          'hello':'world'
-        };
+        const conf = { 'hello':'world' };
         charts.setConf(conf);
         expect(charts.getConf()).to.eql(conf);
       });
       it('should set the data object', () => {
-        const data = {
-          'hello':'world'
-        };
+        const data = { 'hello':'world' };
         charts.setData(data);
         expect(charts.getData()).to.eql(data);
       });
-      it('should set the data object', () => {
-        sinon.spy(Flotr, 'draw');
-        const data = {
-          'hello':'world'
-        };
-        const conf = {
-          'hello':'world'
-        };
-        charts.setConf(conf);
-        charts.setData(data);
+      it('should set chartRef on render', () => {
         charts.render();
-        const expected = Flotr.draw.getCall(0).args;
-        expect(expected[0].id).to.eql('charts');
-        expect(expected[1]).to.eql(data);
-        expect(expected[2]).to.eql(conf);
-        Flotr.draw.restore();
+        expect(charts.chartRef).to.not.equal(null);
+      });
+      it('should destroy previous chart on re-render', () => {
+        charts.render();
+        let destroyed = false;
+        charts.chartRef.destroy = () => { destroyed = true; };
+        charts.render();
+        expect(destroyed).to.be.true;
       });
       it('should set the labels prop for tick format', () => {
         const labels = ['bob', 'tim', 'sue'];
@@ -81,47 +71,23 @@
         charts.setNotes(notes);
         expect(charts.getNotes()).to.eql(notes);
       });
-      it('should set the notes from the server', () => {
+      it('should fetch note when note exists at index', () => {
         const notes = ['note/url/1', null, 'note/url/3'];
         charts.setNotes(notes);
-        charts.render();
-
-        let stub = sinon.stub(charts.chartRef.hit, 'hit');
-        stub.onCall(0).returns({ 'index': 0});
-
         let result = charts.getNoteMarkdown(0);
         expect(result).to.be.an('object');
       });
-      it('should set the notes from the server with null', () => {
+      it('should return null when note is missing at index', () => {
         const notes = ['note/url/1', null, 'note/url/3'];
         charts.setNotes(notes);
-        charts.render();
-
-        let stub = sinon.stub(charts.chartRef.hit, 'hit');
-        stub.onCall(0).returns({ 'index': 1});
-
-        let result = charts.getNoteMarkdown(0);
+        let result = charts.getNoteMarkdown(1);
         expect(result).to.eql(null);
       });
-      it('should create one listener for notes', () => {
-        sinon.spy(Flotr.EventAdapter, 'observe');
-        const data = {
-          'hello':'world'
-        };
-        const conf = {
-          'hello':'world'
-        };
+      it('should add onClick handler when notes are set', () => {
         const notes = ['# note 1', null, '# note 3'];
-        charts.setConf(conf);
-        charts.setData(data);
         charts.setNotes(notes);
         charts.render();
-        charts.setNotes(notes);
-        const expected = Flotr.EventAdapter.observe.getCall(0);
-        expect(expected.args[0].getAttribute('id')).to.eql('charts');
-        expect(expected.args[1]).to.eql('flotr:click');
-        expect(expected.args[2].name).to.eql('bound getNoteMarkdown');
-        Flotr.EventAdapter.observe.restore();
+        expect(typeof charts.conf.options.onClick).to.eql('function');
       });
       it('should set the dates prop for tick format', () => {
         const dates = ['11/6', '12/6', '01/6'];
@@ -131,17 +97,12 @@
         expect(charts.tickFormatDates(2)).to.eql('01/6');
       });
       it('should set the processMarkdown method', () => {
-        const notes = ['# note 1', null, '# note 3'];
         let data = charts.processMarkdown('# note 1');
         expect(data.replace(/(\r\n|\n|\r)/gm,'')).to.eql('<h1>note 1</h1>');
       });
       it('should set the location hash', () => {
         charts.setHash('#test');
         expect(location.hash).to.eql('#test');
-      });
-      it('should get the note index from the chart reference', () => {
-        charts.render();
-        expect(charts.getNoteIndex({})).to.eql(0);
       });
     });
 
