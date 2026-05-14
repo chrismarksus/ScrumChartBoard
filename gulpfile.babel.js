@@ -2,7 +2,6 @@ const gulp = require('gulp');
 const gulpLoadPlugins = require('gulp-load-plugins');
 const browserSync = require('browser-sync').create();
 const del = require('del');
-const wiredep = require('wiredep').stream;
 const cleanCSS = require('gulp-clean-css');
 const through2 = require('through2');
 const path = require('path');
@@ -15,19 +14,6 @@ var dev = true;
 // --- Leaf tasks (no dependencies) ---
 
 gulp.task('clean', () => del(['.tmp', 'dist']));
-
-gulp.task('wiredep', (done) => {
-  gulp.src('app/styles/*.less')
-    .pipe($.filter(file => file.stat && file.stat.size))
-    .pipe(wiredep({ ignorePath: /^(\.\.\/)+/ }))
-    .pipe(gulp.dest('app/styles'));
-
-  gulp.src('app/*.html')
-    .pipe(wiredep({ ignorePath: /^(\.\.\/)*\.\./ }))
-    .pipe(gulp.dest('app'));
-
-  done();
-});
 
 gulp.task('styles', () => {
   return gulp.src('app/styles/*.less')
@@ -67,8 +53,7 @@ gulp.task('templates', () => {
 });
 
 gulp.task('fonts', () => {
-  return gulp.src(require('main-bower-files')('**/*.{eot,svg,ttf,woff,woff2}', function(err) {})
-    .concat('app/fonts/**/*'))
+  return gulp.src('app/fonts/**/*')
     .pipe($.if(dev, gulp.dest('.tmp/fonts'), gulp.dest('dist/fonts')));
 });
 
@@ -112,12 +97,12 @@ gulp.task('build', gulp.series(
 
 gulp.task('default', gulp.series(
   (done) => { dev = false; done(); },
-  gulp.parallel('clean', 'wiredep'),
+  'clean',
   'build'
 ));
 
 gulp.task('serve', gulp.series(
-  gulp.parallel('clean', 'wiredep'),
+  'clean',
   gulp.parallel('styles', 'templates', 'scripts', 'fonts', 'mockData', 'sampleData'),
   () => {
     browserSync.init({
@@ -125,7 +110,7 @@ gulp.task('serve', gulp.series(
       port: 9000,
       server: {
         baseDir: ['.tmp', 'app'],
-        routes: { '/bower_components': 'bower_components', '/node_modules': 'node_modules' }
+        routes: { '/node_modules': 'node_modules' }
       }
     });
 
@@ -134,7 +119,6 @@ gulp.task('serve', gulp.series(
     gulp.watch('app/scripts/**/*.js', gulp.series('scripts'));
     gulp.watch('app/fonts/**/*', gulp.series('fonts'));
     gulp.watch('app/templates/**/*.hbs', gulp.series('templates'));
-    gulp.watch('bower.json', gulp.series('wiredep', 'fonts'));
   }
 ));
 
@@ -158,7 +142,6 @@ gulp.task('serve:test', gulp.series(
         routes: {
           '/scripts': '.tmp/scripts',
           '/templates': '.tmp/templates',
-          '/bower_components': 'bower_components',
           '/node_modules': 'node_modules'
         }
       }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <title>Mocha Spec Runner</title>
-  <link rel="stylesheet" href="../bower_components/mocha/mocha.css">
+  <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
   <style>
   .chart {
     height: 100px;
@@ -13,25 +13,18 @@
 <body>
   <div id="mocha"></div>
   <div id="sandbox"></div>
-  <script src="../bower_components/mocha/mocha.js"></script>
+  <script src="../node_modules/mocha/mocha.js"></script>
   <script>mocha.setup('bdd');</script>
-  <script src="../bower_components/chai/chai.js"></script>
+  <script src="../node_modules/chai/chai.js"></script>
   <script>
     var assert = chai.assert;
     var expect = chai.expect;
     var should = chai.should();
   </script>
-  <!-- bower:js -->
-  <script src="../bower_components/sinon-browser-only/sinon.js"></script>
-  <script src="../bower_components/jquery/dist/jquery.js"></script>
-  <script src="../bower_components/handlebars/handlebars.js"></script>
-  <script src="../bower_components/markdown-it/dist/markdown-it.js"></script>
-  <!---->
-  <script src="../bower_components/blanket/dist/mocha/blanket_mocha.js"
-          data-cover-adapter="../bower_components/blanket/src/adapters/mocha-blanket.js">
-  </script>
-
-  <!-- endbower -->
+  <script src="../node_modules/sinon/pkg/sinon.js"></script>
+  <script src="../node_modules/jquery/dist/jquery.js"></script>
+  <script src="../node_modules/handlebars/dist/handlebars.js"></script>
+  <script src="../node_modules/markdown-it/dist/markdown-it.js"></script>
   <script src="../node_modules/chart.js/dist/chart.umd.js"></script>
   <script src="data.js"></script>
   <script src="templates/main.js"></script>

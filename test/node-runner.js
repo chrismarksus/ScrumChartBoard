@@ -15,10 +15,10 @@ global.window   = dom.window;
 global.document = dom.window.document;
 global.location = dom.window.location;
 
-// --- jQuery 2.1 from bower (matches the browser runtime; has .complete() which the source uses) ---
+// --- jQuery from npm ---
 dom.window.eval(
   fs.readFileSync(
-    path.join(__dirname, '../bower_components/jquery/dist/jquery.js'), 'utf8'
+    path.join(__dirname, '../node_modules/jquery/dist/jquery.js'), 'utf8'
   )
 );
 global.$      = dom.window.$;
@@ -41,9 +41,9 @@ global.Chart = function Chart(el, conf) {
 global.Chart.register = function() {};
 global.Chart.getChart = function() { return null; };
 
-// --- markdown-it (pure-JS UMD build from bower) ---
+// --- markdown-it ---
 global.markdownit = require(
-  path.join(__dirname, '../bower_components/markdown-it/dist/markdown-it.js')
+  path.join(__dirname, '../node_modules/markdown-it/dist/markdown-it.js')
 );
 
 // --- Source files ---

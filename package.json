@@ -8,7 +8,7 @@
     "@babel/preset-env": "^7.29.5",
     "@babel/register": "^7.29.3",
     "browser-sync": "^3.0.3",
-    "chai": "^6.2.2",
+    "chai": "^4.5.0",
     "del": "^6.1.1",
     "gulp": "^5.0.0",
     "gulp-babel": "^8.0.0",
@@ -25,12 +25,10 @@
     "gulp-uglify": "^3.0.0",
     "gulp-useref": "^3.1.2",
     "jsdom": "^29.1.1",
-    "main-bower-files": "^2.13.1",
     "mocha": "^11.3.0",
     "run-sequence": "^2.2.1",
     "sinon": "^22.0.0",
-    "through2": "^3.0.2",
-    "wiredep": "^4.0.0"
+    "through2": "^3.0.2"
   },
   "eslintConfig": {
     "env": {
@@ -49,6 +47,9 @@
     "serialize-javascript": "^7.0.5"
   },
   "dependencies": {
-    "chart.js": "^4.5.1"
+    "chart.js": "^4.5.1",
+    "jquery": "^4.0.0",
+    "markdown-it": "^14.1.1",
+    "skeleton-css": "^2.0.4"
   }
 }

@@ -29,14 +29,15 @@ class Charts {
   }
   getNoteMarkdown(index) {
     if (this.notes[index]) {
-      return $.getJSON(this.notes[index]).complete(this.processResponse.bind(this));
+      return $.getJSON(this.notes[index]).always(this.processResponse.bind(this));
     }
     return null;
   }
-  processResponse(data) {
-    if (data.status === 200 && data.responseText) {
+  processResponse(data, textStatus, jqXHR) {
+    const xhr = (textStatus === 'success') ? jqXHR : data;
+    if (xhr.status === 200 && xhr.responseText) {
       this.setHash('#notesDescription');
-      this.setMarkdownContent(this.processMarkdown(data.responseText));
+      this.setMarkdownContent(this.processMarkdown(xhr.responseText));
     }
   }
   processMarkdown(data) {
