@@ -1,4 +1,5 @@
 import Charts from './Charts.js';
+import Helper from '../Helper.js';
 
 class Line extends Charts {
   constructor(el, yLabel) {
