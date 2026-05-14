@@ -1,3 +1,5 @@
+import Charts from './Charts.js';
+
 class Burndown extends Charts {
   constructor(el) {
     super(el);
@@ -58,3 +60,5 @@ class Burndown extends Charts {
     super.render();
   }
 }
+
+export default Burndown;

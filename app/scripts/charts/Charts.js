@@ -1,3 +1,9 @@
+import { Chart, registerables } from 'chart.js';
+import markdownit from 'markdown-it';
+import Colors from '../Colors.js';
+
+Chart.register(...registerables);
+
 class Charts {
   constructor(el) {
     const container = document.getElementById(el);
@@ -89,3 +95,5 @@ class Charts {
     this.chartRef = new Chart(this.el, this.conf);
   }
 }
+
+export default Charts;

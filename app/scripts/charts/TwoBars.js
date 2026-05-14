@@ -1,3 +1,5 @@
+import Charts from './Charts.js';
+
 class TwoBars extends Charts {
   constructor(el, yLabel) {
     super(el);
@@ -41,3 +43,5 @@ class TwoBars extends Charts {
     super.render();
   }
 }
+
+export default TwoBars;

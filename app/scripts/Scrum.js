@@ -1,3 +1,13 @@
+import Templates from './Templates.js';
+import Satisfaction from './charts/Satisfaction.js';
+import TwoBars from './charts/TwoBars.js';
+import Line from './charts/Line.js';
+import Lines from './charts/Lines.js';
+import Burndown from './charts/Burndown.js';
+import Status from './charts/Status.js';
+import Timelines from './charts/Timelines.js';
+import Types from './charts/Types.js';
+
 class Scrum {
   constructor(id, model = {}, doc = document){
     this.el = document.getElementById(id);
@@ -229,3 +239,5 @@ class Scrum {
     }
   }
 }
+
+export default Scrum;

@@ -1,3 +1,5 @@
+import Charts from './Charts.js';
+
 class Pie extends Charts {
   constructor(el, mLabel = 'points') {
     super(el);
@@ -43,3 +45,5 @@ class Pie extends Charts {
     super.render();
   }
 }
+
+export default Pie;

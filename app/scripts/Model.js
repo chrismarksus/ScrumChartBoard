@@ -1,3 +1,5 @@
+import Helper from './Helper.js';
+
 class Model{
   constructor(data = {}, change = () => {}){
     this.d = data;
@@ -330,3 +332,5 @@ class Model{
     return label;
   }
 }
+
+export default Model;

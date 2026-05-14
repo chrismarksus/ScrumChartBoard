@@ -15,7 +15,7 @@ global.window   = dom.window;
 global.document = dom.window.document;
 global.location = dom.window.location;
 
-// --- jQuery from npm ---
+// --- jQuery from npm (loaded into jsdom so DOM tests work) ---
 dom.window.eval(
   fs.readFileSync(
     path.join(__dirname, '../node_modules/jquery/dist/jquery.js'), 'utf8'
@@ -34,42 +34,42 @@ global.should = chai.should();
 const sinon  = require('sinon');
 global.sinon = sinon;
 
-// --- Chart.js stub (canvas charting library — not usable in jsdom) ---
-global.Chart = function Chart(el, conf) {
-  this.destroy = function() {};
+// --- Chart.js stub (canvas charting not usable in jsdom) ---
+// Pre-populate require cache so source file imports get the stub.
+const ChartStub = function Chart(el, conf) { this.destroy = function() {}; };
+ChartStub.register    = function() {};
+ChartStub.getChart    = function() { return null; };
+const chartjsPath = require.resolve('chart.js');
+require.cache[chartjsPath] = {
+  id: chartjsPath, filename: chartjsPath, loaded: true,
+  exports: { Chart: ChartStub, registerables: [] }
 };
-global.Chart.register = function() {};
-global.Chart.getChart = function() { return null; };
+global.Chart = ChartStub;
 
-// --- markdown-it ---
-global.markdownit = require(
-  path.join(__dirname, '../node_modules/markdown-it/dist/markdown-it.js')
-);
+// --- @babel/register: transform ESM import/export in source files ---
+require('@babel/register')({
+  presets: [['@babel/preset-env', { targets: { node: 'current' }, modules: 'commonjs' }]],
+  only: [new RegExp(path.join(__dirname, '..', 'app', 'scripts').replace(/\\/g, '\\\\'))],
+  configFile: false,
+});
 
-// --- Source files ---
-const srcDir   = path.join(__dirname, '../app/scripts');
-const srcFiles = [
-  'Colors.js',
-  'Helper.js',
-  'Templates.js',
-  'GetData.js',
-  'Model.js',
-  'charts/Charts.js',
-  'charts/Burndown.js',
-  'charts/Line.js',
-  'charts/Lines.js',
-  'charts/Pie.js',
-  'charts/Satisfaction.js',
-  'charts/Status.js',
-  'charts/Timelines.js',
-  'charts/TwoBars.js',
-  'charts/Types.js',
-];
-
-for (const file of srcFiles) {
-  const code = fs.readFileSync(path.join(srcDir, file), 'utf8');
-  vm.runInThisContext(code, { filename: file });
-}
+// --- Source files (loaded as ES modules via babel-register) ---
+const srcDir = path.join(__dirname, '../app/scripts');
+global.Colors       = require(path.join(srcDir, 'Colors.js')).default;
+global.Helper       = require(path.join(srcDir, 'Helper.js')).default;
+global.Templates    = require(path.join(srcDir, 'Templates.js')).default;
+global.GetData      = require(path.join(srcDir, 'GetData.js')).default;
+global.Model        = require(path.join(srcDir, 'Model.js')).default;
+global.Charts       = require(path.join(srcDir, 'charts/Charts.js')).default;
+global.Burndown     = require(path.join(srcDir, 'charts/Burndown.js')).default;
+global.Line         = require(path.join(srcDir, 'charts/Line.js')).default;
+global.Lines        = require(path.join(srcDir, 'charts/Lines.js')).default;
+global.Pie          = require(path.join(srcDir, 'charts/Pie.js')).default;
+global.Satisfaction = require(path.join(srcDir, 'charts/Satisfaction.js')).default;
+global.Status       = require(path.join(srcDir, 'charts/Status.js')).default;
+global.Timelines    = require(path.join(srcDir, 'charts/Timelines.js')).default;
+global.TwoBars      = require(path.join(srcDir, 'charts/TwoBars.js')).default;
+global.Types        = require(path.join(srcDir, 'charts/Types.js')).default;
 
 // --- Mock data ---
 const dataCode = fs.readFileSync(path.join(__dirname, 'data.js'), 'utf8');

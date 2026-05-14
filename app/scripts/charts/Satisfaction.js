@@ -1,3 +1,5 @@
+import Charts from './Charts.js';
+
 class Satisfaction extends Charts {
   constructor(el) {
     super(el);
@@ -49,3 +51,5 @@ class Satisfaction extends Charts {
     this.conf.data.datasets = this.data;
   }
 }
+
+export default Satisfaction;

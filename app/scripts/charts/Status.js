@@ -1,3 +1,5 @@
+import Pie from './Pie.js';
+
 class Status extends Pie {
   constructor(el, mLabel = 'points') {
     super(el);
@@ -7,3 +9,5 @@ class Status extends Pie {
     return this.clr.progress();
   }
 }
+
+export default Status;

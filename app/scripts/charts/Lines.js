@@ -1,3 +1,5 @@
+import Charts from './Charts.js';
+
 class Lines extends Charts {
   constructor(el, yLabel) {
     super(el);
@@ -32,3 +34,5 @@ class Lines extends Charts {
     super.render();
   }
 }
+
+export default Lines;

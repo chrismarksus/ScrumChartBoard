@@ -21,3 +21,4 @@ class Helper {
     return Math.round((completed / commited) * 100);
   }
 }
+export default Helper;

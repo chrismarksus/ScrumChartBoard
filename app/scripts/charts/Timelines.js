@@ -1,3 +1,5 @@
+import Charts from './Charts.js';
+
 class Timelines extends Charts {
   constructor(el) {
     super(el);
@@ -37,3 +39,5 @@ class Timelines extends Charts {
     }];
   }
 }
+
+export default Timelines;
