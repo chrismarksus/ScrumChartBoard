@@ -4,7 +4,7 @@
   let project = helper.queryString('project');
   let urlStorage = localStorage.getItem('scrum_url_data_0001');
   if(urlStorage){
-    urlStorage = $.parseJSON(urlStorage);
+    urlStorage = JSON.parse(urlStorage);
   } else {
     urlStorage = [];
   }
