@@ -17,13 +17,13 @@
       localStorage.setItem('scrum_url_data_0001', JSON.stringify(urlStorage));
     }
     let getData = new GetData(team, project);
-    getData.setup().done((dashboard, project, intervals) => {
+    getData.setup().then(([dashboard, project, intervals]) => {
       let board = dashboard[0];
 
-      let lastModifiedIntervals = intervals[2].getResponseHeader('Last-Modified');
+      let lastModifiedIntervals = intervals[1].headers.get('Last-Modified');
       let dateIntervals = new Date(lastModifiedIntervals);
 
-      let lastModifiedProject = project[2].getResponseHeader('Last-Modified');
+      let lastModifiedProject = project[1].headers.get('Last-Modified');
       let dateProject = new Date(lastModifiedProject);
 
       if(dateIntervals > dateProject){
@@ -39,15 +39,15 @@
       let main = new Scrum('main', model);
       main.setup();
       window.addEventListener('unload', main.destroy);
-    }).fail((err) => {
+    }).catch((err) => {
       console.error(err);
-      $('#main').html(App.templates.nodata({
+      document.getElementById('main').innerHTML = App.templates.nodata({
         'links': urlStorage
-      }));
+      });
     });
   } else {
-    $('#main').html(App.templates.nodata({
+    document.getElementById('main').innerHTML = App.templates.nodata({
       'links': urlStorage
-    }));
+    });
   }
 })();

@@ -4,12 +4,17 @@ class GetData {
     this.project = `teams/${team}/projects/${project}/project.json`;
     this.intervals = `teams/${team}/projects/${project}/intervals.json`;
   }
+  fetchJson(url){
+    return fetch(url).then(response => {
+      if(!response.ok) throw new Error(`HTTP ${response.status}: ${url}`);
+      return response.json().then(data => [data, response]);
+    });
+  }
   setup(){
-    let promise = $.when(
-      $.getJSON(this.dashboard),
-      $.getJSON(this.project),
-      $.getJSON(this.intervals)
-    );
-    return promise;
+    return Promise.all([
+      this.fetchJson(this.dashboard),
+      this.fetchJson(this.project),
+      this.fetchJson(this.intervals)
+    ]);
   }
 }

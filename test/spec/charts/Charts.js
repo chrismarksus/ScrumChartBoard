@@ -25,15 +25,15 @@
         expect($('#notesDescription .content').html()).to.eql('<em>notes 1</em>');
       });
       it('should add content to the notes dialog after successful load', () => {
-        charts.processResponse({ 'status': 200, 'responseText':'*notes 1*'})
+        charts.processResponse('*notes 1*');
         expect($('#notesDescription .content').html().replace(/(\r\n|\n|\r)/gm,'')).to.eql('<p><em>notes 1</em></p>');
       });
-      it('should add content to the notes dialog after failed load', () => {
-        charts.processResponse({ 'status': 404, 'responseText':'<p><em>notes 1</em><p>'})
+      it('should not add content to the notes dialog when text is empty', () => {
+        charts.processResponse('');
         expect($('#notesDescription .content').html()).to.eql('');
       });
-      it('should add content to the notes dialog after no text', () => {
-        charts.processResponse({ 'status': 200 })
+      it('should not add content to the notes dialog when text is null', () => {
+        charts.processResponse(null);
         expect($('#notesDescription .content').html()).to.eql('');
       });
     });
@@ -75,7 +75,7 @@
         const notes = ['note/url/1', null, 'note/url/3'];
         charts.setNotes(notes);
         let result = charts.getNoteMarkdown(0);
-        expect(result).to.be.an('object');
+        expect(result).to.be.instanceof(Promise);
       });
       it('should return null when note is missing at index', () => {
         const notes = ['note/url/1', null, 'note/url/3'];

@@ -1,7 +1,7 @@
 class Scrum {
   constructor(id, model = {}, doc = document){
     const temp = App.templates;
-    this.el = $(`#${id}`);
+    this.el = document.getElementById(id);
     this.doc = doc;
     this.model = model;
     this.dboardWindowEvent;
@@ -129,7 +129,7 @@ class Scrum {
   timelines(timelines, table){
     return timelines.map((item, index) => {
       let el = `timeline_${index}`;
-      $(`#${el}`).height((item.timeline.length * 25) + 50);
+      document.getElementById(el).style.height = `${(item.timeline.length * 25) + 50}px`;
       let timelineChart = new Timelines(el);
       timelineChart.setLabels(table.label);
       timelineChart.setData(item.timeline);
@@ -225,7 +225,7 @@ class Scrum {
     let func = () => {
       this.draw(label);
     };
-    this.el.html(App.templates.main(data));
+    this.el.innerHTML = App.templates.main(data);
     this.doc.title = this.model.title();
 
     if(!this.dboardWindowEvent){
@@ -235,7 +235,7 @@ class Scrum {
     this.draw(label);
   }
   destroy(){
-    this.el.empty();
+    this.el.innerHTML = '';
     if(this.dboardWindowEvent){
       window.removeEventListener('resize', this.dboardWindowEvent);
       this.dboardWindowEvent = null;

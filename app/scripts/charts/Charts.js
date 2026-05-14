@@ -29,22 +29,23 @@ class Charts {
   }
   getNoteMarkdown(index) {
     if (this.notes[index]) {
-      return $.getJSON(this.notes[index]).always(this.processResponse.bind(this));
+      return fetch(this.notes[index]).then(r => {
+        if (r.ok) return r.text().then(text => this.processResponse(text));
+      });
     }
     return null;
   }
-  processResponse(data, textStatus, jqXHR) {
-    const xhr = (textStatus === 'success') ? jqXHR : data;
-    if (xhr.status === 200 && xhr.responseText) {
+  processResponse(text) {
+    if (text) {
       this.setHash('#notesDescription');
-      this.setMarkdownContent(this.processMarkdown(xhr.responseText));
+      this.setMarkdownContent(this.processMarkdown(text));
     }
   }
   processMarkdown(data) {
     return new markdownit().render(data);
   }
   setMarkdownContent(html) {
-    $('#notesDescription .content').html(html);
+    document.querySelector('#notesDescription .content').innerHTML = html;
   }
   setHash(str) {
     location.hash = str;
