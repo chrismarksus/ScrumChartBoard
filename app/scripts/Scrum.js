@@ -229,14 +229,16 @@ class Scrum {
     this.doc.title = this.model.title();
 
     if(!this.dboardWindowEvent){
-      this.dboardWindowEvent = window.addEventListener('resize', func.bind(this));
+      this.dboardWindowEvent = func;
+      window.addEventListener('resize', this.dboardWindowEvent);
     }
     this.draw(label);
   }
   destroy(){
     this.el.empty();
     if(this.dboardWindowEvent){
-        this.dboardWindowEvent.removeEventListener('resize');
+      window.removeEventListener('resize', this.dboardWindowEvent);
+      this.dboardWindowEvent = null;
     }
   }
 }

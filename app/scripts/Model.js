@@ -116,7 +116,6 @@ class Model{
   cardsEstimatedPercentage(label = 'none'){
     const i = this.findByIntervalLabel(label);
     if(i.cardsEstimated && i.cardsUnestimated && typeof i.cardsEstimated === 'number' && typeof i.cardsUnestimated === 'number'){
-      console.log(i.cardsUnestimated , i.cardsEstimated);
       return Math.round(100 - ((i.cardsUnestimated / i.cardsEstimated) * 100));
     }
     return 0;
@@ -248,8 +247,8 @@ class Model{
       'teamMembersCount'],
       this.d.intervals
     );
-    data.daysOutHolidays.map((i) => {
-      return i.teamMembersCount * i.daysOutHolidays;
+    data.daysOutHolidays = data.daysOutHolidays.map((i, idx) => {
+      return data.teamMembersCount[idx] * i;
     });
     data.daysTimebox.reduce(this.addUp);
     let dop = data.daysOutPlanned.map((item) => {
@@ -280,7 +279,7 @@ class Model{
     if(data.daysOutUnplanned.reduce(this.addUp) === 0){
       delete data.daysOutUnplanned;
     }
-    if(data.daysOutHolidays.reduce(this.addUp) === 0){
+    if(!data.daysOutHolidays.reduce(this.addUp, 0)){
       delete data.daysOutHolidays;
     }
     delete data.teamMembersCount;

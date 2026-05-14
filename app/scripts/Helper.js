@@ -15,12 +15,9 @@ class Helper {
     return v ? v[1] : null;
   }
   calcPercentage(completed, commited){
-    let total = 0;
-    if(commited === 0 && completed >= completed){
-      total = completed * 100;
-    } else if(completed !== 0 && completed >= completed){
-      total = (completed / commited)* 100;
+    if(commited === 0){
+      return Math.round(completed * 100);
     }
-    return Math.round(total);
+    return Math.round((completed / commited) * 100);
   }
 }
