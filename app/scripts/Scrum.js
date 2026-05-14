@@ -42,13 +42,7 @@ class Scrum {
   }
   capacity(capcityData, table, notes){
     const chart = new Lines('daysWorked', 'Days');
-    chart.setData(capcityData, {
-      'daysTimebox': 'Timeboxes',
-      'daysOutHolidays': 'Holidays',
-      'daysOutPlanned': 'Planned',
-      'daysOutUnplanned': 'Unplanned',
-      'daysWorked': 'Capacity'
-    });
+    chart.setData(capcityData, Scrum.capacityKeys());
     chart.setLabels(table.label);
     chart.setDates(table.dateEnd);
     chart.setNotes(notes.notesInterval);
@@ -72,13 +66,10 @@ class Scrum {
     chart.render();
     return chart;
   }
-  issuesPerInterval(data, table, notes){
+  issuesPerInterval(table, notes){
+    const { data, labels } = Scrum.issuesPerIntervalInput(table);
     const chart = new Lines('issuesPerInterval', 'Issues');
-    chart.setData({
-      'issuesPerInterval': table.issuesPerInterval
-    },{
-      'issuesPerInterval' : 'Issues Per Sprint'
-    });
+    chart.setData(data, labels);
     chart.setLabels(table.label);
     chart.setDates(table.dateEnd);
     chart.setNotes(notes.notesInterval);
@@ -112,12 +103,9 @@ class Scrum {
     chart.render();
     return chart;
   }
-  burndown(data, table){
+  burndown(table){
     const chart = new Burndown('burndown');
-    chart.setData([
-      table.pointsCompleted,
-      table.pointsEstimated
-    ]);
+    chart.setData(Scrum.burndownInput(table));
     chart.setLabels(table.label);
     chart.setDates(table.dateEnd);
     chart.render();
@@ -137,70 +125,22 @@ class Scrum {
   draw(label){
     const notes = this.model.intervalNotes();
     const table = this.model.intervalData();
-    const pcLabels = {
-      'pointsCommited': 'Commited',
-      'pointsCompleted': 'Completed'
-    };
-    const pointsData = [{
-      label: 'Commited',
-      data: table.pointsCommited
-    },{
-      label: 'Completed',
-      data: table.pointsCompleted
-    }];
-    const ccLabels = {
-      'cardsCommited': 'Commited',
-      'cardsCompleted': 'Completed'
-    };
-    const cardData = [{
-      label: 'Commited',
-      data: table.cardsCommited
-    },{
-      label: 'Completed',
-      data: table.cardsCompleted
-    }];
-    const cardsBlockedData = {
-      'cardsBlocked': table.cardsBlocked
-    };
-    const cbLabels = {
-      'cardsBlocked' : 'Cards Blocked'
-    };
-    const burndownData = [
-      table.pointsCompleted,
-      table.pointsEstimated
-    ];
+    const { data: pointsData, labels: pcLabels } = Scrum.pointsChartInput(table);
+    const { data: cardData, labels: ccLabels } = Scrum.cardsChartInput(table);
+    const { data: cardsBlockedData, labels: cbLabels } = Scrum.cardsBlockedInput(table);
 
-    this.commitedCompleted(
-      pointsData, table, pcLabels
-    );
-    this.pointsGoal(
-      pointsData, table, pcLabels
-    );
-    this.cardsCommitedCompleted(
-      cardData, table, ccLabels
-    );
-    this.cardsGoal(
-      cardData, table, notes, ccLabels
-    );
-    this.issuesPerInterval(
-      cardData, table, notes, ccLabels
-    );
-    this.cardsBlocked(
-      cardsBlockedData, table, notes, cbLabels
-    );
-    this.capacity(
-      this.model.capacity(), table, notes
-    );
-    this.burndown(
-      burndownData, table
-    );
-    this.satisfaction(
-      this.model.satisfaction(), table
-    );
+    this.commitedCompleted(pointsData, table, pcLabels);
+    this.pointsGoal(pointsData, table, notes, pcLabels);
+    this.cardsCommitedCompleted(cardData, table, ccLabels);
+    this.cardsGoal(cardData, table, notes, ccLabels);
+    this.issuesPerInterval(table, notes);
+    this.cardsBlocked(cardsBlockedData, table, notes, cbLabels);
+    this.capacity(this.model.capacity(), table, notes);
+    this.burndown(table);
+    this.satisfaction(this.model.satisfaction(), table);
+
     if(this.model.d.project.timelines){
-      this.timelines(
-        this.model.d.project.timelines, table
-      );
+      this.timelines(this.model.d.project.timelines, table);
     }
     if(this.model.d.project.cardStatus){
       this.status(
@@ -214,7 +154,6 @@ class Scrum {
         this.model.d.project.cardTypeLabel || null
       );
     }
-
   }
   setup(){
     const label = this.model.lastIntervalLabel();
@@ -237,6 +176,54 @@ class Scrum {
       window.removeEventListener('resize', this.dboardWindowEvent);
       this.dboardWindowEvent = null;
     }
+  }
+
+  static pointsChartInput(table) {
+    return {
+      data: [
+        { label: 'Commited', data: table.pointsCommited },
+        { label: 'Completed', data: table.pointsCompleted }
+      ],
+      labels: { pointsCommited: 'Commited', pointsCompleted: 'Completed' }
+    };
+  }
+
+  static cardsChartInput(table) {
+    return {
+      data: [
+        { label: 'Commited', data: table.cardsCommited },
+        { label: 'Completed', data: table.cardsCompleted }
+      ],
+      labels: { cardsCommited: 'Commited', cardsCompleted: 'Completed' }
+    };
+  }
+
+  static cardsBlockedInput(table) {
+    return {
+      data: { cardsBlocked: table.cardsBlocked },
+      labels: { cardsBlocked: 'Cards Blocked' }
+    };
+  }
+
+  static burndownInput(table) {
+    return [table.pointsCompleted, table.pointsEstimated];
+  }
+
+  static issuesPerIntervalInput(table) {
+    return {
+      data: { issuesPerInterval: table.issuesPerInterval },
+      labels: { issuesPerInterval: 'Issues Per Sprint' }
+    };
+  }
+
+  static capacityKeys() {
+    return {
+      daysTimebox: 'Timeboxes',
+      daysOutHolidays: 'Holidays',
+      daysOutPlanned: 'Planned',
+      daysOutUnplanned: 'Unplanned',
+      daysWorked: 'Capacity'
+    };
   }
 }
 

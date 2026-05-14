@@ -70,6 +70,7 @@ global.Status       = require(path.join(srcDir, 'charts/Status.js')).default;
 global.Timelines    = require(path.join(srcDir, 'charts/Timelines.js')).default;
 global.TwoBars      = require(path.join(srcDir, 'charts/TwoBars.js')).default;
 global.Types        = require(path.join(srcDir, 'charts/Types.js')).default;
+global.Scrum        = require(path.join(srcDir, 'Scrum.js')).default;
 
 // --- Mock data ---
 const dataCode = fs.readFileSync(path.join(__dirname, 'data.js'), 'utf8');
@@ -94,6 +95,7 @@ const specFiles = [
   'spec/charts/Timelines.js',
   'spec/charts/TwoBars.js',
   'spec/charts/Types.js',
+  'spec/Scrum.js',
 ];
 
 for (const file of specFiles) {
