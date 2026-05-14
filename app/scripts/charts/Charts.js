@@ -22,7 +22,7 @@ class Charts {
     this.conf = conf;
   }
   setNotes(notes) {
-    this.notes = notes;
+    this.notes = notes || [];
   }
   getNotes() {
     return this.notes;
@@ -70,6 +70,12 @@ class Charts {
   }
   render() {
     if (this.chartRef) { this.chartRef.destroy(); }
+    const existing = Chart.getChart(this.el);
+    if (existing) { existing.destroy(); }
+    const options = this.conf.options = this.conf.options || {};
+    if (options.maintainAspectRatio === undefined) {
+      options.maintainAspectRatio = false;
+    }
     if (this.notes.length > 0) {
       const options = this.conf.options = this.conf.options || {};
       const prev = options.onClick;

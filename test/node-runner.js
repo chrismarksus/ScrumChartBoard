@@ -39,6 +39,7 @@ global.Chart = function Chart(el, conf) {
   this.destroy = function() {};
 };
 global.Chart.register = function() {};
+global.Chart.getChart = function() { return null; };
 
 // --- markdown-it (pure-JS UMD build from bower) ---
 global.markdownit = require(
