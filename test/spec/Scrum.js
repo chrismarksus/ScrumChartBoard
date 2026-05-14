@@ -6,7 +6,6 @@
     let statusMock  = sinon.mock(Charts);
 
     beforeEach(() => {
-      sinon.spy(Handlebars, 'registerPartial');
       model =  new Model(mockData);
       scrum = new Scrum('sandbox', model, mockDoc);
     });
@@ -14,43 +13,10 @@
       scrum.destroy();
       scrum = null;
       mockDoc = {title: 'test'};
-      Handlebars.registerPartial.restore();
       statusMock.restore();
     });
 
     describe('The Scrum App', () => {
-      describe('should add handlebar partials', () => {
-        it('should be chartGroupPartial added', () => {
-          expect(Handlebars.registerPartial.calledWith('chartGroupPartial', App.templates.chartGroupPartial)).to.eql(true);
-        });
-        it('should be popupPartial added', () => {
-          expect(Handlebars.registerPartial.calledWith('popupPartial', App.templates.popupPartial)).to.eql(true);
-        });
-        it('should be deckLinkPartial added', () => {
-          expect(Handlebars.registerPartial.calledWith('deckLinkPartial', App.templates.deckLinkPartial)).to.eql(true);
-        });
-        it('should be backlogPartial added', () => {
-          expect(Handlebars.registerPartial.calledWith('backlogPartial', App.templates.backlogPartial)).to.eql(true);
-        });
-        it('should be updatedPartial added', () => {
-          expect(Handlebars.registerPartial.calledWith('updatedPartial', App.templates.updatedPartial)).to.eql(true);
-        });
-        it('should be velocity added', () => {
-          expect(Handlebars.registerPartial.calledWith('velocity', App.templates.velocity)).to.eql(true);
-        });
-        it('should be workdays added', () => {
-          expect(Handlebars.registerPartial.calledWith('workdays', App.templates.workdays)).to.eql(true);
-        });
-        it('should be capacity added', () => {
-          expect(Handlebars.registerPartial.calledWith('capacity', App.templates.capacity)).to.eql(true);
-        });
-        it('should be blockTitleWithCount added', () => {
-          expect(Handlebars.registerPartial.calledWith('blockTitleWithCount', App.templates.blockTitleWithCount)).to.eql(true);
-        });
-        it('should be estimatedCards added', () => {
-          expect(Handlebars.registerPartial.calledWith('estimatedCards', App.templates.estimatedCards)).to.eql(true);
-        });
-      });
       it('should add Headliner to a container', function () {
         scrum.setup();
         expect($('#sandbox').text()).to.contain('TestDashboard');

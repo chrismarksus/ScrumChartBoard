@@ -51,6 +51,7 @@ const srcDir   = path.join(__dirname, '../app/scripts');
 const srcFiles = [
   'Colors.js',
   'Helper.js',
+  'Templates.js',
   'GetData.js',
   'Model.js',
   'charts/Charts.js',

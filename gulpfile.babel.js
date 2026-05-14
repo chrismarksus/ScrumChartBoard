@@ -3,8 +3,6 @@ const gulpLoadPlugins = require('gulp-load-plugins');
 const browserSync = require('browser-sync').create();
 const del = require('del');
 const cleanCSS = require('gulp-clean-css');
-const through2 = require('through2');
-const path = require('path');
 
 const $ = gulpLoadPlugins();
 const reload = browserSync.reload;
@@ -35,23 +33,6 @@ gulp.task('scripts', () => {
     .pipe(reload({ stream: true }));
 });
 
-function defineTemplate() {
-  return through2.obj((file, enc, cb) => {
-    const name = path.basename(file.path, '.js');
-    const content = file.contents.toString();
-    const ns = `this["App"] = this["App"] || {};\nthis["App"]["templates"] = this["App"]["templates"] || {};\nthis["App"]["templates"]["${name}"] = Handlebars.template(${content});\n`;
-    file.contents = Buffer.from(ns);
-    cb(null, file);
-  });
-}
-
-gulp.task('templates', () => {
-  return gulp.src('app/templates/**/*.hbs')
-    .pipe($.handlebars())
-    .pipe(defineTemplate())
-    .pipe(gulp.dest('.tmp/templates'));
-});
-
 gulp.task('fonts', () => {
   return gulp.src('app/fonts/**/*')
     .pipe($.if(dev, gulp.dest('.tmp/fonts'), gulp.dest('dist/fonts')));
@@ -80,7 +61,7 @@ gulp.task('extras', () => {
 // --- Composite tasks ---
 
 gulp.task('html', gulp.series(
-  gulp.parallel('styles', 'templates', 'scripts'),
+  gulp.parallel('styles', 'scripts'),
   () => {
     return gulp.src('app/*.html')
       .pipe($.useref({ searchPath: ['.tmp', 'app', '.'] }))
@@ -103,7 +84,7 @@ gulp.task('default', gulp.series(
 
 gulp.task('serve', gulp.series(
   'clean',
-  gulp.parallel('styles', 'templates', 'scripts', 'fonts', 'mockData', 'sampleData'),
+  gulp.parallel('styles', 'scripts', 'fonts', 'mockData', 'sampleData'),
   () => {
     browserSync.init({
       notify: false,
@@ -114,11 +95,10 @@ gulp.task('serve', gulp.series(
       }
     });
 
-    gulp.watch(['app/*.html', 'app/templates/**/*.hbs', 'app/images/**/*', '.tmp/fonts/**/*']).on('change', reload);
+    gulp.watch(['app/*.html', 'app/images/**/*', '.tmp/fonts/**/*']).on('change', reload);
     gulp.watch('app/styles/**/*.less', gulp.series('styles'));
     gulp.watch('app/scripts/**/*.js', gulp.series('scripts'));
     gulp.watch('app/fonts/**/*', gulp.series('fonts'));
-    gulp.watch('app/templates/**/*.hbs', gulp.series('templates'));
   }
 ));
 
@@ -131,7 +111,7 @@ gulp.task('serve:dist', gulp.series('default', () => {
 }));
 
 gulp.task('serve:test', gulp.series(
-  gulp.parallel('scripts', 'templates'),
+  'scripts',
   () => {
     browserSync.init({
       notify: false,
@@ -147,8 +127,7 @@ gulp.task('serve:test', gulp.series(
       }
     });
 
-    gulp.watch(['test/index.html', 'app/scripts/**/*.js', 'app/templates/**/*.hbs', 'test/spec/**/*.js']).on('change', reload);
+    gulp.watch(['test/index.html', 'app/scripts/**/*.js', 'test/spec/**/*.js']).on('change', reload);
     gulp.watch('app/scripts/**/*.js', gulp.series('scripts'));
-    gulp.watch('app/templates/**/*.hbs', gulp.series('templates'));
   }
 ));

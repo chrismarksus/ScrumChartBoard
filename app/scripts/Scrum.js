@@ -1,22 +1,9 @@
 class Scrum {
   constructor(id, model = {}, doc = document){
-    const temp = App.templates;
     this.el = document.getElementById(id);
     this.doc = doc;
     this.model = model;
     this.dboardWindowEvent;
-
-    Handlebars.registerPartial('dashboardHeader', temp.dashboardHeader);
-    Handlebars.registerPartial('chartGroupPartial', temp.chartGroupPartial);
-    Handlebars.registerPartial('deckLinkPartial', temp.deckLinkPartial);
-    Handlebars.registerPartial('backlogPartial', temp.backlogPartial);
-    Handlebars.registerPartial('popupPartial', temp.popupPartial);
-    Handlebars.registerPartial('updatedPartial', temp.updatedPartial);
-    Handlebars.registerPartial('velocity', temp.velocity);
-    Handlebars.registerPartial('workdays', temp.workdays);
-    Handlebars.registerPartial('capacity', temp.capacity);
-    Handlebars.registerPartial('blockTitleWithCount', temp.blockTitleWithCount);
-    Handlebars.registerPartial('estimatedCards', temp.estimatedCards);
   }
   satisfaction(data, table){
     const chart = new Satisfaction('satisfaction');
@@ -225,7 +212,7 @@ class Scrum {
     let func = () => {
       this.draw(label);
     };
-    this.el.innerHTML = App.templates.main(data);
+    this.el.innerHTML = Templates.main(data);
     this.doc.title = this.model.title();
 
     if(!this.dboardWindowEvent){

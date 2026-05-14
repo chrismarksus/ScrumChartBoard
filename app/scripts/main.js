@@ -41,12 +41,12 @@
       window.addEventListener('unload', main.destroy);
     }).catch((err) => {
       console.error(err);
-      document.getElementById('main').innerHTML = App.templates.nodata({
+      document.getElementById('main').innerHTML = Templates.nodata({
         'links': urlStorage
       });
     });
   } else {
-    document.getElementById('main').innerHTML = App.templates.nodata({
+    document.getElementById('main').innerHTML = Templates.nodata({
       'links': urlStorage
     });
   }
