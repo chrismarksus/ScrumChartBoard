@@ -52,5 +52,9 @@
         let result = helper.calcPercentage(25, 0);
         expect(result).to.eql(2500);
       });
+      it('should calcPercentage 100 when completed equals commited', function () {
+        let result = helper.calcPercentage(50, 50);
+        expect(result).to.eql(100);
+      });
     });
 })();
