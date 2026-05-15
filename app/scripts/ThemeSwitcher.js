@@ -1,6 +1,7 @@
 class ThemeSwitcher {
-  constructor() {
+  constructor({ reload = true } = {}) {
     this.key = 'scrum_theme_0001';
+    this.reload = reload;
     this.palettes = [
       { id: 'forest',   label: 'Forest',   swatches: ['#6e8e4f', '#4a7c8a', '#d97757', '#a88b5c'] },
       { id: 'warm',     label: 'Warm',     swatches: ['#5fa15e', '#2e7df0', '#e57543', '#8a6cc7'] },
@@ -20,9 +21,27 @@ class ThemeSwitcher {
     localStorage.setItem(this.key, JSON.stringify({ ...this.prefs(), ...update }));
   }
 
-  applyAndReload(update) {
+  apply(update) {
     this.save(update);
-    window.location.reload();
+    const { theme, palette } = this.prefs();
+    if (this.reload) {
+      window.location.reload();
+    } else {
+      document.body.className = `theme-${theme} palette-${palette}`;
+      this._updateUI(theme, palette);
+    }
+  }
+
+  _updateUI(theme, palette) {
+    document.querySelectorAll('.ls-chip').forEach(el => {
+      el.classList.toggle('is-active', el.dataset.palette === palette);
+    });
+    document.querySelectorAll('.ls-mode-span').forEach(el => {
+      el.classList.toggle('is-active', el.dataset.mode === theme);
+    });
+    document.querySelectorAll('.palette-card').forEach(el => {
+      el.classList.toggle('is-active', el.dataset.palette === palette);
+    });
   }
 
   setup() {
@@ -45,7 +64,7 @@ class ThemeSwitcher {
           `</div>`;
         btn.addEventListener('click', () => {
           if (btn.dataset.palette !== this.prefs().palette) {
-            this.applyAndReload({ palette: btn.dataset.palette });
+            this.apply({ palette: btn.dataset.palette });
           }
         });
         chipsContainer.appendChild(btn);
@@ -56,7 +75,16 @@ class ThemeSwitcher {
       span.classList.toggle('is-active', span.dataset.mode === theme);
       span.addEventListener('click', () => {
         if (span.dataset.mode !== this.prefs().theme) {
-          this.applyAndReload({ theme: span.dataset.mode });
+          this.apply({ theme: span.dataset.mode });
+        }
+      });
+    });
+
+    document.querySelectorAll('.palette-card').forEach(card => {
+      card.classList.toggle('is-active', card.dataset.palette === palette);
+      card.addEventListener('click', () => {
+        if (card.dataset.palette !== this.prefs().palette) {
+          this.apply({ palette: card.dataset.palette });
         }
       });
     });
