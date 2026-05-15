@@ -85,6 +85,7 @@ const mocha = new Mocha({ reporter: 'spec' });
 const specFiles = [
   'spec/Colors.js',
   'spec/ThemeSwitcher.js',
+  'spec/Templates.js',
   'spec/Helper.js',
   'spec/GetData.js',
   'spec/Model.js',
