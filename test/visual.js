@@ -36,6 +36,16 @@ async function setup() {
   await page.evaluateOnNewDocument(() => {
     localStorage.setItem('scrum_theme_0001', JSON.stringify({ theme: 'light', palette: 'forest' }));
   });
+  // block external font requests so rendering is identical in every environment
+  await page.setRequestInterception(true);
+  page.on('request', req => {
+    const url = req.url();
+    if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
+      req.abort();
+    } else {
+      req.continue();
+    }
+  });
 }
 
 async function teardown() {
