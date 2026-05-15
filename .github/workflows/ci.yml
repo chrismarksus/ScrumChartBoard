@@ -20,11 +20,20 @@ jobs:
           node-version: 24
           cache: npm
 
+      - name: Cache Puppeteer Chromium
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
       - name: Install dependencies
         run: npm ci
 
       - name: Unit tests
         run: npm test
+
+      - name: Build
+        run: npm run build
 
       - name: Start dev server
         run: npm run dev &
