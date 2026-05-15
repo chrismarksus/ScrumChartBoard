@@ -2,112 +2,108 @@
 
 ## Prerequisites
 
-- Node.js 16+
+- Node.js 24+
 - npm
-- Bower (`npm install -g bower`)
-- Chrome (for running the full browser test suite)
+- Chrome (for E2E and visual regression tests)
 
 ## Setup
 
 ```bash
 git clone https://github.com/chrismarksus/ScrumChartBoard.git
 cd ScrumChartBoard
-npm install && bower install
+npm install
 ```
 
 ---
 
 ## Running the App
 
-### Bash / Linux
-
 Start the dev server:
 
 ```bash
-npx gulp serve
+npm run dev
 ```
 
-BrowserSync will start and print the local URL (typically `http://localhost:9000`). Open that URL in a browser. On first run you will see the no-data page. Add `team` and `project` query parameters to load your data:
+Vite will start and print the local URL (typically `http://localhost:9000`). Open that URL in a browser. On first run you will see the landing page. Add `team` and `project` query parameters to load dashboard data:
 
 ```
-http://localhost:9000?team=myTeam&project=myProject
+http://localhost:9000?team=abc&project=sample
 ```
 
-The server watches source files and reloads the browser automatically on changes.
+The server watches source files and hot-reloads on changes.
 
 ### Claude Code
 
 Prefix the command with `!` so the output appears directly in the conversation:
 
 ```
-! npx gulp serve
+! npm run dev
 ```
-
-Claude Code can then use its built-in browser tools to navigate to the URL printed by BrowserSync and interact with the running app.
 
 ---
 
 ## Running the Tests
 
-There are two ways to run tests depending on whether a browser is available.
+### Unit tests (no browser required)
 
-### Full browser suite (Bash / Linux)
-
-Requires Chrome to be installed with its shared libraries present. Start the test server, then run the suite against it:
+Runs all specs — Colors, ThemeSwitcher, Templates, Helper, GetData, Model, all chart classes, and Scrum — in Node.js without a browser. Uses [jsdom](https://github.com/jsdom/jsdom) for the DOM environment. Fastest feedback during development:
 
 ```bash
-# Terminal 1 – start the test server
-npx gulp serve:test
-
-# Terminal 2 – run tests headlessly
-npx mocha-headless-chrome -f http://localhost:9000/
+npm test
 ```
 
-BrowserSync may pick a different port if 9000 is busy — check its startup output for the actual URL.
+### E2E tests
 
-### Node.js runner (Bash / Linux)
-
-Runs all specs — Colors, Helper, GetData, Model, and all chart classes — in Node.js without a browser. Uses [jsdom](https://github.com/jsdom/jsdom) for the DOM environment and bower's jQuery 2.1 for jQuery compatibility. This is the fastest way to get signal during development:
+Uses Puppeteer to drive Chrome. Requires the dev server to be running first:
 
 ```bash
-node test/node-runner.js
+# Terminal 1
+npm run dev
+
+# Terminal 2
+npm run test:e2e
 ```
 
-The only specs not covered by this runner are `Scrum.js` (requires Handlebars + full app bootstrap).
+### Visual regression tests
+
+Compares screenshots against baselines in `screenshots/baseline/`. Requires the dev server to be running first:
+
+```bash
+# Terminal 1
+npm run dev
+
+# Terminal 2
+npm run test:visual
+```
+
+To update baselines after intentional UI changes:
+
+```bash
+npm run test:visual:update
+```
+
+Commit the updated `screenshots/baseline/*.png` files along with your change.
 
 ### Claude Code
 
-**Option 1 — full browser suite.** Start the test server, then run `mocha-headless-chrome` against the URL BrowserSync prints:
+Ask Claude to run:
 
 ```
-! npx gulp serve:test
+! npm test
 ```
 
-Once BrowserSync prints its URL (e.g. `http://localhost:9000`), ask Claude:
-
-> "Run `npx mocha-headless-chrome -f http://localhost:9000/` and report the results"
-
-**Option 2 — Node.js runner (no browser needed).** Ask Claude to run:
-
-```
-! node test/node-runner.js
-```
-
-This covers all chart and model specs instantly without starting a server.
+This covers all unit specs instantly without starting a server. For E2E tests, start the dev server first, then ask Claude to run `npm run test:e2e`.
 
 ---
 
-## Chrome dependency note (Linux / WSL)
+## Screenshots
 
-If `npx mocha-headless-chrome` fails with a shared library error, install the missing system packages:
+Take a screenshot of the running app (opens Chrome):
 
 ```bash
-sudo apt-get install -y libnspr4 libnss3 libatk1.0-0 libatk-bridge2.0-0 \
-  libcups2 libdrm2 libxkbcommon0 libxcomposite1 libxdamage1 libxfixes3 \
-  libxrandr2 libgbm1 libasound2t64
+npm run screenshot
+npm run screenshot -- "http://localhost:9000?team=abc&project=sample"
 ```
-
-On Ubuntu 22.04 or earlier substitute `libasound2` for `libasound2t64`.
 
 ---
 
@@ -116,11 +112,28 @@ On Ubuntu 22.04 or earlier substitute `libasound2` for `libasound2t64`.
 Compile to `dist/` for deployment:
 
 ```bash
-npx gulp
+npm run build
+```
+
+Preview the production build locally:
+
+```bash
+npm run preview
 ```
 
 ---
 
-## Code style
+## Workflow
 
-ES6. No linter is enforced beyond the `.eslintConfig` in `package.json` (single quotes, browser + Node globals). Keep new code consistent with the style around it.
+Every change should have a GitHub issue.
+
+1. Search for an existing issue: `gh issue list --repo chrismarksus/ScrumChartBoard`
+2. If none exists, create one: `gh issue create --repo chrismarksus/ScrumChartBoard --title "..." --body "..."`
+3. Reference the issue number in your commit message (e.g. `closes #42`)
+4. After pushing, close the issue: `gh issue close <number> --repo chrismarksus/ScrumChartBoard`
+
+---
+
+## Code Style
+
+ES6 classes with ES modules (`import`/`export default`). Single quotes. Keep new code consistent with existing patterns.

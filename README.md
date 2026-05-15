@@ -1,6 +1,6 @@
 # ScrumChartBoard
 
-A no-database web page that renders charts to visualize data a scrum master would care about. It loads 3 JSON files into the browser via Ajax request.
+A no-database web app that renders charts to visualize data a scrum master would care about. It loads three JSON files into the browser via fetch and renders Scrum metric charts using Chart.js.
 
 This project started as a single HTML page with links to images generated in Excel. I eventually started filling out JSON files and having JavaScript render the charts. I still use Excel to generate backlog data that I transfer to JSON files in the `teams/` folder manually.
 
@@ -37,10 +37,9 @@ These instructions will get the project running locally for development and test
 
 ### Prerequisites
 
-- Node.js 16 or higher
+- Node.js 24 or higher
 - npm
-- Bower (`npm install -g bower`) — manages front-end runtime dependencies
-- Chrome — required for the full browser test suite
+- Chrome — required for E2E and visual regression tests
 
 To contribute you should be comfortable writing ES6 and unit tests.
 
@@ -57,16 +56,16 @@ cd ScrumChartBoard
 Install dependencies:
 
 ```bash
-npm install && bower install
+npm install
 ```
 
 ### Running the dev server
 
 ```bash
-npx gulp serve
+npm run dev
 ```
 
-BrowserSync will start and print the local URL (typically `http://localhost:9000`). On first run you will see the no-data page. Add `team` and `project` query parameters matching your `teams/` folder structure to load your data:
+Vite will start and print the local URL (typically `http://localhost:9000`). On first run you will see the landing page. Add `team` and `project` query parameters to load dashboard data:
 
 ```
 http://localhost:9000?team=abc&project=sample
@@ -76,47 +75,39 @@ http://localhost:9000?team=abc&project=sample
 
 ## Running the tests
 
-See [CONTRIBUTIONS.md](CONTRIBUTIONS.md) for full details including Claude Code instructions and Linux/WSL Chrome setup.
+See [CONTRIBUTIONS.md](CONTRIBUTIONS.md) for full details.
 
-### Node.js runner (no browser required)
+### Unit tests (no browser required)
 
-Covers all chart and model specs using jsdom. The fastest way to get feedback during development:
+Covers all chart, model, and template specs using jsdom. Fastest feedback during development:
 
 ```bash
-node test/node-runner.js
+npm test
 ```
 
-### Full browser suite
+### E2E tests
 
-Requires Chrome. Covers the complete suite including Scrum integration:
+Requires the dev server to be running first:
 
 ```bash
-# Terminal 1
-npx gulp serve:test
-
-# Terminal 2 — use the port printed by BrowserSync
-npx mocha-headless-chrome -f http://localhost:9000/
+npm run dev &
+npm run test:e2e
 ```
 
----
+### Visual regression tests
 
-## Using Docker
+Requires the dev server to be running first:
 
 ```bash
-docker run -it --rm --name scrumchartboard -v $(pwd):/myproject -p 9000:9000 node bash
+npm run dev &
+npm run test:visual
 ```
 
-**On Windows** with Vagrant or Docker you may see a symlink error. Install dependencies with:
+To update baselines after intentional UI changes:
 
 ```bash
-npm --no-bin-links i -g gulp bower
-npm --no-bin-links i
-```
-
-To find the container's IP address on Windows:
-
-```bash
-docker-machine ip
+npm run dev &
+npm run test:visual:update
 ```
 
 ---
@@ -126,19 +117,18 @@ docker-machine ip
 Build to `./dist/`:
 
 ```bash
-npx gulp
+npm run build
 ```
 
 Copy or FTP the `dist/` contents to your web server. The expected folder structure is:
 
 ```
 dist/
-  scripts/
-  styles/
+  assets/
   teams/
-  template/
   favicon.ico
   index.html
+  landing.html
   robots.txt
 ```
 
@@ -150,17 +140,15 @@ See [DATA_FORMAT.md](DATA_FORMAT.md) for the full JSON schema for `dashboard.jso
 
 ## Built With
 
-* [Node](https://nodejs.org/en/) - Build tooling and dependency management
-* [Bower](https://bower.io/) - Front-end dependency management
-* [flotr2](http://www.humblesoftware.com/flotr2/) - Chart library
-* [jQuery](https://jquery.com/) - DOM and Ajax
-* [Handlebars](http://handlebarsjs.com/) - Template engine
-* [Skeleton](http://getskeleton.com/) - CSS grid framework
-* [markdown-it](https://github.com/markdown-it/markdown-it) - Client-side Markdown renderer
-* [Mocha](https://mochajs.org/) - Test framework
-* [Blanket](http://blanketjs.org/) - Client-side code coverage
-* [Gulp](http://gulpjs.com/) - Task runner
-* [BrowserSync](https://browsersync.io/) - Dev server with live reload
+* [Node.js](https://nodejs.org/) — runtime and dependency management
+* [Vite](https://vitejs.dev/) — dev server and production build
+* [Chart.js](https://www.chartjs.org/) — canvas charting
+* [markdown-it](https://github.com/markdown-it/markdown-it) — client-side Markdown renderer
+* [Mocha](https://mochajs.org/) — test framework
+* [Chai](https://www.chaijs.com/) — assertions
+* [Sinon](https://sinonjs.org/) — test spies and stubs
+* [Puppeteer](https://pptr.dev/) — E2E and visual regression tests
+* [jsdom](https://github.com/jsdom/jsdom) — headless DOM for unit tests
 
 ---
 

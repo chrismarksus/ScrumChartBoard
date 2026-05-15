@@ -27,9 +27,12 @@ Top-level team metadata. This file rarely changes.
   "dashboardName": "Sample Dashboard",
   "teamName": "Sample Team",
   "updatedName": "Sample person",
+  "updatedDate": "01/01/2026",
   "daysInInterval": 10
 }
 ```
+
+`updatedName` and `updatedDate` are optional. When both are present, an "Updated by / date" line is shown on the dashboard.
 
 ---
 
@@ -53,6 +56,7 @@ Non-interval project data: card types, statuses, and optional timelines. Card ty
       "Todo": 10,
       "Blocked": 2
     },
+    "backlog": "https://your-backlog-tool.example.com/board",
     "timelines": [
       {
         "title": "Timeline 1",
@@ -66,7 +70,7 @@ Non-interval project data: card types, statuses, and optional timelines. Card ty
 }
 ```
 
-`cardTypeLabel`, `cardStatusLabel`, and `timelines` are optional.
+`cardTypeLabel`, `cardStatusLabel`, `backlog`, and `timelines` are optional. When `backlog` is present, a "Backlog" link button is shown on the dashboard.
 
 ---
 
