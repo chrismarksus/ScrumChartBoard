@@ -644,7 +644,6 @@ body {
    Responsive
    ============================================================ */
 @media (max-width: 960px) {
-  .shell { padding: 0 24px; }
   .hero-grid { grid-template-columns: 1fr; gap: 40px; }
   .doh-card { grid-template-columns: 1fr; padding: 28px; }
   .feature.span-3, .feature.span-2, .feature.span-4 { grid-column: span 6; }

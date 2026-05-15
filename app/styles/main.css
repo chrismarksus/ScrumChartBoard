@@ -662,3 +662,7 @@ p.updatedBy {
   background: var(--text-primary);
   color: var(--surface);
 }
+
+@media (max-width: 960px) {
+  .shell { padding: 0 24px; }
+}
