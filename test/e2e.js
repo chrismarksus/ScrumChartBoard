@@ -92,9 +92,9 @@ async function smokeDashboard() {
 async function noDataState() {
   await page.goto(BASE, { waitUntil: 'networkidle2' });
 
-  await run('shows DOH! message when no params', async () => {
-    const text = await page.$eval('h1', el => el.textContent);
-    assert.ok(text.includes('DOH!'), `Expected "DOH!" in h1, got: "${text}"`);
+  await run('redirects to landing page when no params', async () => {
+    const url = page.url();
+    assert.ok(url.includes('landing.html'), `Expected redirect to landing.html, got: "${url}"`);
   });
 
   await run('shows sample data link', async () => {
