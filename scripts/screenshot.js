@@ -9,11 +9,14 @@ const outDir = join(__dirname, '..', 'screenshots');
 
 await mkdir(outDir, { recursive: true });
 
+const isCI = !!process.env.CI;
 const browser = await puppeteer.launch({
-  headless: false,
-  devtools: true,
-  args: ['--start-maximized'],
-  defaultViewport: null,
+  headless: isCI,
+  devtools: !isCI,
+  args: [
+    ...(isCI ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage'] : ['--start-maximized']),
+  ],
+  defaultViewport: isCI ? { width: 1366, height: 768 } : null,
 });
 
 const page = await browser.pages().then(pages => pages[0]);

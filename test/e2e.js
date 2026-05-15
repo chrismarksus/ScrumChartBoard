@@ -4,11 +4,15 @@ import assert from 'assert';
 const BASE = process.env.E2E_URL || 'http://localhost:9000';
 const SAMPLE = `${BASE}?team=abc&project=sample`;
 
+const CI_ARGS = process.env.CI
+  ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
+  : [];
+
 let browser;
 let page;
 
 async function setup() {
-  browser = await puppeteer.launch({ headless: true });
+  browser = await puppeteer.launch({ headless: true, args: CI_ARGS });
   page = await browser.newPage();
 }
 
