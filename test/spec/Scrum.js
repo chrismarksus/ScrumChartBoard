@@ -121,7 +121,7 @@
     });
     it('returns a label for the issuesPerInterval key', () => {
       const { labels } = Scrum.issuesPerIntervalInput(tableFixture);
-      expect(labels.issuesPerInterval).to.eql('Issues Per Sprint');
+      expect(labels.issuesPerInterval).to.eql('Issues Per Interval');
     });
   });
 

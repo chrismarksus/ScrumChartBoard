@@ -138,7 +138,7 @@ const Templates = {
 
   <div class="row">
     <div class="twelve columns ">
-      <h3 class="chart header title">Sprint Reviews</h3>
+      <h3 class="chart header title">Interval Reviews</h3>
       <div id="slideDecks" class="slidedecks">
           ${deckLinks}
       </div>
@@ -184,7 +184,7 @@ const Templates = {
   </div>
   <div class="row">
     <div class="six columns">
-      ${Templates.chartGroupPartial({tagname: 'h4', label: 'pointsgoals', title: 'Points Sprint Goals'})}
+      ${Templates.chartGroupPartial({tagname: 'h4', label: 'pointsgoals', title: 'Points Interval Goals'})}
     </div>
     <div class="six columns">
       ${Templates.chartGroupPartial({tagname: 'h4', label: 'commitedvscompleted', title: 'Points Commited <small>VS</small> Completed'})}
@@ -192,7 +192,7 @@ const Templates = {
   </div>
   <div class="row">
     <div class="six columns">
-      ${Templates.chartGroupPartial({tagname: 'h4', label: 'cardsgoals', title: 'Cards Sprint Goals'})}
+      ${Templates.chartGroupPartial({tagname: 'h4', label: 'cardsgoals', title: 'Cards Interval Goals'})}
     </div>
     <div class="six columns">
       ${Templates.chartGroupPartial({tagname: 'h4', label: 'cardscommitedvscompleted', title: 'Cards Commited <small>VS</small> Completed'})}
@@ -200,7 +200,7 @@ const Templates = {
   </div>
   <div class="row">
     <div class="six columns">
-      ${Templates.chartGroupPartial({tagname: 'h4', label: 'issuesPerInterval', title: 'Issues Per Sprint'})}
+      ${Templates.chartGroupPartial({tagname: 'h4', label: 'issuesPerInterval', title: 'Issues Per Interval'})}
     </div>
     <div class="six columns">
       ${Templates.chartGroupPartial({tagname: 'h4', label: 'cardsBlocked', title: 'Cards Blocked'})}

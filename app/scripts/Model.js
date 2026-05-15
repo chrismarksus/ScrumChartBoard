@@ -8,7 +8,7 @@ class Model{
       {
         'label': 'burndown',
         'title': 'Burnup',
-        'content': 'Display the scope of the project in story point. Then the point that the team has completed up through the previous sprint. There is also a projection line to predict a completion forecast in terms of sprints.'
+        'content': 'Display the scope of the project in story point. Then the point that the team has completed up through the previous interval. There is also a projection line to predict a completion forecast in terms of intervals.'
       },
       {
         'label': 'timelines',
@@ -23,32 +23,32 @@ class Model{
       {
         'label': 'commitedvscompleted',
         'title': 'Commited <small>VS</small> Completed (Points)',
-        'content': 'The teams commits to a number of story points and completes point in the sprint. This display the trend for committed to completion.'
+        'content': 'The teams commits to a number of story points and completes point in the interval. This display the trend for committed to completion.'
       },
       {
         'label': 'pointsgoals',
-        'title': 'Sprint Goals (Points)',
-        'content': 'This is the percentage of points completed and committed. We want to aim for 100%. Plus or minus 10% to 15% is acceptable. High and more points should be added to the sprint. Low and fewer points should be added to the sprint.'
+        'title': 'Interval Goals (Points)',
+        'content': 'This is the percentage of points completed and committed. We want to aim for 100%. Plus or minus 10% to 15% is acceptable. High and more points should be added to the interval. Low and fewer points should be added to the interval.'
       },
       {
         'label': 'cardscommitedvscompleted',
         'title': 'Commited <small>VS</small> Completed (Cards)',
-        'content': 'The teams commits to a number of story cards and completed cards in a sprint. This display the trend for committed to completion.'
+        'content': 'The teams commits to a number of story cards and completed cards in an interval. This display the trend for committed to completion.'
       },
       {
         'label': 'cardsgoals',
-        'title': 'Sprint Goals (Cards)',
-        'content': 'This is the percentage of points completed and committed. We want to aim for 100%. Plus or minus 10% to 15% is acceptable. High and more points should be added to the sprint.'
+        'title': 'Interval Goals (Cards)',
+        'content': 'This is the percentage of points completed and committed. We want to aim for 100%. Plus or minus 10% to 15% is acceptable. High and more points should be added to the interval.'
       },
       {
         'label': 'type',
         'title': 'Card Type',
-        'content': 'These are the types of cards by amount <em>(not points)</em>. Trends in projects can monitored and determine with this chart. A large number of spikes or non-story cards may indicate too many unknowns in the project. High defect density may indicate the team is move too fast and needs to better understand the sprint goals.'
+        'content': 'These are the types of cards by amount <em>(not points)</em>. Trends in projects can monitored and determine with this chart. A large number of spikes or non-story cards may indicate too many unknowns in the project. High defect density may indicate the team is move too fast and needs to better understand the interval goals.'
       },
       {
         'label': 'daysWorked',
         'title': 'Capacity',
-        'content': 'This is a predicted work capacity. The holidays and vacations days are calculated against the velocity. This will figure out the number of person work days but also the velocity that can be achieved with the person work days available for a sprint. Red is the next sprint. Blue is the current sprint green are previous sprints.'
+        'content': 'This is a predicted work capacity. The holidays and vacations days are calculated against the velocity. This will figure out the number of person work days but also the velocity that can be achieved with the person work days available for an interval. Red is the next interval. Blue is the current interval green are previous intervals.'
       },
       {
         'label': 'capacityDays',
@@ -58,12 +58,12 @@ class Model{
       {
         'label': 'velocity',
         'title': 'Velocity',
-        'content': 'The teams current velocity base on the last 3 completed sprints.'
+        'content': 'The teams current velocity base on the last 3 completed intervals.'
       },
       {
         'label': 'satisfaction',
         'title': 'Satisfaction',
-        'content': 'Each team member rates the sprint as to how satisfied they are with the previous sprint. This is averaged by votes. Absent members are not counted. This is done during the retrospective. The rating is from one to ten. Ten is the sprint to set all future sprints by and one is the worst sprint ever!'
+        'content': 'Each team member rates the interval as to how satisfied they are with the previous interval. This is averaged by votes. Absent members are not counted. This is done during the retrospective. The rating is from one to ten. Ten is the interval to set all future intervals by and one is the worst interval ever!'
       },
       {
         'label': 'cards',
@@ -73,12 +73,12 @@ class Model{
       {
         'label': 'issuesPerInterval',
         'title': 'Issues Per Interval',
-        'content': 'This is the number of problem that occur within a sprint.'
+        'content': 'This is the number of problem that occur within an interval.'
       },
       {
         'label': 'cardsBlocked',
-        'title': 'Blocked Cards Per Sprint',
-        'content': 'This is the number of card blocked during the sprint. This is one card blocked one time. A card blocked multiple time will be counted each time'
+        'title': 'Blocked Cards Per Interval',
+        'content': 'This is the number of card blocked during the interval. This is one card blocked one time. A card blocked multiple time will be counted each time'
       }
     ];
   }

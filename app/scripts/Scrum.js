@@ -212,7 +212,7 @@ class Scrum {
   static issuesPerIntervalInput(table) {
     return {
       data: { issuesPerInterval: table.issuesPerInterval },
-      labels: { issuesPerInterval: 'Issues Per Sprint' }
+      labels: { issuesPerInterval: 'Issues Per Interval' }
     };
   }
 
