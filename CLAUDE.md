@@ -18,6 +18,10 @@ npm test
 npm run dev &
 npm run test:e2e
 
+# Take a screenshot (opens Chrome with DevTools; optional URL argument)
+npm run screenshot
+npm run screenshot -- "http://localhost:9000?team=abc&project=sample"
+
 # Production build → dist/
 npm run build
 
