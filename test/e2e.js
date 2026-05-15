@@ -160,6 +160,51 @@ async function sprintTabs() {
   });
 }
 
+// ── Landing page ─────────────────────────────────────────────────────────────
+const LANDING = `${BASE}/landing.html`;
+
+async function landingPage() {
+  const consoleErrors = [];
+  page.on('console', msg => { if (msg.type() === 'error') consoleErrors.push(msg.text()); });
+
+  await page.goto(LANDING, { waitUntil: 'networkidle2' });
+
+  await run('no console errors', async () => {
+    assert.strictEqual(consoleErrors.length, 0,
+      `Console errors: ${consoleErrors.join(', ')}`);
+  });
+
+  await run('dark mode toggle adds theme-dark class', async () => {
+    await page.$eval('.ls-mode-span[data-mode="dark"]', el => el.click());
+    const cls = await page.$eval('body', el => el.className);
+    assert.ok(cls.includes('theme-dark'), `Expected theme-dark on body, got: "${cls}"`);
+  });
+
+  await run('palette chip updates body palette class', async () => {
+    await page.$eval('.ls-chip[data-palette="electric"]', el => el.click());
+    const cls = await page.$eval('body', el => el.className);
+    assert.ok(cls.includes('palette-electric'), `Expected palette-electric on body, got: "${cls}"`);
+  });
+
+  await run('palette section card click marks it active', async () => {
+    await page.$eval('.palette-card[data-palette="warm"]', el => el.click());
+    const cls = await page.$eval('.palette-card[data-palette="warm"]', el => el.className);
+    assert.ok(cls.includes('is-active'), `Expected is-active on warm palette card, got: "${cls}"`);
+  });
+
+  await run('footer GitHub link points to repo', async () => {
+    const href = await page.$eval('.footer-links a[href*="github.com"]', el => el.getAttribute('href'));
+    assert.strictEqual(href, 'https://github.com/chrismarksus/ScrumChartBoard',
+      `Unexpected footer GitHub href: "${href}"`);
+  });
+
+  await run('final CTA GitHub link points to repo', async () => {
+    const href = await page.$eval('.final-cta a[href*="github.com"]', el => el.getAttribute('href'));
+    assert.strictEqual(href, 'https://github.com/chrismarksus/ScrumChartBoard',
+      `Unexpected final CTA GitHub href: "${href}"`);
+  });
+}
+
 // ── Main ─────────────────────────────────────────────────────────────────────
 (async () => {
   await setup();
@@ -175,6 +220,9 @@ async function sprintTabs() {
 
   console.log('\n  Sprint tab state');
   await sprintTabs();
+
+  console.log('\n  Landing page');
+  await landingPage();
 
   console.log('');
   await teardown();
