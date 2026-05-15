@@ -80,6 +80,12 @@ All source files use ES modules (`import`/`export default`).
 
 ## Workflow
 
+**Issues — every change should have one:**
+- Before starting work, search for an existing issue: `gh issue list --repo chrismarksus/ScrumChartBoard`
+- If none exists, create one: `gh issue create --repo chrismarksus/ScrumChartBoard --title "..." --body "..."`
+- Reference the issue number in the commit message (e.g. `closes #42`)
+- Close the issue after pushing: `gh issue close <number> --repo chrismarksus/ScrumChartBoard`
+
 **Before committing / pushing:**
 ```bash
 npm test        # all specs must pass before you push
