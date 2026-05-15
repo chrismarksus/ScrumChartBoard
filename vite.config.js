@@ -7,6 +7,12 @@ export default defineConfig({
   build: {
     outDir: '../dist',
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, 'app/index.html'),
+        landing: path.resolve(__dirname, 'app/landing.html'),
+      },
+    },
   },
   server: {
     port: 9000,

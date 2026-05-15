@@ -1,13 +1,12 @@
 class ThemeSwitcher {
   constructor() {
     this.key = 'scrum_theme_0001';
-    this.palettes = ['forest', 'warm', 'electric', 'mono'];
-    this.swatchColors = {
-      forest:   '#d97757',
-      warm:     '#2e7df0',
-      electric: '#ff5d8f',
-      mono:     '#8a857e'
-    };
+    this.palettes = [
+      { id: 'forest',   label: 'Forest',   swatches: ['#6e8e4f', '#4a7c8a', '#d97757', '#a88b5c'] },
+      { id: 'warm',     label: 'Warm',     swatches: ['#5fa15e', '#2e7df0', '#e57543', '#8a6cc7'] },
+      { id: 'electric', label: 'Electric', swatches: ['#6cd9b8', '#5b6cff', '#ff5d8f', '#a45dff'] },
+      { id: 'mono',     label: 'Mono',     swatches: ['#2a2723', '#6e6a62', '#1a1816', '#4a4642'] },
+    ];
   }
 
   prefs() {
@@ -30,26 +29,39 @@ class ThemeSwitcher {
     const { theme, palette } = this.prefs();
     document.body.className = `theme-${theme} palette-${palette}`;
 
+    const chips = this.palettes.map(p => `
+      <button class="ts-chip${p.id === palette ? ' active' : ''}" data-palette="${p.id}" title="${p.label}" aria-label="${p.label}">
+        <div class="ts-swatch">
+          <i style="background:${p.swatches[2]}"></i>
+          <i style="background:${p.swatches[1]}"></i>
+          <i style="background:${p.swatches[0]}"></i>
+          <i style="background:${p.swatches[3]}"></i>
+        </div>
+      </button>`).join('');
+
     const el = document.createElement('div');
     el.id = 'theme-switcher';
     el.innerHTML = `
-      <button id="ts-mode" title="${theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}">
-        ${theme === 'dark' ? '&#9788;' : '&#9790;'}
-      </button>
+      <div class="ts-palettes">${chips}</div>
       <div class="ts-divider"></div>
-      <div class="ts-palettes">
-        ${this.palettes.map(p => `<button class="ts-swatch${p === palette ? ' active' : ''}" data-palette="${p}" title="${p[0].toUpperCase() + p.slice(1)}" style="background:${this.swatchColors[p]}"></button>`).join('')}
+      <div class="ts-mode">
+        <span class="${theme === 'light' ? 'active' : ''}" data-mode="light">LIGHT</span>
+        <span class="${theme === 'dark' ? 'active' : ''}" data-mode="dark">DARK</span>
       </div>`;
     document.body.appendChild(el);
 
-    el.querySelector('#ts-mode').addEventListener('click', () => {
-      this.applyAndReload({ theme: this.prefs().theme === 'light' ? 'dark' : 'light' });
-    });
-
-    el.querySelectorAll('.ts-swatch').forEach(btn => {
+    el.querySelectorAll('.ts-chip').forEach(btn => {
       btn.addEventListener('click', () => {
         if (btn.dataset.palette !== this.prefs().palette) {
           this.applyAndReload({ palette: btn.dataset.palette });
+        }
+      });
+    });
+
+    el.querySelectorAll('.ts-mode span').forEach(span => {
+      span.addEventListener('click', () => {
+        if (span.dataset.mode !== this.prefs().theme) {
+          this.applyAndReload({ theme: span.dataset.mode });
         }
       });
     });

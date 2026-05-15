@@ -56,8 +56,6 @@ new ThemeSwitcher().setup();
       });
     });
   } else {
-    document.getElementById('main').innerHTML = Templates.nodata({
-      'links': urlStorage
-    });
+    window.location.replace('./landing.html');
   }
 })();
