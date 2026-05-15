@@ -17,11 +17,6 @@ export default defineConfig({
   server: {
     port: 9000,
   },
-  css: {
-    preprocessorOptions: {
-      less: {},
-    },
-  },
   plugins: [
     {
       name: 'serve-sample-data',

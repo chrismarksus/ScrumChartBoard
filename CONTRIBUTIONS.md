@@ -44,6 +44,12 @@ Prefix the command with `!` so the output appears directly in the conversation:
 
 ## Running the Tests
 
+### Lint
+
+```bash
+npm run lint
+```
+
 ### Unit tests (no browser required)
 
 Runs all specs — Colors, ThemeSwitcher, Templates, Helper, GetData, Model, all chart classes, and Scrum — in Node.js without a browser. Uses [jsdom](https://github.com/jsdom/jsdom) for the DOM environment. Fastest feedback during development:
@@ -136,4 +142,4 @@ Every change should have a GitHub issue.
 
 ## Code Style
 
-ES6 classes with ES modules (`import`/`export default`). Single quotes. Keep new code consistent with existing patterns.
+ES6 classes with ES modules (`import`/`export default`). Single quotes enforced by ESLint (`npm run lint`). Keep new code consistent with existing patterns.

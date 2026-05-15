@@ -24,7 +24,7 @@ const Templates = {
   deckLinkPartial(item) {
     const attrs = item.review
       ? `class="button button-primary" href="${item.review}"`
-      : `class="button"`;
+      : 'class="button"';
     const label = item.dateStart
       ? ` ${item.label} (${item.dateStart} - ${item.dateEnd})`
       : item.label;
@@ -233,7 +233,7 @@ const Templates = {
         <ul>
           ${data.links.map(l => `<li><a href="./?team=${l.team}&project=${l.project}">Team: ${l.team} Project: ${l.project}</a></li>`).join('\n          ')}
         </ul>`
-      : `<p>Either there are missing parameters in the url or the json files are not on the server. Please view the <a href="./?team=abc&project=sample">sample data</a>.</p>`;
+      : '<p>Either there are missing parameters in the url or the json files are not on the server. Please view the <a href="./?team=abc&project=sample">sample data</a>.</p>';
     return `<div class="container">
   <div class="row">
     <div class="twelve columns">

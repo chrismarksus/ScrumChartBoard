@@ -48,7 +48,7 @@ new ThemeSwitcher().setup();
       const model = new Model(board);
       const main = new Scrum('main', model);
       main.setup();
-      window.addEventListener('unload', main.destroy);
+      window.addEventListener('pagehide', main.destroy);
     }).catch((err) => {
       console.error(err);
       document.getElementById('main').innerHTML = Templates.nodata({

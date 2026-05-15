@@ -56,12 +56,12 @@ class ThemeSwitcher {
         btn.title = p.label;
         btn.setAttribute('aria-label', p.label);
         btn.innerHTML =
-          `<div class="swatch">` +
+          '<div class="swatch">' +
           `<i style="background:${p.swatches[2]}"></i>` +
           `<i style="background:${p.swatches[1]}"></i>` +
           `<i style="background:${p.swatches[0]}"></i>` +
           `<i style="background:${p.swatches[3]}"></i>` +
-          `</div>`;
+          '</div>';
         btn.addEventListener('click', () => {
           if (btn.dataset.palette !== this.prefs().palette) {
             this.apply({ palette: btn.dataset.palette });

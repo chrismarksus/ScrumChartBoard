@@ -1,12 +1,13 @@
 {
   "private": true,
   "engines": {
-    "node": ">=18"
+    "node": ">=24"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "lint": "eslint app/scripts/",
     "test": "node test/node-runner.js",
     "screenshot": "node scripts/screenshot.js",
     "test:e2e": "node test/e2e.js",
@@ -18,6 +19,8 @@
     "@babel/preset-env": "^7.29.5",
     "@babel/register": "^7.29.3",
     "chai": "^4.5.0",
+    "eslint": "^10.4.0",
+    "globals": "^17.6.0",
     "jquery": "^4.0.0",
     "jsdom": "^29.1.1",
     "mocha": "^11.3.0",
@@ -27,26 +30,11 @@
     "sinon": "^22.0.0",
     "vite": "^8.0.12"
   },
-  "eslintConfig": {
-    "env": {
-      "es6": true,
-      "node": true,
-      "browser": true
-    },
-    "rules": {
-      "quotes": [
-        2,
-        "single"
-      ]
-    }
-  },
   "overrides": {
     "serialize-javascript": "^7.0.5"
   },
   "dependencies": {
     "chart.js": "^4.5.1",
-    "handlebars": "^4.7.8",
-    "markdown-it": "^14.1.1",
-    "skeleton-css": "^2.0.4"
+    "markdown-it": "^14.1.1"
   }
 }

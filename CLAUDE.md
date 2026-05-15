@@ -11,6 +11,9 @@ npm install
 # Dev server with live reload at http://localhost:9000
 npm run dev
 
+# Lint all source files
+npm run lint
+
 # Run all tests without a browser (fastest; covers all chart and model specs)
 npm test
 
@@ -74,7 +77,7 @@ All source files use ES modules (`import`/`export default`).
 - `npm run build` — production build to `dist/`
 - Vite root is `app/`; styles are plain CSS (`app/styles/main.css`) with no preprocessor
 
-**Test runner (`test/node-runner.js`):** Sets up a jsdom DOM environment, loads jQuery from npm, stubs `Chart.js` via `require.cache` pre-population (canvas not usable in jsdom), uses `@babel/register` to transform ESM source files to CommonJS, loads all source files via `require()`, then runs Mocha specs via `vm.runInThisContext`. The only spec not covered is `Scrum.js` (requires full app bootstrap).
+**Test runner (`test/node-runner.js`):** Sets up a jsdom DOM environment, loads jQuery from npm, stubs `Chart.js` via `require.cache` pre-population (canvas not usable in jsdom), uses `@babel/register` to transform ESM source files to CommonJS, loads all source files via `require()`, then runs Mocha specs via `vm.runInThisContext`. All specs including `Scrum.js` are covered.
 
 **Data format:** See `DATA_FORMAT.md` for the full JSON schema. Team data lives in `teams/<teamName>/` (not checked in; not included in `dist/`).
 
@@ -88,6 +91,7 @@ All source files use ES modules (`import`/`export default`).
 
 **Before committing / pushing:**
 ```bash
+npm run lint    # no lint errors
 npm test        # all specs must pass before you push
 ```
 
