@@ -97,6 +97,8 @@ All source files use ES modules (`import`/`export default`).
 npm run lint    # no lint errors
 npm test        # all specs must pass before you push
 ```
+- **Docs** — does README, CONTRIBUTIONS, DATA_FORMAT, or CLAUDE.md need updating? New scripts, changed behaviour, new data fields, and new workflow steps should all be reflected.
+- **Test coverage** — does the change introduce new logic without a corresponding spec? Check `test/spec/` for the relevant file and add tests if coverage is missing.
 
 **After pushing:**
 ```bash
