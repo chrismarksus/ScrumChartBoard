@@ -109,7 +109,9 @@ const Templates = {
 
   estimatedCards(data) {
     return `<div class="textChart cardsestimated">
-  <div class="head">${Templates.blockTitleWithCount({tagname: 'h4', label: 'cards', title: 'Cards', count: data.cardsTotal})}</div>
+  <div class="head">
+    <h4 class="title">Cards</h4>
+  </div>
   <div class="body">
     <p class="number">${data.cardsEstimatedPercentage}%</p>
   </div>
@@ -152,13 +154,10 @@ const Templates = {
   ${timelineRows}
 
   <div class="row">
-    <div id="estimatedCards" class="five columns">
-      ${Templates.estimatedCards(data)}
-    </div>
-    <div class="three columns">
+    <div class="six columns">
       ${Templates.chartGroupPartial({tagname: 'h4', label: 'status', title: 'Status'})}
     </div>
-    <div class="four columns">
+    <div class="six columns">
       ${Templates.chartGroupPartial({tagname: 'h4', label: 'cardTypes', title: 'Types'})}
     </div>
   </div>
@@ -168,10 +167,13 @@ const Templates = {
     </div>
   </div>
   <div class="row">
-    <div id="velocity" class="six columns">
+    <div id="estimatedCards" class="four columns">
+      ${Templates.estimatedCards(data)}
+    </div>
+    <div id="velocity" class="four columns">
       ${Templates.velocity(data)}
     </div>
-    <div id="daysCapacity" class="six columns">
+    <div id="daysCapacity" class="four columns">
       ${Templates.capacity(data)}
     </div>
   </div>

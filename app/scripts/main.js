@@ -1,4 +1,3 @@
-import 'skeleton-css/css/skeleton.css';
 import '../styles/main.css';
 import Helper from './Helper.js';
 import GetData from './GetData.js';
