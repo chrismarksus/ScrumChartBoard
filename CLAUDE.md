@@ -14,6 +14,10 @@ npm run dev
 # Run all tests without a browser (fastest; covers all chart and model specs)
 npm test
 
+# Run Puppeteer E2E tests (requires dev server running first)
+npm run dev &
+npm run test:e2e
+
 # Production build → dist/
 npm run build
 
@@ -48,7 +52,7 @@ All source files use ES modules (`import`/`export default`).
 **Build pipeline (`vite.config.js`):**
 - `npm run dev` — Vite dev server with HMR at http://localhost:9000; serves `test/teams/` at `/teams/` for sample data
 - `npm run build` — production build to `dist/`
-- Vite root is `app/`; LESS is compiled via the built-in CSS preprocessor with the `less` npm package
+- Vite root is `app/`; styles are plain CSS (`app/styles/main.css`) with no preprocessor
 
 **Test runner (`test/node-runner.js`):** Sets up a jsdom DOM environment, loads jQuery from npm, stubs `Chart.js` via `require.cache` pre-population (canvas not usable in jsdom), uses `@babel/register` to transform ESM source files to CommonJS, loads all source files via `require()`, then runs Mocha specs via `vm.runInThisContext`. The only spec not covered is `Scrum.js` (requires full app bootstrap).
 
