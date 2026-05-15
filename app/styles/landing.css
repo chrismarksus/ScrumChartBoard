@@ -553,6 +553,15 @@ body {
   border-color: var(--accent);
   color: white;
 }
+.theme-dark .price-card.is-featured {
+  background: var(--surface-2);
+  color: var(--text-primary);
+  border-color: var(--accent);
+}
+.theme-dark .price-card.is-featured .price-name { color: var(--text-secondary); }
+.theme-dark .price-card.is-featured .price-num { color: var(--text-primary); }
+.theme-dark .price-card.is-featured .price-feat-list li { color: var(--text-secondary); }
+.theme-dark .price-card.is-featured .price-feat-list li::before { color: var(--accent); }
 .price-name {
   font-family: var(--font-mono);
   font-size: 11px;
