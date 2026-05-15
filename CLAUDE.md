@@ -11,6 +11,9 @@ npm install
 # Dev server with live reload at http://localhost:9000
 npm run dev
 
+# Dev server exposed on the local network (for phone/tablet access)
+npm run dev:host
+
 # Lint all source files
 npm run lint
 
