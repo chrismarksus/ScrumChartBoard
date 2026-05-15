@@ -2,6 +2,8 @@ import { defineConfig } from 'vite';
 import path from 'path';
 import fs from 'fs';
 
+const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'package.json'), 'utf8'));
+
 export default defineConfig({
   root: 'app',
   base: process.env.VITE_BASE || '/',
@@ -19,6 +21,10 @@ export default defineConfig({
     port: 9000,
   },
   plugins: [
+    {
+      name: 'inject-version',
+      transformIndexHtml: html => html.replace(/%APP_VERSION%/g, version),
+    },
     {
       name: 'serve-sample-data',
       configureServer(server) {
