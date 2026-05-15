@@ -18,6 +18,14 @@ npm test
 npm run dev &
 npm run test:e2e
 
+# Run visual regression tests (requires dev server running first)
+npm run dev &
+npm run test:visual
+
+# Update visual baselines after intentional UI changes
+npm run dev &
+npm run test:visual:update   # overwrites screenshots/baseline/*.png — commit the results
+
 # Take a screenshot (opens Chrome with DevTools; optional URL argument)
 npm run screenshot
 npm run screenshot -- "http://localhost:9000?team=abc&project=sample"
