@@ -11,9 +11,10 @@ const dom = new JSDOM(
   '<!DOCTYPE html><html><body><div id="sandbox"></div></body></html>',
   { url: 'http://localhost', runScripts: 'dangerously' }
 );
-global.window   = dom.window;
-global.document = dom.window.document;
-global.location = dom.window.location;
+global.window        = dom.window;
+global.document      = dom.window.document;
+global.location      = dom.window.location;
+global.localStorage  = dom.window.localStorage;
 
 // --- jQuery from npm (loaded into jsdom so DOM tests work) ---
 dom.window.eval(
@@ -55,7 +56,8 @@ require('@babel/register')({
 
 // --- Source files (loaded as ES modules via babel-register) ---
 const srcDir = path.join(__dirname, '../app/scripts');
-global.Colors       = require(path.join(srcDir, 'Colors.js')).default;
+global.Colors         = require(path.join(srcDir, 'Colors.js')).default;
+global.ThemeSwitcher  = require(path.join(srcDir, 'ThemeSwitcher.js')).default;
 global.Helper       = require(path.join(srcDir, 'Helper.js')).default;
 global.Templates    = require(path.join(srcDir, 'Templates.js')).default;
 global.GetData      = require(path.join(srcDir, 'GetData.js')).default;
@@ -82,6 +84,7 @@ const mocha = new Mocha({ reporter: 'spec' });
 
 const specFiles = [
   'spec/Colors.js',
+  'spec/ThemeSwitcher.js',
   'spec/Helper.js',
   'spec/GetData.js',
   'spec/Model.js',

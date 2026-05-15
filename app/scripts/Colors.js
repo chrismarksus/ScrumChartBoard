@@ -1,9 +1,12 @@
 // app/scripts/Colors.js
 //
-// ScrumChartBoard — themed palette.
+// ScrumChartBoard — chart colour palette.
 //
-// To switch palette, replace the `this.theme = arr || [ ... ]` array below
-// with one of the variants at the bottom of this file.
+// The active palette is controlled by body classes set via ThemeSwitcher
+// (e.g. `theme-light palette-forest`). Slots 0–5 are read from CSS custom
+// properties at construction time so Chart.js canvases pick up the correct
+// palette after a page reload. Slots 6–12 are fixed values used for
+// secondary chart elements (gridlines, legend, dark-mode background).
 //
 // Indices map to semantic names via `this.names`:
 //   0  done            (theme[0])
@@ -24,14 +27,22 @@ class Colors {
   constructor(bgc = 'light', arr) {
     let background;
 
-    // ── Default palette: FOREST (clay + olive) ─────────────────
+    // Read semantic colors from CSS custom properties (set by palette body class).
+    // Falls back to forest palette values when CSS vars are unavailable (test env).
+    const cssVar = (prop, fallback) => {
+      try {
+        const v = getComputedStyle(document.body).getPropertyValue(prop).trim();
+        return v || fallback;
+      } catch { return fallback; }
+    };
+
     this.theme = arr || [
-      '#6e8e4f',  // 0  done
-      '#4a7c8a',  // 1  todo
-      '#d97757',  // 2  inprogress
-      '#a88b5c',  // 3  satisfaction
-      '#6fa8b8',  // 4  default
-      '#b85c4a',  // 5  hover (blocked)
+      cssVar('--c-done',         '#6e8e4f'),  // 0  done
+      cssVar('--c-todo',         '#4a7c8a'),  // 1  todo
+      cssVar('--c-inprogress',   '#d97757'),  // 2  inprogress
+      cssVar('--c-satisfaction', '#a88b5c'),  // 3  satisfaction
+      cssVar('--c-default',      '#6fa8b8'),  // 4  default
+      cssVar('--c-hover',        '#b85c4a'),  // 5  hover (blocked)
       '#c4a473',  // 6  tan
       '#2d4a5c',  // 7  darkblue
       '#545454',  // 8  gridlines
@@ -99,8 +110,10 @@ export default Colors;
 
 
 /* ──────────────────────────────────────────────────────────────
-   ALTERNATE PALETTES — copy one of these arrays over the
-   `this.theme = arr || [ ... ]` block above to switch palettes.
+   REFERENCE — hex values for each palette (slots 0–5).
+   Palette switching is handled automatically via CSS custom
+   properties and the ThemeSwitcher body class. These arrays
+   are here for reference or for passing an explicit `arr` in tests.
 
    ── WARM (orange + blue, modern) ──────────────────────────────
    [

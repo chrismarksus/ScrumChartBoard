@@ -1,9 +1,12 @@
 import '../styles/main.css';
+import ThemeSwitcher from './ThemeSwitcher.js';
 import Helper from './Helper.js';
 import GetData from './GetData.js';
 import Model from './Model.js';
 import Scrum from './Scrum.js';
 import Templates from './Templates.js';
+
+new ThemeSwitcher().setup();
 
 (function () {
   const helper = new Helper();

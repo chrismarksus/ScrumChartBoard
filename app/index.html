@@ -7,7 +7,8 @@
     <title>scrum</title>
     <link rel="apple-touch-icon" href="apple-touch-icon.png">
   </head>
-  <body class="theme-light palette-forest">
+  <body>
+    <script>try{const p=JSON.parse(localStorage.getItem('scrum_theme_0001')||'{}');document.body.className=`theme-${p.theme||'light'} palette-${p.palette||'forest'}`;}catch(e){document.body.className='theme-light palette-forest';}</script>
     <div id="main" class="hero-unit"></div>
     <script type="module" src="/scripts/main.js"></script>
   </body>

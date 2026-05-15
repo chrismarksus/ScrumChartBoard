@@ -46,10 +46,18 @@ The app is a no-database, browser-only SPA that loads three JSON files via fetch
 - `Model.js` — all data computation; the single source of truth for derived metrics
 - `Scrum.js` — orchestrates template rendering and chart instantiation
 - `Helper.js` — date formatting and query-string parsing utilities
-- `Colors.js` — chart color palette
+- `Colors.js` — chart color palette; reads semantic colors from CSS custom properties (`--c-done`, `--c-todo`, etc.) so charts update when the palette changes
+- `ThemeSwitcher.js` — fixed pill widget (top-right) for light/dark toggle and palette selection; persists preference to `localStorage` under key `scrum_theme_0001`
 - `Templates.js` — HTML template strings (template literals, no external template engine)
 - `charts/Charts.js` — base class all chart classes extend
 - `charts/*.js` — one file per chart type (Burndown, Line, Lines, Pie, Satisfaction, Status, Timelines, TwoBars, Types)
+
+**Theme system:**
+- Palette and mode are controlled by two classes on `<body>`: `theme-{light|dark}` and `palette-{forest|warm|electric|mono}`
+- CSS custom properties (`--c-done`, `--c-todo`, `--c-inprogress`, `--c-satisfaction`, `--c-default`, `--c-hover`, `--tab-active`) are defined per palette/mode in `app/styles/main.css`
+- `Colors.js` reads those vars at chart-render time so Chart.js canvases use the active palette
+- `ThemeSwitcher` saves the preference to `localStorage` and calls `location.reload()` on change so charts re-render with updated colors
+- An inline script at the top of `<body>` in `index.html` applies the saved class before the module loads, preventing flash of unstyled content
 
 All source files use ES modules (`import`/`export default`).
 
@@ -61,6 +69,19 @@ All source files use ES modules (`import`/`export default`).
 **Test runner (`test/node-runner.js`):** Sets up a jsdom DOM environment, loads jQuery from npm, stubs `Chart.js` via `require.cache` pre-population (canvas not usable in jsdom), uses `@babel/register` to transform ESM source files to CommonJS, loads all source files via `require()`, then runs Mocha specs via `vm.runInThisContext`. The only spec not covered is `Scrum.js` (requires full app bootstrap).
 
 **Data format:** See `DATA_FORMAT.md` for the full JSON schema. Team data lives in `teams/<teamName>/` (not checked in; not included in `dist/`).
+
+## Workflow
+
+**Before committing / pushing:**
+```bash
+npm test        # all specs must pass before you push
+```
+
+**After pushing:**
+```bash
+gh run list --repo chrismarksus/ScrumChartBoard --limit 3
+```
+Check that the most recent run shows `completed` / `success`. If it failed, open it with `gh run view <run-id> --log-failed` to see which step broke.
 
 ## Code style
 
