@@ -5,4 +5,5 @@ bower_components
 test/bower_components
 *.log
 artifacts
-screenshots
+screenshots/current
+screenshots/diff

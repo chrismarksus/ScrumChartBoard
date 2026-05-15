@@ -4,6 +4,10 @@ import Colors from '../Colors.js';
 
 Chart.register(...registerables);
 
+if (new URLSearchParams(window.location.search).has('__vt__')) {
+  Chart.defaults.animation = false;
+}
+
 class Charts {
   constructor(el) {
     const container = document.getElementById(el);
