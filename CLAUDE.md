@@ -106,7 +106,13 @@ Check that the most recent run shows `completed` / `success`. If it failed, open
 
 **Releasing (triggers GitHub Pages deployment):**
 ```bash
-gh release create v1.x.x --repo chrismarksus/ScrumChartBoard --title "v1.x.x" --notes "..."
+# 1. Bump version in package.json to match the new tag, then commit
+npm version 1.x.x --no-git-tag-version
+git add package.json && git commit -m "chore: bump version to 1.x.x"
+git push origin master
+
+# 2. Cut the release — this triggers deploy-pages.yml
+gh release create v1.x.x --repo chrismarksus/ScrumChartBoard --title "v1.x.x · <subtitle>" --notes "..."
 ```
 Publishing a release triggers `deploy-pages.yml`, which builds with the `/ScrumChartBoard/` base URL, copies sample data, and deploys to `https://chrismarksus.github.io/ScrumChartBoard/`. Pages is already configured (Source → GitHub Actions, `v*` tag policy set on the `github-pages` environment).
 
