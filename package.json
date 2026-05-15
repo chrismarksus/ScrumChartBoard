@@ -47,6 +47,7 @@
     "chart.js": "^4.5.1",
     "handlebars": "^4.7.8",
     "markdown-it": "^14.1.1",
-    "skeleton-css": "^2.0.4"
+    "skeleton-css": "^2.0.4",
+    "sortablejs": "^1.15.7"
   }
 }
