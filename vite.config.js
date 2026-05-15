@@ -4,6 +4,7 @@ import fs from 'fs';
 
 export default defineConfig({
   root: 'app',
+  base: process.env.VITE_BASE || '/',
   build: {
     outDir: '../dist',
     emptyOutDir: true,

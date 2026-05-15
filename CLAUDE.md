@@ -104,6 +104,12 @@ gh run list --repo chrismarksus/ScrumChartBoard --limit 3
 ```
 Check that the most recent run shows `completed` / `success`. If it failed, open it with `gh run view <run-id> --log-failed` to see which step broke.
 
+**Releasing (triggers GitHub Pages deployment):**
+```bash
+gh release create v1.x.x --repo chrismarksus/ScrumChartBoard --title "v1.x.x" --notes "..."
+```
+Publishing a release triggers `deploy-pages.yml`, which builds with the `/ScrumChartBoard/` base URL, copies sample data, and deploys to `https://chrismarksus.github.io/ScrumChartBoard/`. Requires Pages to be enabled in repo Settings → Pages → Source → GitHub Actions.
+
 ## Code style
 
 ES6 classes with ES modules (`import`/`export default`). Single quotes. Keep new code consistent with existing patterns.
