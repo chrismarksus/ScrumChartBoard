@@ -27,38 +27,33 @@ class ThemeSwitcher {
 
   setup() {
     const { theme, palette } = this.prefs();
-    document.body.className = `theme-${theme} palette-${palette}`;
 
-    const chips = this.palettes.map(p => `
-      <button class="ts-chip${p.id === palette ? ' active' : ''}" data-palette="${p.id}" title="${p.label}" aria-label="${p.label}">
-        <div class="ts-swatch">
-          <i style="background:${p.swatches[2]}"></i>
-          <i style="background:${p.swatches[1]}"></i>
-          <i style="background:${p.swatches[0]}"></i>
-          <i style="background:${p.swatches[3]}"></i>
-        </div>
-      </button>`).join('');
-
-    const el = document.createElement('div');
-    el.id = 'theme-switcher';
-    el.innerHTML = `
-      <div class="ts-palettes">${chips}</div>
-      <div class="ts-divider"></div>
-      <div class="ts-mode">
-        <span class="${theme === 'light' ? 'active' : ''}" data-mode="light">LIGHT</span>
-        <span class="${theme === 'dark' ? 'active' : ''}" data-mode="dark">DARK</span>
-      </div>`;
-    document.body.appendChild(el);
-
-    el.querySelectorAll('.ts-chip').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if (btn.dataset.palette !== this.prefs().palette) {
-          this.applyAndReload({ palette: btn.dataset.palette });
-        }
+    const chipsContainer = document.getElementById('ls-palette-chips');
+    if (chipsContainer) {
+      this.palettes.forEach(p => {
+        const btn = document.createElement('button');
+        btn.className = `ls-chip switcher-chip${p.id === palette ? ' is-active' : ''}`;
+        btn.dataset.palette = p.id;
+        btn.title = p.label;
+        btn.setAttribute('aria-label', p.label);
+        btn.innerHTML =
+          `<div class="swatch">` +
+          `<i style="background:${p.swatches[2]}"></i>` +
+          `<i style="background:${p.swatches[1]}"></i>` +
+          `<i style="background:${p.swatches[0]}"></i>` +
+          `<i style="background:${p.swatches[3]}"></i>` +
+          `</div>`;
+        btn.addEventListener('click', () => {
+          if (btn.dataset.palette !== this.prefs().palette) {
+            this.applyAndReload({ palette: btn.dataset.palette });
+          }
+        });
+        chipsContainer.appendChild(btn);
       });
-    });
+    }
 
-    el.querySelectorAll('.ts-mode span').forEach(span => {
+    document.querySelectorAll('.ls-mode-span').forEach(span => {
+      span.classList.toggle('is-active', span.dataset.mode === theme);
       span.addEventListener('click', () => {
         if (span.dataset.mode !== this.prefs().theme) {
           this.applyAndReload({ theme: span.dataset.mode });

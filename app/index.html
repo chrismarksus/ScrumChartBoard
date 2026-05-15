@@ -9,6 +9,24 @@
   </head>
   <body>
     <script>try{const p=JSON.parse(localStorage.getItem('scrum_theme_0001')||'{}');document.body.className=`theme-${p.theme||'light'} palette-${p.palette||'forest'}`;}catch(e){document.body.className='theme-light palette-forest';}</script>
+    <header class="topbar">
+      <div class="shell topbar-inner">
+        <a class="brand" href="landing.html">
+          <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+          Scrum<em>ChartBoard</em>
+        </a>
+        <div class="top-actions">
+          <div class="switcher">
+            <div class="switcher-group" id="ls-palette-chips"></div>
+            <div class="switcher-divider"></div>
+            <div class="mode-toggle">
+              <span class="ls-mode-span" data-mode="light">LIGHT</span>
+              <span class="ls-mode-span" data-mode="dark">DARK</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
     <div id="main" class="hero-unit"></div>
     <script type="module" src="/scripts/main.js"></script>
   </body>
