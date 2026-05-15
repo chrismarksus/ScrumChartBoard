@@ -108,7 +108,7 @@ Check that the most recent run shows `completed` / `success`. If it failed, open
 ```bash
 gh release create v1.x.x --repo chrismarksus/ScrumChartBoard --title "v1.x.x" --notes "..."
 ```
-Publishing a release triggers `deploy-pages.yml`, which builds with the `/ScrumChartBoard/` base URL, copies sample data, and deploys to `https://chrismarksus.github.io/ScrumChartBoard/`. Requires Pages to be enabled in repo Settings → Pages → Source → GitHub Actions.
+Publishing a release triggers `deploy-pages.yml`, which builds with the `/ScrumChartBoard/` base URL, copies sample data, and deploys to `https://chrismarksus.github.io/ScrumChartBoard/`. Pages is already configured (Source → GitHub Actions, `v*` tag policy set on the `github-pages` environment).
 
 ## Code style
 

@@ -6,6 +6,11 @@ This project started as a single HTML page with links to images generated in Exc
 
 I use this to track team stats at work, as a practice project to stay current in JavaScript development, and to explore best practices in Scrum, DevOps, and Continuous Delivery.
 
+## Live demo
+
+:globe_with_meridians: [chrismarksus.github.io/ScrumChartBoard](https://chrismarksus.github.io/ScrumChartBoard/) — landing page
+:bar_chart: [Dashboard with sample data](https://chrismarksus.github.io/ScrumChartBoard/?team=abc&project=sample)
+
 ## Using the project
 
 :file_folder: [Get the latest release](https://github.com/chrismarksus/ScrumChartBoard/releases)
