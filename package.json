@@ -8,7 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node test/node-runner.js",
-    "screenshot": "node scripts/screenshot.js"
+    "screenshot": "node scripts/screenshot.js",
+    "test:e2e": "node test/e2e.js"
   },
   "devDependencies": {
     "@babel/core": "^7.29.0",
