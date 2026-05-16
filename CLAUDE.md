@@ -87,6 +87,13 @@ All source files use ES modules (`import`/`export default`).
 ## Workflow
 
 **Issues — every change should have one:**
+
+Use the `/start-work` slash command — it searches for an existing issue, creates one if needed, and prints the issue number ready to reference in commits:
+```
+/start-work add dark mode to landing page
+```
+
+Manual steps (if needed without the skill):
 - Before starting work, search for an existing issue: `gh issue list --repo chrismarksus/ScrumChartBoard`
 - If none exists, create one: `gh issue create --repo chrismarksus/ScrumChartBoard --title "..." --body "..."`
 - Reference the issue number in the commit message (e.g. `closes #42`)
