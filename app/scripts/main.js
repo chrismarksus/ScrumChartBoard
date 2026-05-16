@@ -5,7 +5,12 @@ import GetData from './GetData.js';
 import Model from './Model.js';
 import Scrum from './Scrum.js';
 import Templates from './Templates.js';
+import Store from './Store.js';
+import Board from './Board.js';
+
 new ThemeSwitcher().setup();
+
+let board = null;
 
 // Tab switching
 (function () {
@@ -15,6 +20,7 @@ new ThemeSwitcher().setup();
     btn.addEventListener('click', () => {
       btns.forEach(b => b.classList.toggle('is-active', b === btn));
       panels.forEach(p => { p.hidden = p.id !== `panel-${btn.dataset.tab}`; });
+      if (btn.dataset.tab === 'board' && board) board.render('panel-board');
     });
   });
 })();
@@ -33,6 +39,10 @@ new ThemeSwitcher().setup();
     return (item.team === team && item.project === project);
   });
   if(team && project){
+    const store = new Store(team, project);
+    board = new Board(store);
+    board.render('panel-board');
+
     if(!isTeamAndProjectInStorage){
       urlStorage.push({ 'team': team, 'project': project });
       localStorage.setItem('scrum_url_data_0001', JSON.stringify(urlStorage));

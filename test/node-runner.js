@@ -47,6 +47,15 @@ require.cache[chartjsPath] = {
 };
 global.Chart = ChartStub;
 
+// --- SortableJS stub (drag-and-drop not usable in jsdom) ---
+const SortableStub = function Sortable(el, opts) { this.destroy = function() {}; };
+const sortablejsPath = require.resolve('sortablejs');
+require.cache[sortablejsPath] = {
+  id: sortablejsPath, filename: sortablejsPath, loaded: true,
+  exports: SortableStub
+};
+global.Sortable = SortableStub;
+
 // --- @babel/register: transform ESM import/export in source files ---
 require('@babel/register')({
   presets: [['@babel/preset-env', { targets: { node: 'current' }, modules: 'commonjs' }]],
@@ -57,6 +66,8 @@ require('@babel/register')({
 // --- Source files (loaded as ES modules via babel-register) ---
 const srcDir = path.join(__dirname, '../app/scripts');
 global.Colors         = require(path.join(srcDir, 'Colors.js')).default;
+global.Store          = require(path.join(srcDir, 'Store.js')).default;
+global.Board          = require(path.join(srcDir, 'Board.js')).default;
 global.ThemeSwitcher  = require(path.join(srcDir, 'ThemeSwitcher.js')).default;
 global.Helper       = require(path.join(srcDir, 'Helper.js')).default;
 global.Templates    = require(path.join(srcDir, 'Templates.js')).default;
@@ -83,6 +94,8 @@ const Mocha = require('mocha');
 const mocha = new Mocha({ reporter: 'spec' });
 
 const specFiles = [
+  'spec/Store.js',
+  'spec/Board.js',
   'spec/Colors.js',
   'spec/ThemeSwitcher.js',
   'spec/Templates.js',
