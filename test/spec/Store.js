@@ -89,6 +89,88 @@ describe('Store', function () {
     });
   });
 
+  describe('sync()', function () {
+    let _originalFetch;
+
+    beforeEach(function () {
+      _originalFetch = global.fetch;
+    });
+
+    afterEach(function () {
+      global.fetch = _originalFetch;
+      Store.apiBase = null;
+    });
+
+    it('resolves immediately when apiBase is not set', function () {
+      return store.sync();
+    });
+
+    it('loads server state into the store when apiBase is set', function () {
+      const serverData = {
+        cards: [{ id: 'srv1', title: 'Server card', type: 'Story', status: 'backlog', blocked: false, intervalId: null }],
+        intervals: [],
+        timelines: []
+      };
+      global.fetch = sinon.stub().resolves({
+        ok: true,
+        json: () => Promise.resolve(serverData)
+      });
+      Store.apiBase = 'http://localhost:3001';
+      return store.sync().then(() => {
+        assert.equal(store.getCards().length, 1);
+        assert.equal(store.getCards()[0].title, 'Server card');
+      });
+    });
+
+    it('persists server state to localStorage after sync', function () {
+      const serverData = { cards: [], intervals: [{ id: 'iv1', name: 'Sprint 1', active: false }], timelines: [] };
+      global.fetch = sinon.stub().resolves({ ok: true, json: () => Promise.resolve(serverData) });
+      Store.apiBase = 'http://localhost:3001';
+      return store.sync().then(() => {
+        const saved = JSON.parse(localStorage.getItem('scrum_board_team1_proj1'));
+        assert.equal(saved.intervals[0].name, 'Sprint 1');
+      });
+    });
+
+    it('keeps localStorage state when the server returns a non-ok response', function () {
+      store.addCard({ title: 'Local card', type: 'Story' });
+      global.fetch = sinon.stub().resolves({ ok: false });
+      Store.apiBase = 'http://localhost:3001';
+      return store.sync().then(() => {
+        assert.equal(store.getCards().length, 1);
+        assert.equal(store.getCards()[0].title, 'Local card');
+      });
+    });
+
+    it('keeps localStorage state when fetch throws', function () {
+      store.addCard({ title: 'Local card', type: 'Story' });
+      global.fetch = sinon.stub().rejects(new Error('Network error'));
+      Store.apiBase = 'http://localhost:3001';
+      return store.sync().then(() => {
+        assert.equal(store.getCards().length, 1);
+      });
+    });
+
+    it('ignores server response with invalid shape', function () {
+      store.addCard({ title: 'Local card', type: 'Story' });
+      global.fetch = sinon.stub().resolves({ ok: true, json: () => Promise.resolve({ broken: true }) });
+      Store.apiBase = 'http://localhost:3001';
+      return store.sync().then(() => {
+        assert.equal(store.getCards().length, 1);
+      });
+    });
+
+    it('includes team and project as query params in the fetch URL', function () {
+      global.fetch = sinon.stub().resolves({ ok: false });
+      Store.apiBase = 'http://localhost:3001';
+      return store.sync().then(() => {
+        const url = global.fetch.firstCall.args[0];
+        assert.include(url, 'team=team1');
+        assert.include(url, 'project=proj1');
+      });
+    });
+  });
+
   describe('timelines', function () {
     it('adds a timeline with default fields', function () {
       const t = store.addTimeline({ name: 'Theme A' });

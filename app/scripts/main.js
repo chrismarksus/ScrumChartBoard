@@ -46,12 +46,14 @@ let timeline = null;
   });
   if(team && project){
     const store = new Store(team, project);
-    board = new Board(store);
-    board.render('panel-board');
-    planner = new IntervalPlanner(store);
-    planner.render('panel-planner');
-    timeline = new TimelineEditor(store);
-    timeline.render('panel-timeline');
+    store.sync().then(() => {
+      board = new Board(store);
+      board.render('panel-board');
+      planner = new IntervalPlanner(store);
+      planner.render('panel-planner');
+      timeline = new TimelineEditor(store);
+      timeline.render('panel-timeline');
+    });
 
     if(!isTeamAndProjectInStorage){
       urlStorage.push({ 'team': team, 'project': project });

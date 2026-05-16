@@ -1,5 +1,7 @@
 export default class Store {
   constructor(team, project) {
+    this._team = team;
+    this._project = project;
     this._key = `scrum_board_${team}_${project}`;
     this._data = this._load();
   }
@@ -12,14 +14,33 @@ export default class Store {
     }
   }
 
+  _boardUrl() {
+    return `${Store.apiBase}/board?team=${encodeURIComponent(this._team)}&project=${encodeURIComponent(this._project)}`;
+  }
+
   _save() {
     localStorage.setItem(this._key, JSON.stringify(this._data));
     if (Store.apiBase) {
-      fetch(`${Store.apiBase}/board`, {
+      fetch(this._boardUrl(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(this._data)
       }).catch(() => {});
+    }
+  }
+
+  async sync() {
+    if (!Store.apiBase) return;
+    try {
+      const res = await fetch(this._boardUrl());
+      if (!res.ok) return;
+      const data = await res.json();
+      if (Array.isArray(data.cards) && Array.isArray(data.intervals) && Array.isArray(data.timelines)) {
+        this._data = data;
+        localStorage.setItem(this._key, JSON.stringify(this._data));
+      }
+    } catch {
+      // network unavailable — keep localStorage state
     }
   }
 

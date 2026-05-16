@@ -8,6 +8,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # Install dependencies (required after cloning)
 npm install
 
+# Install server dependencies (required once)
+cd server && npm install && cd ..
+
+# Run the REST API server (port 3001 by default)
+cd server && npm start
+
+# Run server in dev mode (auto-restarts on file changes)
+cd server && npm run dev
+
 # Dev server with live reload at http://localhost:9000
 npm run dev
 
@@ -63,7 +72,7 @@ The app is a no-database, browser-only SPA that loads three JSON files via fetch
 - `Colors.js` — chart color palette; reads semantic colors from CSS custom properties (`--c-done`, `--c-todo`, etc.) so charts update when the palette changes
 - `ThemeSwitcher.js` — fixed pill widget (top-right) for light/dark toggle and palette selection; persists preference to `localStorage` under key `scrum_theme_0001`
 - `Templates.js` — HTML template strings (template literals, no external template engine)
-- `Store.js` — localStorage persistence for board data (`scrum_board_{team}_{project}`); manages cards, intervals, and timelines with a stub for future REST API integration (`Store.apiBase`)
+- `Store.js` — localStorage persistence for board data (`scrum_board_{team}_{project}`); manages cards, intervals, and timelines; set `Store.apiBase` to sync with the REST server (`sync()` on init, POST on every change)
 - `Board.js` — Kanban board (Backlog / To Do / In Progress / Done) with SortableJS drag-and-drop, inline card creation, blocked tagging, and delete
 - `IntervalPlanner.js` — drag-and-drop interval planner; left panel shows unassigned backlog cards, right panel shows one lane per interval with point totals and active-interval marking
 - `TimelineEditor.js` — Gantt-style timeline editor; rows are themes/epics, columns are intervals, range set via start/end selectors, status badge cycles todo → inprogress → done
@@ -87,6 +96,11 @@ All source files use ES modules (`import`/`export default`).
 **Test runner (`test/node-runner.js`):** Sets up a jsdom DOM environment, loads jQuery from npm, stubs `Chart.js` via `require.cache` pre-population (canvas not usable in jsdom), uses `@babel/register` to transform ESM source files to CommonJS, loads all source files via `require()`, then runs Mocha specs via `vm.runInThisContext`. All specs including `Scrum.js` are covered.
 
 **Data format:** See `DATA_FORMAT.md` for the full JSON schema. Team data lives in `teams/<teamName>/` (not checked in; not included in `dist/`).
+
+**REST server (`server/`):**
+- `server/index.js` — Express app; `GET /board` and `POST /board` with `?team=X&project=Y` query params
+- `server/data/` — one JSON file per team/project (`{team}_{project}.json`); gitignored
+- Set `Store.apiBase = 'http://localhost:3001'` in the browser console (or in a future config) to enable server sync; the Store calls `sync()` on init and POSTs on every change
 
 ## Workflow
 
