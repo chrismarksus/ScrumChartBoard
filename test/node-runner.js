@@ -66,8 +66,10 @@ require('@babel/register')({
 // --- Source files (loaded as ES modules via babel-register) ---
 const srcDir = path.join(__dirname, '../app/scripts');
 global.Colors         = require(path.join(srcDir, 'Colors.js')).default;
-global.Store          = require(path.join(srcDir, 'Store.js')).default;
-global.Board          = require(path.join(srcDir, 'Board.js')).default;
+global.Store            = require(path.join(srcDir, 'Store.js')).default;
+global.Board            = require(path.join(srcDir, 'Board.js')).default;
+global.IntervalPlanner  = require(path.join(srcDir, 'IntervalPlanner.js')).default;
+global.TimelineEditor   = require(path.join(srcDir, 'TimelineEditor.js')).default;
 global.ThemeSwitcher  = require(path.join(srcDir, 'ThemeSwitcher.js')).default;
 global.Helper       = require(path.join(srcDir, 'Helper.js')).default;
 global.Templates    = require(path.join(srcDir, 'Templates.js')).default;
@@ -96,6 +98,8 @@ const mocha = new Mocha({ reporter: 'spec' });
 const specFiles = [
   'spec/Store.js',
   'spec/Board.js',
+  'spec/IntervalPlanner.js',
+  'spec/TimelineEditor.js',
   'spec/Colors.js',
   'spec/ThemeSwitcher.js',
   'spec/Templates.js',

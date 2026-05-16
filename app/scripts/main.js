@@ -7,10 +7,14 @@ import Scrum from './Scrum.js';
 import Templates from './Templates.js';
 import Store from './Store.js';
 import Board from './Board.js';
+import IntervalPlanner from './IntervalPlanner.js';
+import TimelineEditor from './TimelineEditor.js';
 
 new ThemeSwitcher().setup();
 
 let board = null;
+let planner = null;
+let timeline = null;
 
 // Tab switching
 (function () {
@@ -21,6 +25,8 @@ let board = null;
       btns.forEach(b => b.classList.toggle('is-active', b === btn));
       panels.forEach(p => { p.hidden = p.id !== `panel-${btn.dataset.tab}`; });
       if (btn.dataset.tab === 'board' && board) board.render('panel-board');
+      if (btn.dataset.tab === 'planner' && planner) planner.render('panel-planner');
+      if (btn.dataset.tab === 'timeline' && timeline) timeline.render('panel-timeline');
     });
   });
 })();
@@ -42,6 +48,10 @@ let board = null;
     const store = new Store(team, project);
     board = new Board(store);
     board.render('panel-board');
+    planner = new IntervalPlanner(store);
+    planner.render('panel-planner');
+    timeline = new TimelineEditor(store);
+    timeline.render('panel-timeline');
 
     if(!isTeamAndProjectInStorage){
       urlStorage.push({ 'team': team, 'project': project });

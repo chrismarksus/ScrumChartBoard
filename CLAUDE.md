@@ -63,6 +63,10 @@ The app is a no-database, browser-only SPA that loads three JSON files via fetch
 - `Colors.js` — chart color palette; reads semantic colors from CSS custom properties (`--c-done`, `--c-todo`, etc.) so charts update when the palette changes
 - `ThemeSwitcher.js` — fixed pill widget (top-right) for light/dark toggle and palette selection; persists preference to `localStorage` under key `scrum_theme_0001`
 - `Templates.js` — HTML template strings (template literals, no external template engine)
+- `Store.js` — localStorage persistence for board data (`scrum_board_{team}_{project}`); manages cards, intervals, and timelines with a stub for future REST API integration (`Store.apiBase`)
+- `Board.js` — Kanban board (Backlog / To Do / In Progress / Done) with SortableJS drag-and-drop, inline card creation, blocked tagging, and delete
+- `IntervalPlanner.js` — drag-and-drop interval planner; left panel shows unassigned backlog cards, right panel shows one lane per interval with point totals and active-interval marking
+- `TimelineEditor.js` — Gantt-style timeline editor; rows are themes/epics, columns are intervals, range set via start/end selectors, status badge cycles todo → inprogress → done
 - `charts/Charts.js` — base class all chart classes extend
 - `charts/*.js` — one file per chart type (Burndown, Line, Lines, Pie, Satisfaction, Status, Timelines, TwoBars, Types)
 
