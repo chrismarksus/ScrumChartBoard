@@ -5,8 +5,19 @@ import GetData from './GetData.js';
 import Model from './Model.js';
 import Scrum from './Scrum.js';
 import Templates from './Templates.js';
-
 new ThemeSwitcher().setup();
+
+// Tab switching
+(function () {
+  const btns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      btns.forEach(b => b.classList.toggle('is-active', b === btn));
+      panels.forEach(p => { p.hidden = p.id !== `panel-${btn.dataset.tab}`; });
+    });
+  });
+})();
 
 (function () {
   const helper = new Helper();

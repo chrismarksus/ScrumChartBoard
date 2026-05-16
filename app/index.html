@@ -27,7 +27,20 @@
         </div>
       </div>
     </header>
-    <div id="main" class="hero-unit"></div>
+    <nav class="tab-bar">
+      <div class="shell tab-bar-inner">
+        <button class="tab-btn" data-tab="board">Board</button>
+        <button class="tab-btn" data-tab="planner">Interval Planner</button>
+        <button class="tab-btn" data-tab="timeline">Timeline</button>
+        <button class="tab-btn is-active" data-tab="dashboard">Dashboard</button>
+      </div>
+    </nav>
+    <div id="panel-board" class="tab-panel" hidden></div>
+    <div id="panel-planner" class="tab-panel" hidden></div>
+    <div id="panel-timeline" class="tab-panel" hidden></div>
+    <div id="panel-dashboard" class="tab-panel">
+      <div id="main" class="hero-unit"></div>
+    </div>
     <script type="module" src="/scripts/main.js"></script>
   </body>
 </html>
