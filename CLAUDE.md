@@ -5,7 +5,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-# Install dependencies (required after cloning)
+# Install dependencies
 npm install
 
 # Install server dependencies (required once)
@@ -90,21 +90,18 @@ The app is a SPA that renders Scrum metric charts from JSON files. Board data pe
 - `ThemeSwitcher` saves the preference to `localStorage` and calls `location.reload()` on change so charts re-render with updated colors
 - An inline script at the top of `<body>` in `index.html` applies the saved class before the module loads, preventing flash of unstyled content
 
-All source files use ES modules (`import`/`export default`).
-
 **Build pipeline (`vite.config.js`):**
 - `npm run dev` — Vite dev server with HMR at http://localhost:9000; serves `test/teams/` at `/teams/` for sample data
 - `npm run build` — production build to `dist/`
 - Vite root is `app/`; styles are plain CSS (`app/styles/main.css`) with no preprocessor
 
-**Test runner (`test/node-runner.js`):** Sets up a jsdom DOM environment, loads jQuery from npm, stubs `Chart.js` via `require.cache` pre-population (canvas not usable in jsdom), uses `@babel/register` to transform ESM source files to CommonJS, loads all source files via `require()`, then runs Mocha specs via `vm.runInThisContext`. All specs including `Scrum.js` are covered.
+**Test runner (`test/node-runner.js`):** Node-based jsdom + Mocha runner; no browser required. All specs including `Scrum.js` are covered.
 
 **Data format:** See `DATA_FORMAT.md` for the full JSON schema. Team data lives in `teams/<teamName>/` (not checked in; not included in `dist/`).
 
 **REST server (`server/`):**
 - `server/index.js` — Express app; `GET /board` and `POST /board` with `?team=X&project=Y` query params
 - `server/data/` — one JSON file per team/project (`{team}_{project}.json`); gitignored
-- Set `Store.apiBase = 'http://localhost:3001'` in the browser console (or in a future config) to enable server sync; the Store calls `sync()` on init and POSTs on every change
 
 ## Workflow
 
