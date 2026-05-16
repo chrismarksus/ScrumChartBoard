@@ -107,6 +107,13 @@ gh run list --repo chrismarksus/ScrumChartBoard --limit 3
 Check that the most recent run shows `completed` / `success`. If it failed, open it with `gh run view <run-id> --log-failed` to see which step broke.
 
 **Releasing (triggers GitHub Pages deployment):**
+
+Use the `/release` slash command — it runs lint + tests, bumps the version, commits, pushes, and creates the GitHub release in one guided flow:
+```
+/release 0.3.0
+```
+
+Manual steps (if needed without the skill):
 ```bash
 # 1. Bump version in package.json to match the new tag, then commit
 npm version 1.x.x --no-git-tag-version
