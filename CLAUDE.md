@@ -56,12 +56,16 @@ To load data in the dev server, add query params: `http://localhost:9000?team=ab
 
 ## Architecture
 
-The app is a no-database, browser-only SPA that loads three JSON files via fetch and renders Scrum metric charts.
+The app is a SPA that renders Scrum metric charts from JSON files. Board data persists to `localStorage` and optionally syncs with a Node/Express REST backend (`server/`); the server stores data as JSON files — no SQL database.
 
-**Data flow:**
+**Data flow — charts:**
 1. `main.js` reads `?team=` and `?project=` query params, calls `GetData.setup()` to fetch `dashboard.json`, `project.json`, and `intervals.json` in parallel via `Promise.all`.
 2. The merged data is passed to `Model`, which computes all derived metrics (velocity, capacity, satisfaction averages, card estimates, etc.).
 3. `Scrum` receives the `Model`, renders the template into `#main`, then instantiates and calls `render()` on each chart class.
+
+**Data flow — board:**
+1. `Store.js` reads board state from `localStorage` on init; if `Store.apiBase` is set it also calls `sync()` to pull the latest state from the REST server.
+2. Every card/interval/timeline mutation writes to `localStorage` and, if `Store.apiBase` is set, POSTs to `POST /board?team=X&project=Y`.
 
 **Source layout (`app/scripts/`):**
 - `main.js` — entry point, bootstraps the app
