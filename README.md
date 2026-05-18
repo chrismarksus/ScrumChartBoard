@@ -22,7 +22,7 @@ The starter release includes a `teams/` folder with sample data. Use that as a m
 1. Download the starter release
 1. Uncompress the archive
 1. Copy the files to a folder on a web server
-1. Navigate to that location in your browser
+1. Navigate to that location in your browser and add `?team=<name>&project=<name>` query params
 
 ### Updating to a Newer Release
 
@@ -38,7 +38,7 @@ Copy the **contents** of the uncompressed folder — do not copy over the folder
 
 ## Getting Started
 
-These instructions will get the project running locally for development and testing. See [Deployment](#deployment) for production notes.
+These instructions will get the project running locally for development and testing.
 
 ### Prerequisites
 
@@ -53,7 +53,6 @@ To contribute you should be comfortable writing ES6 and unit tests.
 Clone the project:
 
 ```bash
-cd my/projects
 git clone https://github.com/chrismarksus/ScrumChartBoard.git
 cd ScrumChartBoard
 ```
@@ -119,7 +118,7 @@ npm run test:visual:update
 
 ## Deployment
 
-Build to `./dist/`:
+Build to `dist/`:
 
 ```bash
 npm run build

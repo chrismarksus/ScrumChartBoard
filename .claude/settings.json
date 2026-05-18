@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"\nimport sys, json\nd = json.load(sys.stdin)\nf = d.get('tool_input', {}).get('file_path', '')\nif '/specs/spec.' in f:\n    print('{\\\"systemMessage\\\": \\\"Spec file changed \\u2014 consider running /spec-lint to check for inconsistencies.\\\"}')\n\" 2>/dev/null || true",
+            "statusMessage": "Checking for spec changes..."
+          }
+        ]
+      }
+    ]
+  }
+}

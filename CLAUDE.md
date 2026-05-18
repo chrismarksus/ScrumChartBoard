@@ -151,6 +151,18 @@ gh release create v1.x.x --repo chrismarksus/ScrumChartBoard --title "v1.x.x · 
 ```
 Publishing a release triggers `deploy-pages.yml`, which builds with the `/ScrumChartBoard/` base URL, copies sample data, and deploys to `https://chrismarksus.github.io/ScrumChartBoard/`. Pages is already configured (Source → GitHub Actions, `v*` tag policy set on the `github-pages` environment).
 
+## Feature specs (`specs/`)
+
+Design specs for new features live in `specs/`. Each spec covers one page or shared component. Cross-references between specs use the filename directly (e.g. `spec.backlog.md`). Read the relevant spec before implementing a feature.
+
+Current specs: `spec.main_tabbar.md`, `spec.backlog.md`, `spec.work_item.md`, `spec.work_item_dialog.md`, `spec.confirm_delete.md`, `spec.persistence.md`.
+
+## Custom slash commands (`.claude/commands/`)
+
+- `/spec-lint` — checks all specs for broken cross-references, undefined behaviors, and contradictions
+- `/new-spec <name>` — scaffolds a new spec file and updates the tab bar spec if applicable
+- `/spec-to-tasks <spec file>` — generates an implementation task list from a spec and files it as a GitHub enhancement issue
+
 ## Code style
 
 ES6 classes with ES modules (`import`/`export default`). Single quotes. Keep new code consistent with existing patterns.
