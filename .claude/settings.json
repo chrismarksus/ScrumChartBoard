@@ -1,5 +1,19 @@
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "command": "cd /home/cmarks/claude-projects/ScrumChartBoard && npm run lint > /dev/null 2>&1 && npm test > /dev/null 2>&1 || echo '{\"continue\":false,\"stopReason\":\"Pre-push checks failed — run npm run lint && npm test to see errors.\"}'",
+            "timeout": 120,
+            "statusMessage": "Running lint + tests before push..."
+          }
+        ]
+      }
+    ],
     "PostToolUse": [
       {
         "matcher": "Edit|Write",
@@ -8,6 +22,18 @@
             "type": "command",
             "command": "python3 -c \"\nimport sys, json\nd = json.load(sys.stdin)\nf = d.get('tool_input', {}).get('file_path', '')\nif '/specs/spec.' in f:\n    print('{\\\"systemMessage\\\": \\\"Spec file changed \\u2014 consider running /spec-lint to check for inconsistencies.\\\"}')\n\" 2>/dev/null || true",
             "statusMessage": "Checking for spec changes..."
+          }
+        ]
+      },
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "command": "r=$(gh run list --repo chrismarksus/ScrumChartBoard --limit 3 2>&1 || true); R=\"$r\" node -e 'process.stdout.write(JSON.stringify({systemMessage:\"CI status after push:\\n\"+process.env.R}))'",
+            "timeout": 30,
+            "statusMessage": "Fetching CI status..."
           }
         ]
       }
