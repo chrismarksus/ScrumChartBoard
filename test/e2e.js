@@ -2,7 +2,7 @@ import puppeteer from 'puppeteer';
 import assert from 'assert';
 
 const BASE = process.env.E2E_URL || 'http://localhost:9000';
-const SAMPLE = `${BASE}?team=abc&project=sample`;
+const SAMPLE = `${BASE}/dashboard.html?team=abc&project=sample`;
 
 const CI_ARGS = process.env.CI
   ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage']
@@ -90,11 +90,11 @@ async function smokeDashboard() {
 
 // ── No-data state ────────────────────────────────────────────────────────────
 async function noDataState() {
-  await page.goto(BASE, { waitUntil: 'networkidle2' });
+  await page.goto(`${BASE}/dashboard.html`, { waitUntil: 'networkidle2' });
 
   await run('redirects to landing page when no params', async () => {
     const url = page.url();
-    assert.ok(url.includes('index.html'), `Expected redirect to index.html, got: "${url}"`);
+    assert.ok(!url.includes('dashboard.html'), `Expected redirect away from dashboard.html, got: "${url}"`);
   });
 
   await run('shows sample data link', async () => {
