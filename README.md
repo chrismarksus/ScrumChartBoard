@@ -132,7 +132,7 @@ dist/
   teams/
   favicon.ico
   index.html
-  landing.html
+  dashboard.html
   robots.txt
 ```
 

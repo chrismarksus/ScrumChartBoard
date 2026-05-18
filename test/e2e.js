@@ -94,7 +94,7 @@ async function noDataState() {
 
   await run('redirects to landing page when no params', async () => {
     const url = page.url();
-    assert.ok(url.includes('landing.html'), `Expected redirect to landing.html, got: "${url}"`);
+    assert.ok(url.includes('index.html'), `Expected redirect to index.html, got: "${url}"`);
   });
 
   await run('shows sample data link', async () => {
@@ -161,7 +161,7 @@ async function sprintTabs() {
 }
 
 // ── Landing page ─────────────────────────────────────────────────────────────
-const LANDING = `${BASE}/landing.html`;
+const LANDING = `${BASE}/index.html`;
 
 async function landingPage() {
   const consoleErrors = [];

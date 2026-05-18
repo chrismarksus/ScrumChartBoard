@@ -2,7 +2,7 @@
 
 ## Overview
 
-The landing page (`landing.html`) is the public-facing marketing page for ScrumChartBoard. It is a standalone HTML page — not part of the app's tab bar — built as a separate Vite entry point alongside `index.html`.
+The landing page (`index.html`) is the public-facing marketing page for ScrumChartBoard. It is a standalone HTML page — not part of the app's tab bar — built as a separate Vite entry point alongside `dashboard.html`.
 
 The app redirects here automatically when `?team=` or `?project=` query params are absent (see `main.js`). Users can also reach it directly via URL or by clicking the brand mark inside the app.
 
@@ -12,8 +12,8 @@ The app redirects here automatically when `?team=` or `?project=` query params a
 
 Not accessed via a tab. Entry points:
 
-- Direct URL: `/landing.html`
-- Auto-redirect from `index.html` when team/project params are missing
+- Direct URL: `/` (or `/index.html`)
+- Auto-redirect from `dashboard.html` when team/project params are missing
 - Brand mark link (`<a class="brand">`) inside the main app header
 
 The page contains internal anchor links for single-page scroll navigation:
@@ -31,7 +31,7 @@ The page is a full-width, vertically stacked marketing layout using a centered `
 
 A sticky/fixed header with three zones:
 
-- **Brand mark** — four-square icon + "Scrum*ChartBoard*" wordmark; links to `landing.html`
+- **Brand mark** — four-square icon + "Scrum*ChartBoard*" wordmark; links to `index.html` (`/`)
 - **Top nav** — anchor links: Charts, Palettes, Pricing, Docs (Docs is a stub `#`)
 - **Top actions** — "Start free" CTA button linking to `./?team=abc&project=sample`; inline theme switcher (palette chips + light/dark toggle)
 

@@ -2,9 +2,9 @@
 
 ## Overview
 
-The Dashboard is the chart-first view of sprint and project metrics for a single team/project combination. It is one of the four tabs in the main app (`index.html`) and is the default active tab on page load.
+The Dashboard is the chart-first view of sprint and project metrics for a single team/project combination. It is one of the four tabs in the main app (`dashboard.html`) and is the default active tab on page load.
 
-The Dashboard requires `?team=` and `?project=` query params. If either is absent, `main.js` immediately redirects to `landing.html`. When both are present, it fetches three JSON files from the server, computes all derived metrics through `Model`, renders the HTML template via `Templates.main()`, and instantiates up to twelve chart instances via `Scrum`.
+The Dashboard requires `?team=` and `?project=` query params. If either is absent, `main.js` immediately redirects to `index.html`. When both are present, it fetches three JSON files from the server, computes all derived metrics through `Model`, renders the HTML template via `Templates.main()`, and instantiates up to twelve chart instances via `Scrum`.
 
 ---
 
@@ -128,7 +128,7 @@ Each chart with an `(i)` link has a corresponding `.overlay` popup rendered into
 2. `ThemeSwitcher` initializes — palette chips and mode toggle rendered into `#ls-palette-chips` and `.mode-toggle`; switching theme triggers a full page reload so charts re-render with updated colors
 3. Tab-switching event listeners attached to all `.tab-btn` elements
 4. `?team=` and `?project=` params read from the URL
-5. If either is missing → `window.location.replace('./landing.html')`
+5. If either is missing → `window.location.replace('./index.html')`
 6. If both present: `Store.sync()` runs in parallel with `GetData.setup()`; board, planner, and timeline panels initialize from `Store` data
 
 ### Chart rendering

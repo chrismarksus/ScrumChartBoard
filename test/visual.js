@@ -138,7 +138,7 @@ async function scenarioOverlay() {
 }
 
 async function scenarioLanding() {
-  await page.goto(`${BASE}/landing.html`, { waitUntil: 'networkidle2' });
+  await page.goto(`${BASE}/index.html`, { waitUntil: 'networkidle2' });
   await freezeAnimations();
   await snap('landing');
 }

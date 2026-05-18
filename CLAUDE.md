@@ -88,7 +88,7 @@ The app is a SPA that renders Scrum metric charts from JSON files. Board data pe
 - CSS custom properties (`--c-done`, `--c-todo`, `--c-inprogress`, `--c-satisfaction`, `--c-default`, `--c-hover`, `--tab-active`) are defined per palette/mode in `app/styles/main.css`
 - `Colors.js` reads those vars at chart-render time so Chart.js canvases use the active palette
 - `ThemeSwitcher` saves the preference to `localStorage` and calls `location.reload()` on change so charts re-render with updated colors
-- An inline script at the top of `<body>` in `index.html` applies the saved class before the module loads, preventing flash of unstyled content
+- An inline script at the top of `<body>` in both `index.html` and `dashboard.html` applies the saved class before the module loads, preventing flash of unstyled content
 
 **Build pipeline (`vite.config.js`):**
 - `npm run dev` — Vite dev server with HMR at http://localhost:9000; serves `test/teams/` at `/teams/` for sample data
