@@ -61,6 +61,16 @@ TBD at design time — whether to include an app name or logo to the left of the
 
 ---
 
+## Out of Scope for MVP
+
+- Keyboard navigation between tabs (e.g. arrow keys).
+- Tab reordering by dragging.
+- Hiding or showing tabs based on user role or permissions.
+- Notification badges or counts on tabs.
+- More than two tabs visible simultaneously.
+
+---
+
 ## Specs Needed (one per future tab)
 
 - `spec.board.md`

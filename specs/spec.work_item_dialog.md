@@ -106,3 +106,13 @@ Clicking **Cancel** or the **✕** button discards all changes and closes the di
 
 - **Create mode**: "Create Work Item"
 - **Edit mode**: "Edit Work Item"
+
+---
+
+## Out of Scope for MVP
+
+- Rich-text or Markdown editing for Description or Acceptance Criteria.
+- File or image attachments.
+- @-mention or autocomplete in any field.
+- Autosave / draft persistence while the dialog is open.
+- Field-level change history or diff view in edit mode.
