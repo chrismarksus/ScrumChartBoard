@@ -5,7 +5,7 @@ import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 
 const BASE      = process.env.E2E_URL || 'http://localhost:9000';
-const SAMPLE    = `${BASE}?team=abc&project=sample&__vt__=1`;
+const SAMPLE    = `${BASE}/dashboard.html?team=abc&project=sample&__vt__=1`;
 const THRESHOLD = 0.1 / 100; // 0.1%
 
 const UPDATE    = process.argv.includes('--update-snapshots');
@@ -121,7 +121,7 @@ async function scenarioDashboard() {
 }
 
 async function scenarioNoData() {
-  await page.goto(BASE, { waitUntil: 'networkidle2' });
+  await page.goto(`${BASE}/dashboard.html`, { waitUntil: 'networkidle2' });
   await freezeAnimations();
   await snap('no-data');
 }
