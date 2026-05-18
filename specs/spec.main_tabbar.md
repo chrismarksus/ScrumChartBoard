@@ -8,27 +8,28 @@ The main tab bar is a persistent navigation bar at the top of the application. I
 
 ## MVP Tabs
 
-For the MVP, two tabs exist:
-
-| Order | Label | Page |
+| Order | Label | Spec |
 |---|---|---|
-| 1 | Backlog | `spec.backlog.md` |
-| 2 | Dashboard | Existing Scrum charts page |
+| 1 | Board | `spec.board.md` |
+| 2 | Interval Planner | `spec.interval_planner.md` |
+| 3 | Timeline | `spec.timeline_editor.md` |
+| 4 | Dashboard | `spec.dashboard.md` |
+
+Only tabs with a complete spec and a working implementation are shown. No placeholder or disabled tabs.
 
 ---
 
 ## Planned Future Tabs
 
-The following pages are planned but not yet built. Each requires its own spec before implementation. They are **not** added to the tab bar until the page exists.
+The following pages are not yet built or specced. They are **not** added to the tab bar until both their spec is complete and the page is implemented.
 
 | Label | Notes |
 |---|---|
-| Board | Kanban-style board view of work items |
-| Planner | Sprint planning interface |
-| Project | Timeline / Gantt view (maps to existing Timelines chart data) |
+| Backlog | Work item list and management — see `spec.backlog.md` |
+| Project | Project-level summary view |
 | Teams | Team member management (enables Assigned To dropdown — see `spec.work_item.md`) |
 
-When a new page is built and its spec is complete, add its tab to the bar in the order listed above (i.e. Board comes after Backlog, Planner after Board, etc.).
+When a new page is built and its spec is complete, add its tab to the bar.
 
 ---
 
@@ -73,7 +74,5 @@ TBD at design time — whether to include an app name or logo to the left of the
 
 ## Specs Needed (one per future tab)
 
-- `spec.board.md`
-- `spec.planner.md`
 - `spec.project.md`
 - `spec.teams.md`
