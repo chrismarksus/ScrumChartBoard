@@ -176,6 +176,23 @@ Start a new conversation when switching to an unrelated task. Context from earli
 
 Keep `CLAUDE.md` lean — it is loaded on every conversation, so any content that duplicates `CONTRIBUTIONS.md` or describes behaviour Claude could derive from the code is paid repeatedly. Periodic trimming compounds across every future session.
 
+**Paste error output directly.** Instead of "the tests are failing", paste the actual error. Claude skips the diagnostic round-trip and goes straight to the fix.
+
+**Batch related requests into one message.** Each turn has overhead regardless of length — "change X, Y, and Z" is cheaper than three separate messages.
+
+**Don't ask Claude to verify its own work.** "Does it look right?" / "Are you sure?" causes re-reads. The edit tool errors on failure — if it didn't error, the change landed.
+
+**Run quick checks yourself and only escalate failures.**
+
+```
+! npm test
+! npm run lint
+```
+
+If they pass, move on. Only bring Claude in if something breaks — and paste the output when you do.
+
+**Don't ask for explanations of things you can read.** "What did you just change?" — the diff is right there. Asking Claude to narrate it generates tokens without adding information.
+
 ---
 
 ## Code Style
