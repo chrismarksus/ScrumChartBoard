@@ -67,21 +67,7 @@ The app is a SPA that renders Scrum metric charts from JSON files. Board data pe
 1. `Store.js` reads board state from `localStorage` on init; if `Store.apiBase` is set it also calls `sync()` to pull the latest state from the REST server.
 2. Every card/interval/timeline mutation writes to `localStorage` and, if `Store.apiBase` is set, POSTs to `POST /board?team=X&project=Y`.
 
-**Source layout (`app/scripts/`):**
-- `main.js` — entry point, bootstraps the app
-- `GetData.js` — fetch calls for the three JSON files
-- `Model.js` — all data computation; the single source of truth for derived metrics
-- `Scrum.js` — orchestrates template rendering and chart instantiation
-- `Helper.js` — date formatting and query-string parsing utilities
-- `Colors.js` — chart color palette; reads semantic colors from CSS custom properties (`--c-done`, `--c-todo`, etc.) so charts update when the palette changes
-- `ThemeSwitcher.js` — fixed pill widget (top-right) for light/dark toggle and palette selection; persists preference to `localStorage` under key `scrum_theme_0001`
-- `Templates.js` — HTML template strings (template literals, no external template engine)
-- `Store.js` — localStorage persistence for board data (`scrum_board_{team}_{project}`); manages cards, intervals, and timelines; set `Store.apiBase` to sync with the REST server (`sync()` on init, POST on every change)
-- `Board.js` — Kanban board (Backlog / To Do / In Progress / Done) with SortableJS drag-and-drop, inline card creation, blocked tagging, and delete
-- `IntervalPlanner.js` — drag-and-drop interval planner; left panel shows unassigned backlog cards, right panel shows one lane per interval with point totals and active-interval marking
-- `TimelineEditor.js` — Gantt-style timeline editor; rows are themes/epics, columns are intervals, range set via start/end selectors, status badge cycles todo → inprogress → done
-- `charts/Charts.js` — base class all chart classes extend
-- `charts/*.js` — one file per chart type (Burndown, Line, Lines, Pie, Satisfaction, Status, Timelines, TwoBars, Types)
+**Source layout:** `app/scripts/`; entry point is `main.js`. Charts in `charts/*.js`; base class is `charts/Charts.js`.
 
 **Theme system:**
 - Palette and mode are controlled by two classes on `<body>`: `theme-{light|dark}` and `palette-{forest|warm|electric|mono}`
@@ -89,11 +75,6 @@ The app is a SPA that renders Scrum metric charts from JSON files. Board data pe
 - `Colors.js` reads those vars at chart-render time so Chart.js canvases use the active palette
 - `ThemeSwitcher` saves the preference to `localStorage` and calls `location.reload()` on change so charts re-render with updated colors
 - An inline script at the top of `<body>` in both `index.html` and `dashboard.html` applies the saved class before the module loads, preventing flash of unstyled content
-
-**Build pipeline (`vite.config.js`):**
-- `npm run dev` — Vite dev server with HMR at http://localhost:9000; serves `test/teams/` at `/teams/` for sample data
-- `npm run build` — production build to `dist/`
-- Vite root is `app/`; styles are plain CSS (`app/styles/main.css`) with no preprocessor
 
 **Test runner (`test/node-runner.js`):** Node-based jsdom + Mocha runner; no browser required. All specs including `Scrum.js` are covered.
 
@@ -113,13 +94,6 @@ Use the `/start-work` slash command — it finds or creates a GitHub issue and c
 ```
 /start-work add dark mode to landing page
 # → creates issue #42, checks out feat/42-dark-mode-landing-page
-```
-
-Manual steps (if needed without the skill):
-```bash
-gh issue list --repo chrismarksus/ScrumChartBoard          # find existing
-gh issue create --repo chrismarksus/ScrumChartBoard --title "..." --body "..."
-git checkout -b feat/<number>-<slug>                        # feat/, fix/, or chore/
 ```
 
 **Before committing / pushing:**
@@ -150,23 +124,11 @@ Use the `/release` slash command — it runs lint + tests, bumps the version, co
 /release 0.3.0
 ```
 
-Manual steps (if needed without the skill):
-```bash
-# 1. Bump version in package.json to match the new tag, then commit
-npm version 1.x.x --no-git-tag-version
-git add package.json && git commit -m "chore: bump version to 1.x.x"
-git push origin master
-
-# 2. Cut the release — this triggers deploy-pages.yml
-gh release create v1.x.x --repo chrismarksus/ScrumChartBoard --title "v1.x.x · <subtitle>" --notes "..."
-```
-Publishing a release triggers `deploy-pages.yml`, which builds with the `/ScrumChartBoard/` base URL, copies sample data, and deploys to `https://chrismarksus.github.io/ScrumChartBoard/`. Pages is already configured (Source → GitHub Actions, `v*` tag policy set on the `github-pages` environment).
-
 ## Feature specs (`specs/`)
 
 Design specs for new features live in `specs/`. Each spec covers one page or shared component. Cross-references between specs use the filename directly (e.g. `spec.backlog.md`). Read the relevant spec before implementing a feature.
 
-Current specs: `spec.main_tabbar.md`, `spec.backlog.md`, `spec.work_item.md`, `spec.work_item_dialog.md`, `spec.confirm_delete.md`, `spec.persistence.md`.
+Glob `specs/` to find current spec files.
 
 ## Custom slash commands (`.claude/commands/`)
 
