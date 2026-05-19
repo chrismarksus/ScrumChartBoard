@@ -20,9 +20,6 @@ cd server && npm run dev
 # Dev server with live reload at http://localhost:9000
 npm run dev
 
-# Dev server exposed on the local network (for phone/tablet access)
-npm run dev:host
-
 # Lint all source files
 npm run lint
 
@@ -41,15 +38,8 @@ npm run test:visual
 npm run dev &
 npm run test:visual:update   # overwrites screenshots/baseline/*.png — commit the results
 
-# Take a screenshot (opens Chrome with DevTools; optional URL argument)
-npm run screenshot
-npm run screenshot -- "http://localhost:9000?team=abc&project=sample"
-
 # Production build → dist/
 npm run build
-
-# Preview production build
-npm run preview
 ```
 
 To load data in the dev server, add query params: `http://localhost:9000?team=abc&project=sample`
