@@ -36,16 +36,6 @@ async function setup() {
   await page.evaluateOnNewDocument(() => {
     localStorage.setItem('scrum_theme_0001', JSON.stringify({ theme: 'light', palette: 'forest' }));
   });
-  // block external font requests so rendering is identical in every environment
-  await page.setRequestInterception(true);
-  page.on('request', req => {
-    const url = req.url();
-    if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
-      req.abort();
-    } else {
-      req.continue();
-    }
-  });
 }
 
 async function teardown() {
@@ -59,6 +49,10 @@ function readPng(filePath) {
       .on('parsed', function () { resolve(this); })
       .on('error', reject);
   });
+}
+
+async function waitForFonts() {
+  await page.evaluate(() => document.fonts.ready);
 }
 
 async function freezeAnimations() {
@@ -116,18 +110,21 @@ async function snap(name) {
 
 async function scenarioDashboard() {
   await page.goto(SAMPLE, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   await snap('dashboard');
 }
 
 async function scenarioNoData() {
   await page.goto(`${BASE}/dashboard.html`, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   await snap('no-data');
 }
 
 async function scenarioOverlay() {
   await page.goto(SAMPLE, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   const link = await page.$('a.description');
   if (link) {
@@ -139,6 +136,7 @@ async function scenarioOverlay() {
 
 async function scenarioLanding() {
   await page.goto(`${BASE}/index.html`, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   await snap('landing');
 }
