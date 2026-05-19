@@ -140,6 +140,34 @@ Every change should have a GitHub issue.
 
 ---
 
+## Working with Claude Code
+
+### Saving context / tokens
+
+When debugging CI failures, go straight to the failure log instead of asking Claude to read workflow files:
+
+```
+! gh run list --limit 5
+! gh run view <run-id> --log-failed
+```
+
+When you only need specific values from a file, search rather than reading the whole file:
+
+```
+! grep -n "THRESHOLD\|SIZE_TOLERANCE" test/visual.js
+```
+
+To review what changed on the current branch without reading individual files:
+
+```
+! git diff master...HEAD --stat
+! git diff master...HEAD -- <file>
+```
+
+Use `/compact` before switching to a new sub-problem — not just when context is already full. Compacting mid-session costs the same as compacting at the end, so doing it earlier keeps the next task cheaper.
+
+---
+
 ## Code Style
 
 ES6 classes with ES modules (`import`/`export default`). Single quotes enforced by ESLint (`npm run lint`). Keep new code consistent with existing patterns.
