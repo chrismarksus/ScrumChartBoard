@@ -51,7 +51,6 @@ jobs:
 
       - name: Visual regression tests
         run: npm run test:visual
-        continue-on-error: true  # baselines captured locally; recapture in CI after merge via update-visual-baselines workflow
         env:
           CI: true
           E2E_URL: http://localhost:9000
