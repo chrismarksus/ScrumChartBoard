@@ -180,6 +180,38 @@ gh issue close <number> --repo <owner>/<repo> # close an issue after merging
 gh release create v<x.x.x> --title "..." --notes "..."           # cut a release and trigger Pages deploy
 ```
 
+### Bash
+
+```bash
+ls -la                   # list files with details including hidden files
+cat <file>               # print file contents
+mkdir -p <path>          # create directory including parents
+rm -rf <path>            # recursive force delete
+grep -n "pattern" <file> # search file with line numbers
+find . -name "*.png"     # find files by name pattern
+curl -sf <url>           # silent HTTP check (used in CI health-wait loops)
+chmod +x <file>          # make a file executable
+export VAR=value         # set an environment variable
+npm run dev &            # run a process in the background
+```
+
+### PowerShell (Windows)
+
+Common Unix commands don't exist in PowerShell — use these equivalents:
+
+```powershell
+Remove-Item <path>                          # rm
+Remove-Item -Recurse -Force <path>          # rm -rf
+Get-ChildItem                               # ls / find
+Get-Content <file>                          # cat
+Test-Path <path>                            # [ -f file ]
+New-Item -ItemType Directory -Force <path>  # mkdir -p
+(Get-Item <file>).Length                    # file size in bytes
+$env:VAR_NAME                               # $VAR (read environment variable)
+Select-String -Pattern "..." <file>         # grep
+& "C:\path with spaces\tool.exe" arg1       # run executable with spaces in path
+```
+
 ---
 
 ## Working with Claude Code
