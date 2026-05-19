@@ -45,9 +45,22 @@ jobs:
           E2E_URL: http://localhost:9000
 
       - name: Commit and push updated baselines
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add screenshots/baseline/
-          git diff --cached --quiet || git commit -m "chore: update visual baselines [skip ci]"
-          git push
+          if git diff --cached --quiet; then
+            echo "No baseline changes — nothing to do"
+            exit 0
+          fi
+          BRANCH="chore/update-visual-baselines-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$BRANCH"
+          git commit -m "chore: update visual baselines [skip ci]"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "chore: update visual baselines" \
+            --body "Automated baseline update captured in the CI environment (Ubuntu / Chrome). Merge to keep visual tests green." \
+            --base ${{ github.event.inputs.branch }} \
+            --head "$BRANCH"
