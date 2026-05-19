@@ -166,6 +166,16 @@ To review what changed on the current branch without reading individual files:
 
 Use `/compact` before switching to a new sub-problem — not just when context is already full. Compacting mid-session costs the same as compacting at the end, so doing it earlier keeps the next task cheaper.
 
+Include the file path and line number in your request to skip the explore phase entirely:
+
+> "Change the `THRESHOLD` constant at `test/visual.js:9` from `0.2` to `0.5`"
+
+This is cheaper than a vague request like "the visual tests are too strict, can you loosen them", which causes Claude to search before it can act.
+
+Start a new conversation when switching to an unrelated task. Context from earlier in a conversation is always in the window, even when stale — old debug output keeps costing tokens until you start fresh.
+
+Keep `CLAUDE.md` lean — it is loaded on every conversation, so any content that duplicates `CONTRIBUTIONS.md` or describes behaviour Claude could derive from the code is paid repeatedly. Periodic trimming compounds across every future session.
+
 ---
 
 ## Code Style
