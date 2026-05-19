@@ -146,6 +146,74 @@ Every change should have a GitHub issue.
 
 ---
 
+## Git Quick Reference
+
+Most-used commands in this repo's workflow:
+
+```bash
+git status                          # check what's staged before committing
+git checkout -b feat/<n>-<slug>     # create a feature branch (feat/, fix/, chore/)
+git add <file>                      # stage specific files — avoid git add .
+git commit -m "..."                 # commit after each logical change
+git push -u origin <branch>         # push branch and set upstream in one shot
+git pull origin master              # sync local master after a PR merges
+git checkout master                 # switch back to master after branching
+git diff                            # review staged + unstaged changes before committing
+git reset --hard origin/master      # discard local commits and match remote master
+git diff master...HEAD --stat       # survey all changes on the current branch at once
+```
+
+The three-dot form (`master...HEAD`) is the one most worth remembering — it shows everything on the current branch that hasn't been merged yet, exactly what you need before opening a PR.
+
+### GitHub CLI (`gh`)
+
+```bash
+gh pr create --title "..." --body "..."       # open a PR with explicit title and body
+gh pr create --fill                           # prefill title/body from branch name + commits (fast path)
+gh pr checks <number> --watch                 # stream check status until all pass or fail
+gh pr merge <number> --merge --delete-branch  # merge and delete the branch in one shot
+gh run list --limit 5                         # see the most recent CI runs at a glance
+gh run view <run-id> --log-failed             # jump straight to the failed step output
+gh issue list --repo <owner>/<repo>           # find existing issues before creating a new one
+gh issue create --repo <owner>/<repo> --title "..." --body "..."  # file a new issue
+gh issue close <number> --repo <owner>/<repo> # close an issue after merging
+gh release create v<x.x.x> --title "..." --notes "..."           # cut a release and trigger Pages deploy
+```
+
+### Bash
+
+```bash
+ls -la                   # list files with details including hidden files
+cat <file>               # print file contents
+mkdir -p <path>          # create directory including parents
+rm -rf <path>            # recursive force delete
+grep -n "pattern" <file> # search file with line numbers
+find . -name "*.png"     # find files by name pattern
+curl -sf <url>           # silent HTTP check (used in CI health-wait loops)
+chmod +x <file>          # make a file executable
+export VAR=value         # set an environment variable
+npm run dev &            # run a process in the background
+```
+
+### PowerShell (Windows)
+
+Common Unix commands don't exist in PowerShell — use these equivalents:
+
+```powershell
+Remove-Item <path>                          # rm
+Remove-Item -Recurse -Force <path>          # rm -rf
+Get-ChildItem                               # ls / find
+Get-Content <file>                          # cat
+Test-Path <path>                            # [ -f file ]
+New-Item -ItemType Directory -Force <path>  # mkdir -p
+(Get-Item <file>).Length                    # file size in bytes
+$env:VAR_NAME                               # $VAR (read environment variable)
+Select-String -Pattern "..." <file>         # grep
+& "C:\path with spaces\tool.exe" arg1       # run executable with spaces in path
+```
+
+---
+
 ## Working with Claude Code
 
 ### Saving context / tokens
