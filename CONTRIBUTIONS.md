@@ -32,6 +32,12 @@ http://localhost:9000?team=abc&project=sample
 
 The server watches source files and hot-reloads on changes.
 
+To expose the server on your local network (for phone/tablet access):
+
+```bash
+npm run dev:host
+```
+
 ### Claude Code
 
 Prefix the command with `!` so the output appears directly in the conversation:
