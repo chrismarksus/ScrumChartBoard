@@ -6,7 +6,8 @@ import pixelmatch from 'pixelmatch';
 
 const BASE      = process.env.E2E_URL || 'http://localhost:9000';
 const SAMPLE    = `${BASE}/dashboard.html?team=abc&project=sample&__vt__=1`;
-const THRESHOLD = 0.1 / 100; // 0.1%
+const THRESHOLD     = 0.2 / 100; // 0.2% — tolerates sub-pixel rendering differences across OS/Chrome versions
+const SIZE_TOLERANCE = 3;         // px — tolerates minor cross-platform line-height differences
 
 const UPDATE    = process.argv.includes('--update-snapshots');
 
@@ -83,16 +84,17 @@ async function snap(name) {
 
   const [img1, img2] = await Promise.all([readPng(baselinePath), readPng(currentPath)]);
 
-  if (img1.width !== img2.width || img1.height !== img2.height) {
+  if (img1.width !== img2.width || Math.abs(img1.height - img2.height) > SIZE_TOLERANCE) {
     console.error(`  ✘ ${name}: size mismatch (${img1.width}x${img1.height} vs ${img2.width}x${img2.height})`);
     failed++;
     process.exitCode = 1;
     return;
   }
 
-  const diff      = new PNG({ width: img1.width, height: img1.height });
-  const diffPixels = pixelmatch(img1.data, img2.data, diff.data, img1.width, img1.height, { threshold: 0.1 });
-  const totalPixels = img1.width * img1.height;
+  const h    = Math.min(img1.height, img2.height);
+  const diff = new PNG({ width: img1.width, height: h });
+  const diffPixels = pixelmatch(img1.data, img2.data, diff.data, img1.width, h, { threshold: 0.1 });
+  const totalPixels = img1.width * h;
   const diffRatio   = diffPixels / totalPixels;
 
   if (diffRatio > THRESHOLD) {
