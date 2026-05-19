@@ -146,6 +146,27 @@ Every change should have a GitHub issue.
 
 ---
 
+## Git Quick Reference
+
+Most-used commands in this repo's workflow:
+
+```bash
+git status                          # check what's staged before committing
+git checkout -b feat/<n>-<slug>     # create a feature branch (feat/, fix/, chore/)
+git add <file>                      # stage specific files — avoid git add .
+git commit -m "..."                 # commit after each logical change
+git push -u origin <branch>         # push branch and set upstream in one shot
+git pull origin master              # sync local master after a PR merges
+git checkout master                 # switch back to master after branching
+git diff                            # review staged + unstaged changes before committing
+git reset --hard origin/master      # discard local commits and match remote master
+git diff master...HEAD --stat       # survey all changes on the current branch at once
+```
+
+The three-dot form (`master...HEAD`) is the one most worth remembering — it shows everything on the current branch that hasn't been merged yet, exactly what you need before opening a PR.
+
+---
+
 ## Working with Claude Code
 
 ### Saving context / tokens
