@@ -165,6 +165,21 @@ git diff master...HEAD --stat       # survey all changes on the current branch a
 
 The three-dot form (`master...HEAD`) is the one most worth remembering — it shows everything on the current branch that hasn't been merged yet, exactly what you need before opening a PR.
 
+### GitHub CLI (`gh`)
+
+```bash
+gh pr create --title "..." --body "..."       # open a PR with explicit title and body
+gh pr create --fill                           # prefill title/body from branch name + commits (fast path)
+gh pr checks <number> --watch                 # stream check status until all pass or fail
+gh pr merge <number> --merge --delete-branch  # merge and delete the branch in one shot
+gh run list --limit 5                         # see the most recent CI runs at a glance
+gh run view <run-id> --log-failed             # jump straight to the failed step output
+gh issue list --repo <owner>/<repo>           # find existing issues before creating a new one
+gh issue create --repo <owner>/<repo> --title "..." --body "..."  # file a new issue
+gh issue close <number> --repo <owner>/<repo> # close an issue after merging
+gh release create v<x.x.x> --title "..." --notes "..."           # cut a release and trigger Pages deploy
+```
+
 ---
 
 ## Working with Claude Code
