@@ -91,9 +91,12 @@ async function snap(name) {
     return;
   }
 
-  const h    = Math.min(img1.height, img2.height);
-  const diff = new PNG({ width: img1.width, height: h });
-  const diffPixels = pixelmatch(img1.data, img2.data, diff.data, img1.width, h, { threshold: 0.1 });
+  const h        = Math.min(img1.height, img2.height);
+  const rowBytes = img1.width * 4;
+  const slice1   = img1.data.slice(0, h * rowBytes);
+  const slice2   = img2.data.slice(0, h * rowBytes);
+  const diff     = new PNG({ width: img1.width, height: h });
+  const diffPixels = pixelmatch(slice1, slice2, diff.data, img1.width, h, { threshold: 0.1 });
   const totalPixels = img1.width * h;
   const diffRatio   = diffPixels / totalPixels;
 
