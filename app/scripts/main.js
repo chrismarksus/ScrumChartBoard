@@ -89,6 +89,6 @@ let timeline = null;
       });
     });
   } else {
-    window.location.replace('./landing.html');
+    window.location.replace('./index.html');
   }
 })();

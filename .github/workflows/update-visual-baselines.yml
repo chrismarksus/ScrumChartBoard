@@ -1,0 +1,53 @@
+name: Update Visual Baselines
+
+on:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: Branch to update baselines on
+        required: true
+        default: master
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.inputs.branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Cache Puppeteer Chromium
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/puppeteer
+          key: puppeteer-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Start dev server
+        run: npm run dev &
+
+      - name: Wait for dev server
+        run: |
+          timeout 30 bash -c 'until curl -sf http://localhost:9000 > /dev/null; do sleep 1; done'
+
+      - name: Capture baselines
+        run: npm run test:visual:update
+        env:
+          E2E_URL: http://localhost:9000
+
+      - name: Commit and push updated baselines
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add screenshots/baseline/
+          git diff --cached --quiet || git commit -m "chore: update visual baselines [skip ci]"
+          git push

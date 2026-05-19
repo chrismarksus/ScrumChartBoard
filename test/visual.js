@@ -5,8 +5,9 @@ import { PNG } from 'pngjs';
 import pixelmatch from 'pixelmatch';
 
 const BASE      = process.env.E2E_URL || 'http://localhost:9000';
-const SAMPLE    = `${BASE}?team=abc&project=sample&__vt__=1`;
-const THRESHOLD = 0.1 / 100; // 0.1%
+const SAMPLE    = `${BASE}/dashboard.html?team=abc&project=sample&__vt__=1`;
+const THRESHOLD     = 0.2 / 100; // 0.2% — tolerates sub-pixel rendering differences across OS/Chrome versions
+const SIZE_TOLERANCE = 3;         // px — tolerates minor cross-platform line-height differences
 
 const UPDATE    = process.argv.includes('--update-snapshots');
 
@@ -36,16 +37,6 @@ async function setup() {
   await page.evaluateOnNewDocument(() => {
     localStorage.setItem('scrum_theme_0001', JSON.stringify({ theme: 'light', palette: 'forest' }));
   });
-  // block external font requests so rendering is identical in every environment
-  await page.setRequestInterception(true);
-  page.on('request', req => {
-    const url = req.url();
-    if (url.includes('fonts.googleapis.com') || url.includes('fonts.gstatic.com')) {
-      req.abort();
-    } else {
-      req.continue();
-    }
-  });
 }
 
 async function teardown() {
@@ -59,6 +50,10 @@ function readPng(filePath) {
       .on('parsed', function () { resolve(this); })
       .on('error', reject);
   });
+}
+
+async function waitForFonts() {
+  await page.evaluate(() => document.fonts.ready);
 }
 
 async function freezeAnimations() {
@@ -89,16 +84,20 @@ async function snap(name) {
 
   const [img1, img2] = await Promise.all([readPng(baselinePath), readPng(currentPath)]);
 
-  if (img1.width !== img2.width || img1.height !== img2.height) {
+  if (img1.width !== img2.width || Math.abs(img1.height - img2.height) > SIZE_TOLERANCE) {
     console.error(`  ✘ ${name}: size mismatch (${img1.width}x${img1.height} vs ${img2.width}x${img2.height})`);
     failed++;
     process.exitCode = 1;
     return;
   }
 
-  const diff      = new PNG({ width: img1.width, height: img1.height });
-  const diffPixels = pixelmatch(img1.data, img2.data, diff.data, img1.width, img1.height, { threshold: 0.1 });
-  const totalPixels = img1.width * img1.height;
+  const h        = Math.min(img1.height, img2.height);
+  const rowBytes = img1.width * 4;
+  const slice1   = img1.data.slice(0, h * rowBytes);
+  const slice2   = img2.data.slice(0, h * rowBytes);
+  const diff     = new PNG({ width: img1.width, height: h });
+  const diffPixels = pixelmatch(slice1, slice2, diff.data, img1.width, h, { threshold: 0.1 });
+  const totalPixels = img1.width * h;
   const diffRatio   = diffPixels / totalPixels;
 
   if (diffRatio > THRESHOLD) {
@@ -116,18 +115,21 @@ async function snap(name) {
 
 async function scenarioDashboard() {
   await page.goto(SAMPLE, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   await snap('dashboard');
 }
 
 async function scenarioNoData() {
-  await page.goto(BASE, { waitUntil: 'networkidle2' });
+  await page.goto(`${BASE}/dashboard.html`, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   await snap('no-data');
 }
 
 async function scenarioOverlay() {
   await page.goto(SAMPLE, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   const link = await page.$('a.description');
   if (link) {
@@ -138,7 +140,8 @@ async function scenarioOverlay() {
 }
 
 async function scenarioLanding() {
-  await page.goto(`${BASE}/landing.html`, { waitUntil: 'networkidle2' });
+  await page.goto(`${BASE}/index.html`, { waitUntil: 'networkidle2' });
+  await waitForFonts();
   await freezeAnimations();
   await snap('landing');
 }

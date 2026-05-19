@@ -68,7 +68,7 @@ Clicking **Edit** in the detail panel opens a dialog pre-populated with the curr
 
 ### Behavior
 
-- **Save** — validates required fields, writes changes to localStorage, closes the dialog, and refreshes the detail panel and list row.
+- **Save** — validates required fields, writes changes to localStorage, closes the dialog, and refreshes the detail panel. If any list-column field (Title, State, Effort, or Interval) changed, the corresponding cell in the backlog list row updates immediately.
 - **Cancel** — discards all changes and closes the dialog. No confirmation needed for cancel.
 - If the **Title** is blank when Save is clicked, display an inline validation error on the Title field and do not close the dialog.
 - Editing a work item updates its **Modified At** timestamp.

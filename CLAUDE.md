@@ -88,7 +88,7 @@ The app is a SPA that renders Scrum metric charts from JSON files. Board data pe
 - CSS custom properties (`--c-done`, `--c-todo`, `--c-inprogress`, `--c-satisfaction`, `--c-default`, `--c-hover`, `--tab-active`) are defined per palette/mode in `app/styles/main.css`
 - `Colors.js` reads those vars at chart-render time so Chart.js canvases use the active palette
 - `ThemeSwitcher` saves the preference to `localStorage` and calls `location.reload()` on change so charts re-render with updated colors
-- An inline script at the top of `<body>` in `index.html` applies the saved class before the module loads, preventing flash of unstyled content
+- An inline script at the top of `<body>` in both `index.html` and `dashboard.html` applies the saved class before the module loads, preventing flash of unstyled content
 
 **Build pipeline (`vite.config.js`):**
 - `npm run dev` — Vite dev server with HMR at http://localhost:9000; serves `test/teams/` at `/teams/` for sample data
@@ -105,28 +105,39 @@ The app is a SPA that renders Scrum metric charts from JSON files. Board data pe
 
 ## Workflow
 
-**Issues — every change should have one:**
+**Branch strategy:** `master` is protected — no direct pushes. Every change goes through a feature branch + PR. CI must pass before merging; no reviewer required (squash-merge to keep history clean).
 
-Use the `/start-work` slash command — it searches for an existing issue, creates one if needed, and prints the issue number ready to reference in commits:
+**Starting work — every change should have an issue and a branch:**
+
+Use the `/start-work` slash command — it finds or creates a GitHub issue and checks out a correctly-named feature branch:
 ```
 /start-work add dark mode to landing page
+# → creates issue #42, checks out feat/42-dark-mode-landing-page
 ```
 
 Manual steps (if needed without the skill):
-- Before starting work, search for an existing issue: `gh issue list --repo chrismarksus/ScrumChartBoard`
-- If none exists, create one: `gh issue create --repo chrismarksus/ScrumChartBoard --title "..." --body "..."`
-- Reference the issue number in the commit message (e.g. `closes #42`)
-- Close the issue after pushing: `gh issue close <number> --repo chrismarksus/ScrumChartBoard`
+```bash
+gh issue list --repo chrismarksus/ScrumChartBoard          # find existing
+gh issue create --repo chrismarksus/ScrumChartBoard --title "..." --body "..."
+git checkout -b feat/<number>-<slug>                        # feat/, fix/, or chore/
+```
 
 **Before committing / pushing:**
 ```bash
 npm run lint    # no lint errors
-npm test        # all specs must pass before you push
+npm test        # all specs must pass
 ```
 - **Docs** — does README, CONTRIBUTIONS, DATA_FORMAT, or CLAUDE.md need updating? New scripts, changed behaviour, new data fields, and new workflow steps should all be reflected.
 - **Test coverage** — does the change introduce new logic without a corresponding spec? Check `test/spec/` for the relevant file and add tests if coverage is missing.
 
-**After pushing:**
+**Opening a PR:**
+```bash
+git push -u origin <branch-name>
+gh pr create --fill    # uses branch name + commits to prefill title/body
+```
+Reference the issue in the PR body (`closes #<number>`). GitHub Actions runs CI automatically; the PR can be merged once the `test` check is green.
+
+**After merging:**
 ```bash
 gh run list --repo chrismarksus/ScrumChartBoard --limit 3
 ```
