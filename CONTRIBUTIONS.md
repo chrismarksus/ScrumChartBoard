@@ -24,11 +24,16 @@ Start the dev server:
 npm run dev
 ```
 
-Vite will start and print the local URL (typically `http://localhost:9000`). Open that URL in a browser. On first run you will see the landing page. Add `team` and `project` query parameters to load dashboard data:
+Vite will start and print the local URL (typically `http://localhost:9000`). Open that URL in a browser. On first run you will see the landing page. Add `team` and `project` query parameters to load the interactive app (Board + Planner + Timeline + Dashboard tabs):
 
 ```
 http://localhost:9000?team=abc&project=sample
 ```
+
+- Use `&tab=board|planner|timeline|dashboard` to deep-link a specific tab (URL updates on click, other params like `&apiBase=...` are preserved).
+- The Board tab supports CSV import (with downloadable sample CSVs next to the button), drag-and-drop, inline title editing (dblclick), filter, and "Export JSON" (produces the three legacy files from live data).
+- Visit the JSON Editor at `/editor.html?team=abc&project=sample` for form-based editing of the legacy JSONs + CSV import for types/status + "Download JSON files".
+- For self-host server sync: append `&apiBase=http://localhost:3001` (or your server). A sync badge appears; board changes POST automatically. Start the companion server with `node server/index.js` (port 3001).
 
 The server watches source files and hot-reloads on changes.
 
