@@ -5,3 +5,6 @@ artifacts
 screenshots/*.png
 screenshots/current
 screenshots/diff
+
+# Local AI assistant configuration (contains user-specific permissions and paths)
+.claude/settings.local.json

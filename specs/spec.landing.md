@@ -172,3 +172,5 @@ Two CSS breakpoints in `landing.css`:
 - No contact/waitlist form
 - No analytics or tracking
 - No server-side rendering or SEO meta tags beyond the `<title>`
+
+See `spec.roadmap.md` for the high-level product roadmap, data strategy, and phasing that delivers the vision (including the pricing tiers and import promises) described on this page.
