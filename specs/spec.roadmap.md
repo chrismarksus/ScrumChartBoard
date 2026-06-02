@@ -183,7 +183,7 @@ See the detailed todo list in the workspace for implementation order. Once these
 - Every significant feature or behavior change must have (or update) a spec in `specs/`.
 - Use the `/spec-lint` process (or equivalent) before releases that touch user-facing areas.
 - Landing page marketing claims must be backed by shipped code or clearly marked as roadmap.
-- Update root docs (README, DATA_FORMAT.md, CONTRIBUTIONS.md, CLAUDE.md) when behavior or workflow changes.
+- Update root docs (README, DATA_FORMAT.md, CONTRIBUTIONS.md, and the AI agent instructions file `CLAUDE.md`) when behavior or workflow changes.
 
 **Testing & Quality**
 - Maintain the existing high bar: unit (node-runner), E2E, visual regression, lint.
@@ -242,7 +242,7 @@ See the detailed todo list in the workspace for implementation order. Once these
 - Data format (chart JSONs): `DATA_FORMAT.md`.
 - Implementation entry points: `app/scripts/main.js`, `Store.js`, `GetData.js`, `Model.js`, `server/index.js`, `vite.config.js`.
 - Open tracking: GitHub issues (e.g. board feature, JSON editor #74).
-- Workflow: `CLAUDE.md`, `CONTRIBUTIONS.md`, GitHub branch/PR rules.
+- Workflow: AI agent instructions (`CLAUDE.md`), `CONTRIBUTIONS.md`, GitHub branch/PR rules.
 
 This spec should be updated (not replaced) as phases complete. When a phase is largely done, move its bullets to a "Completed" section or archive note and adjust the current "Phase X" pointers.
 
