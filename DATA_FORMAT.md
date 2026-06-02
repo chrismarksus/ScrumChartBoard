@@ -140,13 +140,15 @@ Sprint/iteration data. All fields are required except `review` and `notesInterva
 
 Downloadable starter CSVs live in `samples/` (and duplicated under the `abc/sample` data for convenience). Use them via the **Import CSV** buttons:
 
-- Board backlog column: imports cards (title, type, points, blocked). Any header aliases accepted (e.g. "card title", "pts", "is blocked"). `type` freeform (Story/Bug/Task/Spike common); `blocked` accepts true/yes/1.
+- Board backlog column: imports cards (title, type, points, blocked, status?, intervalId?). Any header aliases accepted (e.g. "card title", "pts", "is blocked"). `type` freeform (Story/Bug/Task/Spike common); `blocked` accepts true/yes/1. `status` one of backlog/todo/inprogress/done (default backlog on import if omitted). `intervalId` (uuid) to assign to a planner interval (optional; create intervals first in Planner if needed). 
 
-Example `sample-board-cards.csv`:
+This enables CSV roundtrip for board planning state: **Export Cards CSV** includes current status + intervalId; edit/reimport to restore assignments.
+
+Example `sample-board-cards.csv` (updated for roundtrip):
 ```
-title,type,points,blocked
-"Add login page with OAuth",Story,8,false
-"Payment gateway bug on submit",Bug,3,true
+title,type,points,blocked,status,intervalId
+"Add login page with OAuth",Story,8,false,backlog,
+"Payment gateway bug on submit",Bug,3,true,todo,
 ...
 ```
 
@@ -192,7 +194,7 @@ Example shape (as created by `store.addCard` and mutated by drags/edits/CSV impo
 ```
 
 - Defaults on create: `status: 'backlog'`, `blocked: false`, `intervalId: null`, `id: crypto.randomUUID()`.
-- CSV import (Board backlog) supports flexible headers: `title,type,points,blocked` (aliases like "card title", "pts", "is blocked"; blocked accepts true/yes/1).
+- CSV import (Board backlog) supports flexible headers: `title,type,points,blocked,status,intervalId` (aliases supported; status defaults to backlog; intervalId optional uuid for assignment). Enables full CSV roundtrip of cards + planning assignments.
 - Board derives live status/type counts + per-interval aggregates for charts via `BoardAdapter`.
 
 ### Intervals (Sprints / Planner Lanes)

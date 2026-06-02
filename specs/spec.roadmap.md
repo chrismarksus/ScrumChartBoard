@@ -133,7 +133,7 @@ Phase 0 success criteria met. Moving to Phase 1 packaging & self-host polish in 
 
 ### Phase 1 — Self-Host Complete & Packaging
 
-- Round-trip import/export (CSV ↔ full project state including historical metrics).
+- Round-trip import/export (CSV ↔ full project state including historical metrics). ✅ started (enhanced cards CSV bidirectional with status/intervalId; full state JSON export/import in Board + Store; samples/docs updated).
 - Finish remaining MVP items from existing specs (editing intervals/themes, capacity warnings, etc.).
 - Improve the editor to be the primary way to manage both chart config and board data.
 - Packaging & ops: Dockerfile + docker-compose example that serves the static app + the board API server together; one-command self-host story.

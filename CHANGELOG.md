@@ -10,7 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Self-host packaging (Phase 1 start): Dockerfile (multi-stage build of client + server) + docker-compose.yml for one-command self-host (SPA + /board API + samples + persistent data volume on single port 8080).
 - Enhanced `server/index.js` to serve the built `dist/` SPA (with teams/ samples fallback) + SPA catch-all alongside the existing board API. Updated startup logs and added /teams middleware.
-- Docs: README + CONTRIBUTIONS updated with Docker self-host instructions + `?apiBase` usage for sync.
+- Round-trip import/export enhancements for CSV and full board state:
+  - Board: **Export Cards CSV** (includes status, intervalId for bidirectional), **Export State** (full {cards,intervals,timelines} JSON), **Import State** (loads full state back to board/Store).
+  - CSV import now respects `status` and `intervalId` columns (in addition to title/type/points/blocked).
+  - Updated starter samples to demonstrate roundtrip columns.
+- Docs: README + DATA_FORMAT + CONTRIBUTIONS updated for new CSV columns, state export/import, and self-host Docker.
+- Store: added `importState(data)` helper for clean roundtrips.
+
+This enables CSV ↔ full project state roundtrip (planning data) + JSON state backup/restore, advancing Phase 1. Packaging + this gets closer to seamless self-host experience.
+
+### Changed
+- Board backlog header buttons now include CSV export, state export/import for better roundtrip UX (existing Export JSON for legacy charts remains).
 
 This makes a non-technical user able to `docker-compose up --build` and have a full working instance (with board sync) in < 5 minutes. Addresses Phase 1 "one-command self-host story".
 

@@ -42,7 +42,7 @@ export default class Board {
       <div class="board-col-header">
         <span class="board-col-title">${LABELS[status]}</span>
         <span class="board-col-count">${all.length}</span>
-        ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked)">Sample CSV</a><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button>' : ''}
+        ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked,status?,intervalId? for roundtrip)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked,status,intervalId)">Sample CSV</a><button class="board-import-btn" data-action="export-csv" title="Export current cards as CSV (with status, intervalId for roundtrip import)." style="margin-left:4px;">Export Cards CSV</button><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button><button class="board-import-btn" data-action="export-state" title="Export full board state {cards,intervals,timelines} as JSON for backup/roundtrip." style="margin-left:4px;">Export State</button><button class="board-import-btn" data-action="import-state" title="Import full board state JSON (replaces current planning data)." style="margin-left:4px;">Import State</button>' : ''}
         ${status === 'backlog' ? `<input class="board-filter" type="text" placeholder="Filter backlog..." value="${this._backlogFilter || ''}">` : ''}
       </div>
       ${status === 'backlog' ? this._formHtml() : ''}
@@ -131,6 +131,18 @@ export default class Board {
     const exportBtn = el.querySelector('.board-import-btn[data-action="export"]');
     if (exportBtn) {
       exportBtn.addEventListener('click', () => this._exportBoardJson());
+    }
+    const exportStateBtn = el.querySelector('.board-import-btn[data-action="export-state"]');
+    if (exportStateBtn) {
+      exportStateBtn.addEventListener('click', () => this._exportFullState());
+    }
+    const importStateBtn = el.querySelector('.board-import-btn[data-action="import-state"]');
+    if (importStateBtn) {
+      importStateBtn.addEventListener('click', () => this._importFullState());
+    }
+    const exportCsvBtn = el.querySelector('.board-import-btn[data-action="export-csv"]');
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', () => this._exportCardsCSV());
     }
 
     // Small polish: backlog filter input (live, case-insensitive on title/type)
@@ -258,7 +270,10 @@ export default class Board {
           if (isNaN(points)) points = 0;
           const blockedStr = (r.blocked || r['is blocked'] || '').toLowerCase();
           const blocked = blockedStr === 'true' || blockedStr === 'yes' || blockedStr === '1';
-          this._store.addCard({ title, type, points, blocked });
+          const status = (r.status || 'backlog').toLowerCase().trim();
+          let intervalId = r.intervalId || r.interval || r['interval id'] || null;
+          if (intervalId && typeof intervalId === 'string' && intervalId.trim() === '') intervalId = null;
+          this._store.addCard({ title, type, points, blocked, status, intervalId });
           added++;
         });
         document.body.removeChild(input);
@@ -289,6 +304,94 @@ export default class Board {
       this._downloadJson('intervals.json', out.intervals);
     } catch (e) {
       console.error('Export failed', e);
+      alert('Export failed (see console)');
+    }
+  }
+
+  _exportFullState() {
+    try {
+      const snap = {
+        cards: this._store.getCards(),
+        intervals: this._store.getIntervals(),
+        timelines: this._store.getTimelines()
+      };
+      this._downloadJson('board-full-state.json', snap);
+    } catch (e) {
+      console.error('Full state export failed', e);
+      alert('Export failed (see console)');
+    }
+  }
+
+  _importFullState() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json,application/json';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        document.body.removeChild(input);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        try {
+          const data = JSON.parse(ev.target.result);
+          if (data && Array.isArray(data.cards) && Array.isArray(data.intervals) && Array.isArray(data.timelines)) {
+            if (typeof this._store.importState === 'function') {
+              this._store.importState(data);
+            } else {
+              this._store._data = { cards: data.cards, intervals: data.intervals, timelines: data.timelines };
+              this._store._save();
+            }
+            const backlogCount = this._store.getCards().filter(c => c.status === 'backlog').length;
+            if (backlogCount > this._backlogLimit) this._backlogLimit = backlogCount;
+            if (this._lastContainerId) {
+              this.render(this._lastContainerId);
+            }
+            alert('Board state imported successfully.');
+          } else {
+            alert('Invalid board state JSON (must have cards, intervals, timelines arrays).');
+          }
+        } catch (err) {
+          console.error('Import state failed', err);
+          alert('Failed to import (see console).');
+        }
+        document.body.removeChild(input);
+      };
+      reader.readAsText(file);
+    };
+    input.click();
+  }
+
+  _exportCardsCSV() {
+    try {
+      const cards = this._store.getCards();
+      let csv = 'title,type,points,blocked,status,intervalId\n';
+      cards.forEach(c => {
+        const title = (c.title || '').replace(/"/g, '""');
+        const row = [
+          `"${title}"`,
+          c.type || 'Story',
+          c.points || 0,
+          c.blocked ? 'true' : 'false',
+          c.status || 'backlog',
+          c.intervalId || ''
+        ].join(',');
+        csv += row + '\n';
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'board-cards.csv';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Cards CSV export failed', e);
       alert('Export failed (see console)');
     }
   }

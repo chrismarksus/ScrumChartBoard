@@ -45,7 +45,7 @@ A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashb
 - Or visit directly: `/editor.html?team=abc&project=sample`
 - The editor has a reciprocal "Open dashboard" link that also preserves context.
 
-Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.). Board has an **Export JSON** button (backlog header) that emits the three JSON files from live cards+plan via the adapter (roundtrip to static or editor). Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 0 details.
+Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.; updated samples include status + intervalId for roundtrip). Board supports **Export Cards CSV** (with status/intervalId), **Export JSON** (the 3 legacy files via adapter for static/editor), and **Export/Import State** (full {cards,intervals,timelines} JSON for perfect roundtrip/backup). Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 1 roundtrip details.
 
 ---
 
