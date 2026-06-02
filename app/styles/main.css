@@ -853,6 +853,19 @@ p.updatedBy {
   transition: color 160ms ease, border-color 160ms ease;
 }
 .board-load-more:hover { color: var(--text-secondary); border-color: var(--text-muted); }
+.board-import-btn {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 2px 6px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.board-import-btn:hover { background: var(--border); color: var(--text-primary); }
 
 @media (max-width: 960px) {
   .board-columns { grid-template-columns: repeat(2, 1fr); }
