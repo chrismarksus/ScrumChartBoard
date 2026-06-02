@@ -1,5 +1,7 @@
 # Backlog
 
+> **Historical / superseded (Phase 0 note)**: Describes the pre-Board "backlog" using integer-ID work items (see `spec.work_item.md`, `spec.persistence.md`). Current implementation uses the `Board` tab + `Store` with UUID `cards` (status backlog/todo/inprogress/done, title/type/points/blocked/intervalId). See `app/scripts/Board.js`, `Store.js`, `spec.board.md`, and the CSV/JSON Editor flows. This file is retained as historical reference only.
+
 ## Navigation
 
 Accessed by clicking the Backlog tab in the main tab bar (see `spec.main_tabbar.md`).

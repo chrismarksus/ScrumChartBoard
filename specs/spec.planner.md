@@ -1,5 +1,9 @@
 # Planner
 
+> **Historical / superseded (Phase 0 note)**: Placeholder/old spec. Current implementation is the `IntervalPlanner` (lanes per interval, unassigned zone, drag-assign cards from Store, active sprint, delete lanes). See `app/scripts/IntervalPlanner.js`, `spec.interval_planner.md`, `Store.js`, and `spec.board.md`. Update cross-refs to point to the real planner spec + board model.
+
+## (Old content follows)
+
 ## Overview
 
 **Placeholder spec — not yet designed.**

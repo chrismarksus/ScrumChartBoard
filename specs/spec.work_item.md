@@ -1,5 +1,9 @@
 # Work Item
 
+> **Historical / superseded (Phase 0 note)**: This (and `spec.work_item_dialog.md`) describe the old integer-ID work item model and dialog. Superseded by the current `Store` card model (UUIDs, flexible type/status strings, board columns + drag via Sortable, CSV import, JSON editor forms). See `Store.js`, `Board.js`, `editor.js`, `spec.board.md`, `DATA_FORMAT.md`, and `spec.roadmap.md` (reconcile section). Retained for archaeology only; do not extend.
+
+## (Old content follows)
+
 ## Overview
 
 A work item (also referred to as a PBI, Card, or Ticket) represents a small chunk of work to be completed. Work items are created and managed in the Backlog (see `spec.backlog.md`).
