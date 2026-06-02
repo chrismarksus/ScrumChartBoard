@@ -563,6 +563,44 @@ function bindAddButtons() {
       e.target.textContent = 'Copied!';
       setTimeout(() => e.target.textContent = orig, 1200);
     }
+    if (e.target.id === 'download-files-btn') {
+      downloadEditorFiles();
+    }
+  });
+}
+
+function downloadEditorFiles() {
+  // Build the three files from current editor state (mirrors updatePreview logic)
+  const dash = { ...state.dashboard };
+  const proj = {
+    project: {
+      name: state.projectData.name || '',
+      cardTypeLabel: state.projectData.cardTypeLabel || undefined,
+      cardTypes: arrayToObject(state.projectData.cardTypes),
+      cardStatusLabel: state.projectData.cardStatusLabel || undefined,
+      cardStatus: arrayToObject(state.projectData.cardStatus),
+      backlog: state.projectData.backlog || undefined,
+      timelines: state.projectData.timelines.length ? state.projectData.timelines : undefined
+    }
+  };
+  Object.keys(proj.project).forEach(k => { if (proj.project[k] === undefined) delete proj.project[k]; });
+  const ints = { intervals: state.intervals };
+
+  const files = [
+    { name: 'dashboard.json', data: dash },
+    { name: 'project.json', data: proj },
+    { name: 'intervals.json', data: ints }
+  ];
+  files.forEach(({ name, data }) => {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   });
 }
 
