@@ -9,15 +9,26 @@ ScrumChartBoard is a chart-first Scrum metrics dashboard with an expanding inter
 
 This top-level spec defines the product direction, data strategy, phasing, and governance for specs. It is the single source of truth that all feature specs (`spec.*.md`) and implementation work must align with. See also `spec.landing.md` (marketing vision and pricing), `spec.main_tabbar.md` (navigation policy), and the detailed page specs.
 
-Current shipped state (as of the v0.2.2 release and workspace snapshot):
+Current shipped state (as of Phase 0 progress in workspace):
 - Landing page with hero, feature illustrations, palette switcher, and pricing stubs.
 - Four-tab app (Board, Interval Planner, Timeline, Dashboard) — only completed, fully specced pages appear (per `spec.main_tabbar.md`).
 - `Store.js` + `Board.js` + `IntervalPlanner.js` + `TimelineEditor.js` with localStorage persistence and optional REST sync (`Store.apiBase`).
 - Lightweight Node/Express server in `server/` (GET/POST `/board?team=...&project=...`, file-per-project JSON, no auth yet).
-- Mature chart pipeline (`GetData.js`, `Model.js`, `Scrum.js`, seven chart classes) still driven exclusively by the legacy three-JSON format.
+- Mature chart pipeline (`GetData.js`, `Model.js`, `Scrum.js`, seven chart classes) **now supports BoardAdapter** so board data (cards + planning intervals + timelines) can drive dynamic parts of the charts (status, types, timelines, per-interval committed/completed etc.).
+- JSON Editor standalone page (`editor.html`) for the 3 legacy JSON files (forms, live preview, Copy per section).
+- CSV import: in Board (bulk cards) and wired into Editor (for cardTypes/cardStatus).
 - Comprehensive test suite (272+ passing specs covering new board features and legacy charts), visual regression, E2E, lint, and GitHub Pages release deploy.
+- BoardAdapter + toJsonFiles helper (for future snapshot/export of board state to 3-JSON format).
 
-**Note on spec drift**: Some specs pre-date the interactive board work (`spec.persistence.md`, `spec.backlog.md`, `spec.work_item*.md`, placeholder `spec.planner.md`). The shipped card model (UUIDs, statuses `backlog|todo|inprogress|done`, `intervalId`, etc.) differs from the older integer-ID work-item schema. This roadmap calls for reconciliation.
+**Note on spec drift**: Some specs pre-date the interactive board work (`spec.persistence.md`, `spec.backlog.md`, `spec.work_item*.md`, placeholder `spec.planner.md`). The shipped card model (UUIDs, statuses `backlog|todo|inprogress|done`, `intervalId`, etc.) differs from the older integer-ID work-item schema. This roadmap calls for reconciliation (see remaining Phase 0 items below).
+
+### Phase 0 Completed (as of latest build)
+- ✅ JSON editor (issue #74, full forms + preview + copy per the spec).
+- ✅ CSV import (cards → Board + into editor for types/status; per roadmap bullet).
+- ✅ BoardAdapter (transforms Store data to Model shape so board drives charts; + toJsonFiles helper for export).
+- Core Board/Planner/Timeline + tab bar + Store + server (from prior work; tests/build clean).
+
+See "Remaining in Phase 0" todos or the bullets below for what's left to hit the success criteria fully and close tracking issue #85.
 
 ---
 
@@ -101,6 +112,17 @@ Goal: A self-host user can create a project and see both live planning and rich 
 - Small polish: card editing (title/type/points), delete confirmations where specced, basic search/filter on backlog columns if it unblocks users.
 - Docs: update README "Using the project", DATA_FORMAT.md (add board data shape), CONTRIBUTIONS, this roadmap. Add a "What's new" or changelog entry.
 - Success criteria: clone → `npm run dev` → create/edit data via editor → see both board and full dashboard charts for the same project → optional sync to local `server/`.
+
+**Remaining in Phase 0 (as of this update; see AI todos for tracking):**
+- Wire `Store.apiBase` (query param + small persisted UI/settings surface for pointing to server/).
+- Reconcile/deprecate outdated specs (persistence.md, backlog/work_item family etc. vs current card model) + cross-refs.
+- Add `?tab=` URL support + preserve params + load precedence (per main_tabbar.md; currently no URL sync at all).
+- Small polish from board/planner specs now called out in roadmap: card editing (title/type/points), delete confirmations, basic search/filter on backlog.
+- Full ship/reconcile of board feature (update/close #85): implement Export JSON UI (wire toJsonFiles helper to download buttons in board/editor), complete REST wiring via apiBase UI.
+- Docs updates across README, DATA_FORMAT (add board Store schema), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109).
+- Verify end-to-end success criteria (including optional server sync after apiBase wired).
+
+See the detailed todo list in the workspace for implementation order. Once these are done, Phase 0 success criteria should be met and we can move to Phase 1 packaging.
 
 ### Phase 1 — Self-Host Complete & Packaging
 
