@@ -5,29 +5,33 @@ All notable changes to ScrumChartBoard will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] / Phase 0 progress
+## [Unreleased]
+
+## [0.3.0] - 2026-06-02
 
 ### Added
-- Downloadable starter sample CSVs next to Import buttons in Board and Editor (rich realistic examples with quoting, blocked cards, matching the sample project shapes for types/status). Located at `samples/` (built into dist) and inside the `abc/sample` data dir.
-- Export JSON button (in Board backlog header): uses `BoardAdapter.toJsonFiles` to produce and download `dashboard.json` / `project.json` / `intervals.json` from the current live board + planner + timeline state. Enables easy roundtrip to static `teams/` folders or the JSON editor.
-- `?apiBase=...` support: set `Store.apiBase` from query param (or persisted localStorage value). Board mutations now auto-sync (POST) to a self-hosted REST server. Small visible "🔗 host" badge appears when active.
-- `?tab=board|planner|timeline|dashboard` support (per `spec.main_tabbar.md`): tab navigation updates the URL via `history.pushState` (preserving team/project/apiBase etc.), direct links load the specified tab, early class application prevents FOUC. Default remains dashboard when team+project present.
-- Small polish:
-  - Delete confirmations (native confirm) for cards (Board), intervals (Planner), and themes (Timeline).
-  - Double-click a card title in the Board to inline-edit it (saves via store.updateCard + re-render).
-  - Basic live filter input in the backlog column (filters visible cards by title or type; resets pagination).
+- **Phase 0 foundation shipped** (closes #109; advances board #85 + editor #74): interactive Board/Planner/Timeline now unifies with the classic charts via `BoardAdapter` (live derivation of statusCounts, cardTypeCounts, timelines, per-interval aggregates from Store cards/assignments). Dashboard reflects board edits in real time.
+- Downloadable starter sample CSVs next to every Import button in Board and Editor (rich realistic examples with quoting, blocked cards, matching the sample project shapes for types/status). Files served from `samples/` (copied to `dist/` on build) and inside test `teams/abc/sample`.
+- Export JSON button (Board backlog header) + "Download JSON files" in Editor: uses `BoardAdapter.toJsonFiles` to emit `dashboard.json` + `project.json` + `intervals.json` from live state for roundtrips or static hosting.
+- `?apiBase=...` + badge: query (or localStorage) sets `Store.apiBase`; mutations POST to your self-hosted `server/`. Visible "🔗 host" indicator when active. Enables full self-host sync story.
+- `?tab=board|planner|timeline|dashboard` (per `spec.main_tabbar.md`): URL-driven tabs with `history.pushState` (preserves other params), direct-link support, load precedence, early DOM class to avoid FOUC.
+- Small polish on the board surface: native confirm guards on deletes (cards/intervals/themes), dblclick-to-edit card titles, live backlog filter (title/type, resets pagination).
+- Full JSON Editor page (`editor.html` + `app/scripts/editor.js`): dynamic repeating forms for dashboard/project/intervals data, live preview, per-section Copy, CSV import for types/status + sample downloads. Bidirectional nav links between editor and main app.
 
 ### Changed
-- `vite.config.js`: added `publicDir: '../public'` (so `samples/` and other static assets reliably copy during `build` to `dist/`). Extended the dev `/teams` middleware to serve `*.csv` files with correct `text/csv` Content-Type.
-- Removed hardcoded `is-active` on dashboard tab button (JS now controls initial tab state).
-- Updated `BoardAdapter` integration, Store usage, and main loading paths remain compatible.
+- `vite.config.js`: `publicDir: '../public'` + extended `/teams` middleware (now serves `*.csv` as `text/csv`) so samples + assets are reliable in dev and `npm run build`.
+- Board data model is now primary for new/interactive use; legacy 3-JSON path remains fully supported for static/self-host "published dashboard" cases.
+- Tab bar no longer has hardcoded active state on dashboard (JS-driven).
 
 ### Documentation
-- `README.md`: expanded mentions of editor, CSV samples (with download links), Export, `?apiBase`, `?tab=`.
-- `DATA_FORMAT.md`: new section documenting the CSV import formats + starter samples + how Export + editor fit the workflow.
-- `specs/spec.roadmap.md`: marked numerous Phase 0 items complete (CSV samples, Export, apiBase, ?tab=, small polish), updated current shipped state and remaining list.
+- `README.md` + `CONTRIBUTIONS.md`: expanded editor nav, CSV samples, Export, `?apiBase`, `?tab=`, self-host flow, running instructions.
+- `DATA_FORMAT.md`: new "Board data model" + "CSV import formats (starter samples)" + "Export JSON" sections with examples and roundtrip notes.
+- `CHANGELOG.md` (new), `specs/spec.roadmap.md` (Phase 0 marked shipped, deprecation notes on old specs, current shipped state updated).
+- `CLAUDE.md` + workflow docs lightly generalized (AI assistant references).
 
-Tests (272), lint, and production build remain clean. Self-host flow (clone → dev/build → editor or samples CSV import or board edits → ?tab= + Export → optional ?apiBase sync to server/) is now substantially complete for Phase 0.
+All gates passed: 272 unit specs, lint, visual baselines refreshed, production build includes samples. Self-host end-to-end verified (dev server + API server, board → charts via adapter, samples/CSV, Export, ?tab= + ?apiBase sync).
+
+See PR #111 (and its commits) + `specs/spec.roadmap.md` for the full Phase 0 story. This is the first release with a complete open-core interactive + visualization experience.
 
 ## [0.2.2] - Prior
 
