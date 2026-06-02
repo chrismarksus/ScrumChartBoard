@@ -133,3 +133,27 @@ Sprint/iteration data. All fields are required except `review` and `notesInterva
 | `daysOutPlanned` | Array | Known planned days off (vacation, PTO). Log details in `notesInterval` |
 | `daysOutUnplanned` | Array | Unplanned days off (sick, etc.). Log details in `notesInterval` |
 | `notesInterval` | String | URL or path to a Markdown file with notes for this interval (optional) |
+
+---
+
+## CSV import formats (starter samples)
+
+Downloadable starter CSVs live in `samples/` (and duplicated under the `abc/sample` data for convenience). Use them via the **Import CSV** buttons:
+
+- Board backlog column: imports cards (title, type, points, blocked). Any header aliases accepted (e.g. "card title", "pts", "is blocked"). `type` freeform (Story/Bug/Task/Spike common); `blocked` accepts true/yes/1.
+
+Example `sample-board-cards.csv`:
+```
+title,type,points,blocked
+"Add login page with OAuth",Story,8,false
+"Payment gateway bug on submit",Bug,3,true
+...
+```
+
+- Editor (Project tab): for `cardTypes` and `cardStatus` repeats. Headers: `key,value` (or type/name + count/points).
+
+`sample-card-types.csv` and `sample-card-status.csv` match the shapes in the sample `project.json`.
+
+After import, use **Export JSON** (Board) to emit fresh `dashboard.json`/`project.json`/`intervals.json` from your live board state (via BoardAdapter) — ready to drop into a `teams/` folder for static dashboards or further editor tweaks.
+
+See also the JSON Editor and `?apiBase=...` for full self-host flow.

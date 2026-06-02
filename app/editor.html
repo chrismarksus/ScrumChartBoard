@@ -4,99 +4,131 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>JSON Editor — ScrumChartBoard</title>
-  <link rel="stylesheet" href="/styles/main.css">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles/main.css">
 </head>
 <body>
 <script>try{const p=JSON.parse(localStorage.getItem('scrum_theme_0001')||'{}');document.body.className=`theme-${p.theme||'light'} palette-${p.palette||'forest'}`;}catch(e){document.body.className='theme-light palette-forest';}</script>
 
-<div class="shell editor-wrap">
-  <div class="editor-header">
-    <div>
-      <a href="index.html" class="brand" style="text-decoration:none; display:inline-flex; align-items:center; gap:8px;">
-        <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
-        <strong>Scrum<em>ChartBoard</em></strong>
-      </a>
-      <span style="margin-left:12px; color:var(--text-muted);">JSON Editor</span>
+<!-- ======================== TOPBAR ======================== -->
+<header class="topbar">
+  <div class="shell topbar-inner">
+    <a class="brand" href="index.html">
+      <span class="brand-mark"><i></i><i></i><i></i><i></i></span>
+      Scrum<em>ChartBoard</em>
+    </a>
+    <div class="top-actions">
+      <a class="cta-solid" href="dashboard.html?team=abc&project=sample">Open dashboard</a>
+      <div class="switcher">
+        <div class="switcher-group" id="ls-palette-chips"></div>
+        <div class="switcher-divider"></div>
+        <div class="mode-toggle">
+          <span class="ls-mode-span" data-mode="light">LIGHT</span>
+          <span class="ls-mode-span" data-mode="dark">DARK</span>
+        </div>
+      </div>
     </div>
-    <div style="font-size:0.8rem; color:var(--text-muted);">Standalone tool — copy JSON into your <code>teams/</code> files</div>
+  </div>
+</header>
+
+<div class="shell editor-wrap">
+  <!-- Editorial header -->
+  <div class="editor-head">
+    <div class="editor-eyebrow">Data tool · No build step</div>
+    <h1 class="editor-title">Shape your <em>sprint</em> data.</h1>
+    <p class="editor-lede">Fill the forms, watch the JSON build live, then copy it straight into your <code>teams/</code> files. Three documents — dashboard, project, intervals — one tidy workflow.</p>
   </div>
 
-  <!-- Top controls -->
+  <!-- Load bar -->
   <div class="editor-controls">
-    <label style="font-size:0.75rem; color:var(--text-muted);">Team</label>
-    <input id="team-input" type="text" placeholder="abc" value="abc">
-    <label style="font-size:0.75rem; color:var(--text-muted);">Project</label>
-    <input id="project-input" type="text" placeholder="sample" value="sample">
-    <button id="load-btn" class="button button-primary">Load</button>
-    <span id="load-status" style="margin-left:8px; font-size:0.75rem; color:var(--text-muted);"></span>
+    <div class="field">
+      <label for="team-input">Team</label>
+      <input id="team-input" type="text" placeholder="abc" value="abc">
+    </div>
+    <div class="field">
+      <label for="project-input">Project</label>
+      <input id="project-input" type="text" placeholder="sample" value="sample">
+    </div>
+    <button id="load-btn" class="button button-primary">Load existing</button>
+    <span id="load-status"></span>
   </div>
 
   <div class="row">
     <!-- Left: forms -->
     <div class="seven columns">
-      <div class="editor-tabs">
-        <button class="editor-tab-btn is-active" data-tab="dashboard">Dashboard</button>
-        <button class="editor-tab-btn" data-tab="project">Project</button>
-        <button class="editor-tab-btn" data-tab="intervals">Intervals</button>
-      </div>
-
-      <!-- Dashboard tab -->
-      <div id="pane-dashboard" class="editor-pane is-active" data-section="dashboard">
-        <div class="editor-form">
-          <label>dashboardName</label>
-          <input id="d-dashboardName" type="text">
-          <label>teamName</label>
-          <input id="d-teamName" type="text">
-          <label>updatedName (optional)</label>
-          <input id="d-updatedName" type="text">
-          <label>daysInInterval</label>
-          <input id="d-daysInInterval" type="number" min="1" value="10">
+      <div class="editor-panel">
+        <div class="editor-tabs">
+          <button class="editor-tab-btn is-active" data-tab="dashboard">Dashboard</button>
+          <button class="editor-tab-btn" data-tab="project">Project</button>
+          <button class="editor-tab-btn" data-tab="intervals">Intervals</button>
         </div>
-        <button class="button editor-copy-btn" data-copy="dashboard">Copy Dashboard JSON</button>
-      </div>
 
-      <!-- Project tab -->
-      <div id="pane-project" class="editor-pane" data-section="project">
-        <div class="editor-form">
-          <label>project.name</label>
-          <input id="p-name" type="text">
-          <label>cardTypeLabel (optional)</label>
-          <input id="p-cardTypeLabel" type="text" placeholder="Points">
-          <div class="repeat-section">
-            <label>cardTypes</label>
-            <div id="p-cardTypes-container"></div>
-            <button type="button" class="button add-btn" data-add="p-cardTypes">+ Add Type</button>
-            <button type="button" class="button add-btn" data-import-csv="p-cardTypes">Import CSV</button>
+        <!-- Dashboard tab -->
+        <div id="pane-dashboard" class="editor-pane is-active" data-section="dashboard">
+          <div class="editor-form">
+            <label>dashboardName</label>
+            <input id="d-dashboardName" type="text">
+            <label>teamName</label>
+            <input id="d-teamName" type="text">
+            <label>updatedName (optional)</label>
+            <input id="d-updatedName" type="text">
+            <label>daysInInterval</label>
+            <input id="d-daysInInterval" type="number" min="1" value="10">
           </div>
-          <label>cardStatusLabel (optional)</label>
-          <input id="p-cardStatusLabel" type="text" placeholder="Cards">
-          <div class="repeat-section">
-            <label>cardStatus</label>
-            <div id="p-cardStatus-container"></div>
-            <button type="button" class="button add-btn" data-add="p-cardStatus">+ Add Status</button>
-            <button type="button" class="button add-btn" data-import-csv="p-cardStatus">Import CSV</button>
+          <div style="margin-top:20px;">
+            <button class="button editor-copy-btn" data-copy="dashboard">Copy Dashboard JSON</button>
           </div>
-          <label>backlog URL (optional)</label>
-          <input id="p-backlog" type="text" placeholder="https://...">
         </div>
 
-        <div class="repeat-section">
-          <label>timelines (optional)</label>
-          <div id="p-timelines-container"></div>
-          <button type="button" class="button add-btn" data-add="p-timelines">+ Add Timeline</button>
+        <!-- Project tab -->
+        <div id="pane-project" class="editor-pane" data-section="project">
+          <div class="editor-form">
+            <label>project.name</label>
+            <input id="p-name" type="text">
+            <label>cardTypeLabel (optional)</label>
+            <input id="p-cardTypeLabel" type="text" placeholder="Points">
+            <div class="repeat-section">
+              <label>cardTypes</label>
+              <div id="p-cardTypes-container"></div>
+              <button type="button" class="button add-btn" data-add="p-cardTypes">+ Add Type</button>
+              <button type="button" class="button add-btn" data-import-csv="p-cardTypes" title="CSV with header: key,value  e.g. Stories,12">Import CSV</button>
+              <a href="samples/sample-card-types.csv" download class="add-btn" style="text-decoration:none;display:inline-block;">Download sample</a>
+            </div>
+            <label>cardStatusLabel (optional)</label>
+            <input id="p-cardStatusLabel" type="text" placeholder="Cards">
+            <div class="repeat-section">
+              <label>cardStatus</label>
+              <div id="p-cardStatus-container"></div>
+              <button type="button" class="button add-btn" data-add="p-cardStatus">+ Add Status</button>
+              <button type="button" class="button add-btn" data-import-csv="p-cardStatus" title="CSV with header: key,value  e.g. Todo,5">Import CSV</button>
+              <a href="samples/sample-card-status.csv" download class="add-btn" style="text-decoration:none;display:inline-block;">Download sample</a>
+            </div>
+            <label>backlog URL (optional)</label>
+            <input id="p-backlog" type="text" placeholder="https://...">
+          </div>
+
+          <div class="repeat-section">
+            <label>timelines (optional)</label>
+            <div id="p-timelines-container"></div>
+            <button type="button" class="button add-btn" data-add="p-timelines">+ Add Timeline</button>
+          </div>
+
+          <div style="margin-top:20px;">
+            <button class="button editor-copy-btn" data-copy="project">Copy Project JSON</button>
+          </div>
         </div>
 
-        <button class="button editor-copy-btn" data-copy="project">Copy Project JSON</button>
-      </div>
-
-      <!-- Intervals tab -->
-      <div id="pane-intervals" class="editor-pane" data-section="intervals">
-        <div id="intervals-container"></div>
-        <button type="button" class="button add-btn" data-add="interval">+ Add Sprint / Interval</button>
-        <div style="margin-top:8px;">
-          <button class="button editor-copy-btn" data-copy="intervals">Copy Intervals JSON</button>
+        <!-- Intervals tab -->
+        <div id="pane-intervals" class="editor-pane" data-section="intervals">
+          <div id="intervals-container"></div>
+          <button type="button" class="button add-btn" data-add="interval">+ Add Sprint / Interval</button>
+          <div style="margin-top:16px;">
+            <button class="button editor-copy-btn" data-copy="intervals">Copy Intervals JSON</button>
+          </div>
+          <p class="editor-note">Intervals sorted oldest → newest in UI (order in array is preserved on copy).</p>
         </div>
-        <p class="editor-note">Intervals sorted oldest → newest in UI (order in array is preserved on copy).</p>
       </div>
     </div>
 
@@ -105,7 +137,7 @@
       <div class="editor-preview">
         <div class="preview-label">
           <span id="preview-label">Preview</span>
-          <button id="copy-preview-btn" class="button editor-copy-btn">Copy</button>
+          <button id="copy-preview-btn" class="editor-copy-btn">Copy</button>
         </div>
         <pre id="preview-json">{}</pre>
         <p class="editor-note">Preview updates live. Use the tab-specific Copy buttons (or this one) and paste into the matching .json file.</p>
@@ -114,6 +146,10 @@
   </div>
 </div>
 
-<script type="module" src="/scripts/editor.js"></script>
+<script type="module">
+  import ThemeSwitcher from './scripts/ThemeSwitcher.js';
+  new ThemeSwitcher({ reload: false }).setup();
+</script>
+<script type="module" src="scripts/editor.js"></script>
 </body>
 </html>

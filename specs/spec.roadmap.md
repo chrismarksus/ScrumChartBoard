@@ -16,16 +16,21 @@ Current shipped state (as of Phase 0 progress in workspace):
 - Lightweight Node/Express server in `server/` (GET/POST `/board?team=...&project=...`, file-per-project JSON, no auth yet).
 - Mature chart pipeline (`GetData.js`, `Model.js`, `Scrum.js`, seven chart classes) **now supports BoardAdapter** so board data (cards + planning intervals + timelines) can drive dynamic parts of the charts (status, types, timelines, per-interval committed/completed etc.).
 - JSON Editor standalone page (`editor.html`) for the 3 legacy JSON files (forms, live preview, Copy per section).
-- CSV import: in Board (bulk cards) and wired into Editor (for cardTypes/cardStatus).
+- CSV import: in Board (bulk cards) and wired into Editor (for cardTypes/cardStatus). Downloadable starter sample CSVs (rich examples, no guesswork) surfaced next to imports.
 - Comprehensive test suite (272+ passing specs covering new board features and legacy charts), visual regression, E2E, lint, and GitHub Pages release deploy.
-- BoardAdapter + toJsonFiles helper (for future snapshot/export of board state to 3-JSON format).
+- BoardAdapter + toJsonFiles helper (export of board state to 3-JSON format); Export JSON button in Board UI.
+- `Store.apiBase` wired via `?apiBase=` query + local persist + visible badge (enables live sync to self-host server/).
+- `?tab=` support: URL now reflects the active tab (pushState on click, read on load with precedence over defaults, preserves team/project/apiBase etc.). Early class application prevents FOUC of the wrong panel.
 
 **Note on spec drift**: Some specs pre-date the interactive board work (`spec.persistence.md`, `spec.backlog.md`, `spec.work_item*.md`, placeholder `spec.planner.md`). The shipped card model (UUIDs, statuses `backlog|todo|inprogress|done`, `intervalId`, etc.) differs from the older integer-ID work-item schema. This roadmap calls for reconciliation (see remaining Phase 0 items below).
 
 ### Phase 0 Completed (as of latest build)
 - ✅ JSON editor (issue #74, full forms + preview + copy per the spec).
-- ✅ CSV import (cards → Board + into editor for types/status; per roadmap bullet).
+- ✅ CSV import (cards → Board + into editor for types/status; per roadmap bullet). Plus enhanced downloadable starter sample CSVs (rich data, quoted examples) with "Sample CSV"/"Download sample" links next to every import control.
 - ✅ BoardAdapter (transforms Store data to Model shape so board drives charts; + toJsonFiles helper for export).
+- ✅ Export JSON UI (Export JSON button in Board; downloads the three legacy JSON files from live store data for roundtrips/self-host).
+- ✅ `Store.apiBase` wiring ( `?apiBase=...` + persisted + visible sync badge for self-host server sync story).
+- ✅ `?tab=` support (URL reflects active tab + direct links + param preservation + no FOUC; per spec.main_tabbar.md).
 - Core Board/Planner/Timeline + tab bar + Store + server (from prior work; tests/build clean).
 
 See "Remaining in Phase 0" todos or the bullets below for what's left to hit the success criteria fully and close tracking issue #85.
@@ -106,21 +111,24 @@ Goal: A self-host user can create a project and see both live planning and rich 
 - Implement the JSON editor page per `spec` intent in open issue #74 (two-column, tabbed forms for Dashboard/Project/Intervals, live JSON preview, Copy button; later local draft + server save).
 - Add at least CSV import (cards → Board; optionally rows → intervals for metrics). Wire it into both the new editor and a standalone import flow.
 - Implement a `BoardAdapter` (or equivalent) + export so board cards + intervals can populate burnup, velocity, status, capacity, satisfaction, etc. charts. Make the Dashboard able to render from Store data when present (or via explicit "snapshot" action).
-- Wire `Store.apiBase` configuration (query param `?apiBase=...` for quick testing + a small persisted settings surface or env injection for self-hosters running their own server).
+- Wire `Store.apiBase` configuration (query param `?apiBase=...` for quick testing + a small persisted settings surface or env injection for self-hosters running their own server). ✅ done (query + persist + badge UI)
 - Reconcile or explicitly deprecate outdated specs (`spec.persistence.md`, backlog/work-item family) and update any cross-refs.
 - Add `?tab=` support and preserve other params (per `spec.main_tabbar.md`).
 - Small polish: card editing (title/type/points), delete confirmations where specced, basic search/filter on backlog columns if it unblocks users.
-- Docs: update README "Using the project", DATA_FORMAT.md (add board data shape), CONTRIBUTIONS, this roadmap. Add a "What's new" or changelog entry.
-- Success criteria: clone → `npm run dev` → create/edit data via editor → see both board and full dashboard charts for the same project → optional sync to local `server/`.
+- Docs: update README "Using the project", DATA_FORMAT.md (add board data shape + CSV samples), CONTRIBUTIONS, this roadmap. Add a "What's new" or changelog entry.
+- Success criteria: clone → `npm run dev` → create/edit data via editor → see both board and full dashboard charts for the same project → optional sync to local `server/`. (Export JSON + samples downloads also now live)
 
 **Remaining in Phase 0 (as of this update; see AI todos for tracking):**
-- Wire `Store.apiBase` (query param + small persisted UI/settings surface for pointing to server/).
 - Reconcile/deprecate outdated specs (persistence.md, backlog/work_item family etc. vs current card model) + cross-refs.
-- Add `?tab=` URL support + preserve params + load precedence (per main_tabbar.md; currently no URL sync at all).
+- Add `?tab=` URL support + preserve params + load precedence (per main_tabbar.md; currently no URL sync at all). ✅ done (pushState on clicks, read on load with precedence, coexists with team/project/apiBase, early class application to avoid FOUC).
 - Small polish from board/planner specs now called out in roadmap: card editing (title/type/points), delete confirmations, basic search/filter on backlog.
-- Full ship/reconcile of board feature (update/close #85): implement Export JSON UI (wire toJsonFiles helper to download buttons in board/editor), complete REST wiring via apiBase UI.
-- Docs updates across README, DATA_FORMAT (add board Store schema), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109).
-- Verify end-to-end success criteria (including optional server sync after apiBase wired).
+- Full ship/reconcile of board feature (update/close #85): complete REST wiring details if needed, polish export UI (currently in Board; could add to Editor too).
+- Docs updates across README, DATA_FORMAT (add board Store schema + CSV samples), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109).
+- Verify end-to-end success criteria (including optional server sync after apiBase wired; also test Export + samples downloads).
+
+✅ Wire `Store.apiBase` (query param + small persisted UI badge; persisted across reloads; syncs on board ops).
+✅ Export JSON UI implemented (Export JSON button in Board backlog header; uses BoardAdapter.toJsonFiles to download the three JSONs for roundtrip/static use). 
+✅ Sample starter CSVs enhanced with realistic quoted examples (incl. commas in titles, variety of types/points/blocked, matching sample project shapes); Download links ("Sample CSV", "Download sample") next to every Import CSV in Board + Editor; served reliably via teams/ in sample data (copied on deploy) + public/samples.
 
 See the detailed todo list in the workspace for implementation order. Once these are done, Phase 0 success criteria should be met and we can move to Phase 1 packaging.
 

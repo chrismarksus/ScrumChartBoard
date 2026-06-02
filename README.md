@@ -38,7 +38,7 @@ The update release does not include a `teams/` folder.
 
 Copy the **contents** of the uncompressed folder — do not copy over the folder itself or you will overwrite the `teams/` directory and lose your data.
 
-A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashboard.json` / `project.json` / `intervals.json` via forms with live preview and per-section Copy buttons (no more hand-editing). In dev: `/editor.html?team=abc&project=sample`. See the roadmap for Phase 0 details.
+A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashboard.json` / `project.json` / `intervals.json` via forms with live preview and per-section Copy buttons (no more hand-editing). In dev: `/editor.html?team=abc&project=sample`. Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.). Board has an **Export JSON** button (backlog header) that emits the three JSON files from live cards+plan via the adapter (roundtrip to static or editor). Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 0 details.
 
 ---
 
@@ -135,8 +135,8 @@ Copy or FTP the `dist/` contents to your web server. The expected folder structu
 ```
 dist/
   assets/
+    (includes hashed favicon.svg, favicon.png, apple-touch-icon.png)
   teams/
-  favicon.ico
   index.html
   dashboard.html
   robots.txt

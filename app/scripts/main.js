@@ -17,25 +17,64 @@ let board = null;
 let planner = null;
 let timeline = null;
 
-// Tab switching
-(function () {
+function setActiveTab(tab) {
   const btns = document.querySelectorAll('.tab-btn');
   const panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(b => b.classList.toggle('is-active', b.dataset.tab === tab));
+  panels.forEach(p => { p.hidden = p.id !== `panel-${tab}`; });
+  if (tab === 'board' && board) board.render('panel-board');
+  if (tab === 'planner' && planner) planner.render('panel-planner');
+  if (tab === 'timeline' && timeline) timeline.render('panel-timeline');
+}
+
+// Tab switching (URL reflects active tab per spec.main_tabbar.md; ?tab= coexists with team/project/apiBase)
+(function () {
+  const btns = document.querySelectorAll('.tab-btn');
   btns.forEach(btn => {
     btn.addEventListener('click', () => {
-      btns.forEach(b => b.classList.toggle('is-active', b === btn));
-      panels.forEach(p => { p.hidden = p.id !== `panel-${btn.dataset.tab}`; });
-      if (btn.dataset.tab === 'board' && board) board.render('panel-board');
-      if (btn.dataset.tab === 'planner' && planner) planner.render('panel-planner');
-      if (btn.dataset.tab === 'timeline' && timeline) timeline.render('panel-timeline');
+      const tab = btn.dataset.tab;
+      setActiveTab(tab);
+      try {
+        const url = new URL(location.href);
+        url.searchParams.set('tab', tab);
+        history.pushState({}, '', url);
+      } catch (e) {}
     });
   });
+})();
+
+// Initial tab from ?tab= (takes precedence) or the hardcoded active in HTML.
+// Applied early for correct initial panel visibility (no FOUC), before components exist.
+(function initTabFromUrl() {
+  const h = new Helper();
+  let tab = h.queryString('tab');
+  if (!tab) {
+    const active = document.querySelector('.tab-btn.is-active');
+    tab = active ? active.dataset.tab : 'dashboard';
+  }
+  // Apply classes only (component renders guarded inside setActiveTab)
+  const btns = document.querySelectorAll('.tab-btn');
+  const panels = document.querySelectorAll('.tab-panel');
+  btns.forEach(b => b.classList.toggle('is-active', b.dataset.tab === tab));
+  panels.forEach(p => { p.hidden = p.id !== `panel-${tab}`; });
 })();
 
 (function () {
   const helper = new Helper();
   const team = helper.queryString('team');
   const project = helper.queryString('project');
+  // Wire Store.apiBase from query param (for self-host server sync, e.g. ?apiBase=http://localhost:3001)
+  // Persist last-used so it survives reloads; query always wins for this visit.
+  try {
+    const qApi = helper.queryString('apiBase');
+    if (qApi) {
+      Store.apiBase = qApi;
+      localStorage.setItem('scrum_api_base_0001', qApi);
+    } else {
+      const saved = localStorage.getItem('scrum_api_base_0001');
+      if (saved) Store.apiBase = saved;
+    }
+  } catch {}
   let urlStorage = localStorage.getItem('scrum_url_data_0001');
   if(urlStorage){
     urlStorage = JSON.parse(urlStorage);
@@ -54,6 +93,25 @@ let timeline = null;
       planner.render('panel-planner');
       timeline = new TimelineEditor(store);
       timeline.render('panel-timeline');
+
+      // Small persisted UI surface: show sync badge when apiBase is configured (query or saved)
+      if (Store.apiBase) {
+        const brand = document.querySelector('.brand');
+        if (brand && !document.getElementById('api-base-badge')) {
+          const badge = document.createElement('span');
+          badge.id = 'api-base-badge';
+          badge.style.cssText = 'font-family:var(--font-mono);font-size:9px;margin-left:6px;padding:1px 5px;border:1px solid var(--border);border-radius:3px;color:var(--text-muted);';
+          const short = Store.apiBase.replace(/^https?:\/\//, '').replace(/\/$/, '');
+          badge.textContent = '🔗 ' + short;
+          badge.title = 'Board sync target (set via ?apiBase=... or persisted). Changes auto-POST to server.';
+          brand.appendChild(badge);
+        }
+      }
+
+      // Re-apply ?tab= now that the interactive components exist. This ensures the
+      // correct panel is shown and the component's render() has run for direct links.
+      const desiredTab = helper.queryString('tab') || 'dashboard';
+      setActiveTab(desiredTab);
     });
 
     if(!isTeamAndProjectInStorage){

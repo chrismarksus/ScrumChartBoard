@@ -1,4 +1,5 @@
 import Sortable from 'sortablejs';
+import BoardAdapter from './BoardAdapter.js';
 
 const STATUSES = ['backlog', 'todo', 'inprogress', 'done'];
 const LABELS = { backlog: 'Backlog', todo: 'To Do', inprogress: 'In Progress', done: 'Done' };
@@ -36,7 +37,7 @@ export default class Board {
       <div class="board-col-header">
         <span class="board-col-title">${LABELS[status]}</span>
         <span class="board-col-count">${all.length}</span>
-        ${status === 'backlog' ? '<button class="board-import-btn" title="Import cards from CSV (columns: title,type,points,blocked)">Import CSV</button>' : ''}
+        ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked)">Sample CSV</a><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button>' : ''}
       </div>
       ${status === 'backlog' ? this._formHtml() : ''}
       <div class="board-col-cards" data-status="${status}">
@@ -116,9 +117,13 @@ export default class Board {
       });
     });
 
-    const importBtn = el.querySelector('.board-import-btn');
+    const importBtn = el.querySelector('.board-import-btn[data-action="csv"]');
     if (importBtn) {
       importBtn.addEventListener('click', () => this._importCSV());
+    }
+    const exportBtn = el.querySelector('.board-import-btn[data-action="export"]');
+    if (exportBtn) {
+      exportBtn.addEventListener('click', () => this._exportBoardJson());
     }
   }
 
@@ -222,5 +227,36 @@ export default class Board {
       reader.readAsText(file);
     };
     input.click();
+  }
+
+  _exportBoardJson() {
+    try {
+      const snap = {
+        cards: this._store.getCards(),
+        intervals: this._store.getIntervals(),
+        timelines: this._store.getTimelines()
+      };
+      const out = BoardAdapter.toJsonFiles(snap);
+      // out = { dashboard, project: { project }, intervals: { intervals } }
+      this._downloadJson('dashboard.json', out.dashboard);
+      this._downloadJson('project.json', out.project);
+      this._downloadJson('intervals.json', out.intervals);
+    } catch (e) {
+      console.error('Export failed', e);
+      alert('Export failed (see console)');
+    }
+  }
+
+  _downloadJson(filename, dataObj) {
+    const json = JSON.stringify(dataObj, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   }
 }
