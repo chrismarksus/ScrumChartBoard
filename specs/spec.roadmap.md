@@ -31,6 +31,7 @@ Current shipped state (as of Phase 0 progress in workspace):
 - ✅ Export JSON UI (Export JSON button in Board; downloads the three legacy JSON files from live store data for roundtrips/self-host).
 - ✅ `Store.apiBase` wiring ( `?apiBase=...` + persisted + visible sync badge for self-host server sync story).
 - ✅ `?tab=` support (URL reflects active tab + direct links + param preservation + no FOUC; per spec.main_tabbar.md).
+- ✅ Small polish: delete confirmations (cards, intervals, timeline themes), inline title editing (dblclick), basic backlog filter (title/type).
 - Core Board/Planner/Timeline + tab bar + Store + server (from prior work; tests/build clean).
 
 See "Remaining in Phase 0" todos or the bullets below for what's left to hit the success criteria fully and close tracking issue #85.
@@ -113,15 +114,15 @@ Goal: A self-host user can create a project and see both live planning and rich 
 - Implement a `BoardAdapter` (or equivalent) + export so board cards + intervals can populate burnup, velocity, status, capacity, satisfaction, etc. charts. Make the Dashboard able to render from Store data when present (or via explicit "snapshot" action).
 - Wire `Store.apiBase` configuration (query param `?apiBase=...` for quick testing + a small persisted settings surface or env injection for self-hosters running their own server). ✅ done (query + persist + badge UI)
 - Reconcile or explicitly deprecate outdated specs (`spec.persistence.md`, backlog/work-item family) and update any cross-refs.
-- Add `?tab=` support and preserve other params (per `spec.main_tabbar.md`).
-- Small polish: card editing (title/type/points), delete confirmations where specced, basic search/filter on backlog columns if it unblocks users.
+- Add `?tab=` support and preserve other params (per `spec.main_tabbar.md`). ✅ done.
+- Small polish: card editing (title/type/points), delete confirmations where specced, basic search/filter on backlog columns if it unblocks users. ✅ done (see Remaining list).
 - Docs: update README "Using the project", DATA_FORMAT.md (add board data shape + CSV samples), CONTRIBUTIONS, this roadmap. Add a "What's new" or changelog entry.
 - Success criteria: clone → `npm run dev` → create/edit data via editor → see both board and full dashboard charts for the same project → optional sync to local `server/`. (Export JSON + samples downloads also now live)
 
 **Remaining in Phase 0 (as of this update; see AI todos for tracking):**
 - Reconcile/deprecate outdated specs (persistence.md, backlog/work_item family etc. vs current card model) + cross-refs.
 - Add `?tab=` URL support + preserve params + load precedence (per main_tabbar.md; currently no URL sync at all). ✅ done (pushState on clicks, read on load with precedence, coexists with team/project/apiBase, early class application to avoid FOUC).
-- Small polish from board/planner specs now called out in roadmap: card editing (title/type/points), delete confirmations, basic search/filter on backlog.
+- Small polish from board/planner specs now called out in roadmap: card editing (title/type/points), delete confirmations, basic search/filter on backlog. ✅ done (dblclick title edit; confirm before all deletes for cards/intervals/themes; live title+type filter input on backlog that preserves other UX).
 - Full ship/reconcile of board feature (update/close #85): complete REST wiring details if needed, polish export UI (currently in Board; could add to Editor too).
 - Docs updates across README, DATA_FORMAT (add board Store schema + CSV samples), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109).
 - Verify end-to-end success criteria (including optional server sync after apiBase wired; also test Export + samples downloads).
