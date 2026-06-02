@@ -9,8 +9,20 @@ ScrumChartBoard is a chart-first Scrum metrics dashboard with an expanding inter
 
 This top-level spec defines the product direction, data strategy, phasing, and governance for specs. It is the single source of truth that all feature specs (`spec.*.md`) and implementation work must align with. See also `spec.landing.md` (marketing vision and pricing), `spec.main_tabbar.md` (navigation policy), and the detailed page specs.
 
-Current shipped state (as of v0.3.0 release):
-- Landing page with hero, feature illustrations, palette switcher, and pricing stubs.
+Current shipped state (as of v0.3.0 + Phase 1 start on branch):
+- Landing page with hero, feature illustrations, palette switcher, and pricing stubs (updated with muted "Coming soon" paid tiers per design).
+- Four-tab app (Board, Interval Planner, Timeline, Dashboard) — only completed, fully specced pages appear (per `spec.main_tabbar.md`).
+- `Store.js` + `Board.js` + `IntervalPlanner.js` + `TimelineEditor.js` with localStorage persistence and optional REST sync (`Store.apiBase`).
+- Lightweight Node/Express server in `server/` (GET/POST `/board?team=...&project=...`, file-per-project JSON, no auth yet; now also serves built SPA + samples for self-host).
+- Mature chart pipeline (`GetData.js`, `Model.js`, `Scrum.js`, seven chart classes) **now supports BoardAdapter** so board data (cards + planning intervals + timelines) can drive dynamic parts of the charts (status, types, timelines, per-interval committed/completed etc.).
+- JSON Editor standalone page (`editor.html`) for the 3 legacy JSON files (forms, live preview, Copy per section).
+- CSV import: in Board (bulk cards) and wired into Editor (for cardTypes/cardStatus). Downloadable starter sample CSVs (rich examples, no guesswork) surfaced next to imports. Enhanced for roundtrip (status + intervalId columns).
+- Comprehensive test suite (272+ passing specs covering new board features and legacy charts), visual regression, E2E, lint, and GitHub Pages release deploy.
+- BoardAdapter + toJsonFiles helper (export of board state to 3-JSON format); Export JSON button in Board UI. Plus new Export/Import full state JSON and cards CSV for roundtrips.
+- `Store.apiBase` wired via `?apiBase=` query + local persist + visible badge (enables live sync to self-host server/).
+- `?tab=` support: URL now reflects the active tab (pushState on click, read on load with precedence over defaults, preserves team/project/apiBase etc.). Early class application prevents FOUC of the wrong panel.
+- Self-host packaging: Dockerfile + docker-compose for combined SPA + API (one-command, persistent data).
+- Round-trip import/export started (CSV bidirectional for cards+assignments; full board state JSON roundtrip).
 - Four-tab app (Board, Interval Planner, Timeline, Dashboard) — only completed, fully specced pages appear (per `spec.main_tabbar.md`).
 - `Store.js` + `Board.js` + `IntervalPlanner.js` + `TimelineEditor.js` with localStorage persistence and optional REST sync (`Store.apiBase`).
 - Lightweight Node/Express server in `server/` (GET/POST `/board?team=...&project=...`, file-per-project JSON, no auth yet).
