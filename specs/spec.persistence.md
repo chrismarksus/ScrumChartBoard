@@ -1,5 +1,7 @@
 # Persistence
 
+> **Historical / superseded (Phase 0 note)**: This spec predates the interactive Board + `Store.js` (UUID `cards` + `intervals` + `timelines`, per-team/project localStorage keys like `scrum_board_{team}_{project}`, optional `Store.apiBase` REST sync). The old `scrumboard.items` + integer IDs + work-item schema no longer match the shipped implementation (see `app/scripts/Store.js`, `BoardAdapter.js`, `spec.board.md`, and `DATA_FORMAT.md` for current board data shape). Kept for reference; do not implement against this schema. Cross-refs in other specs should point to the Store + board model instead.
+
 ## Overview
 
 All user data is persisted to `localStorage` for the MVP. The persistence layer must be abstracted behind a module so a backend API can be swapped in later without changing page logic.

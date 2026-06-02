@@ -123,6 +123,7 @@ export default class IntervalPlanner {
 
     el.querySelectorAll('.planner-del-lane').forEach(btn => {
       btn.addEventListener('click', e => {
+        if (typeof confirm === 'function' && !confirm('Delete this interval and unassign its cards?')) return;
         const id = e.target.dataset.id;
         this._store.getCards()
           .filter(c => c.intervalId === id)

@@ -6,6 +6,7 @@ const { version } = JSON.parse(fs.readFileSync(path.resolve(__dirname, 'package.
 
 export default defineConfig({
   root: 'app',
+  publicDir: '../public',
   base: process.env.VITE_BASE || '/',
   build: {
     outDir: '../dist',
@@ -33,7 +34,10 @@ export default defineConfig({
           const filePath = path.join(process.cwd(), 'test/teams', req.url);
           if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
             const ext = path.extname(filePath);
-            if (ext === '.json') res.setHeader('Content-Type', 'application/json');
+            let contentType = 'application/octet-stream';
+            if (ext === '.json') contentType = 'application/json';
+            else if (ext === '.csv') contentType = 'text/csv; charset=utf-8';
+            res.setHeader('Content-Type', contentType);
             res.end(fs.readFileSync(filePath));
           } else {
             next();

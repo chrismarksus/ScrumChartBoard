@@ -1,5 +1,9 @@
 # Work Item Dialog
 
+> **Historical / superseded (Phase 0 note)**: See note at top of `spec.work_item.md`. Current editing is via Board cards (dblclick title, drag status, form add, CSV/JSON editor) and planner/timeline. No separate "work item dialog" in the shipped board surface.
+
+## (Old content follows)
+
 ## Overview
 
 A shared dialog form used for both creating and editing work items. It is opened from the Backlog toolbar (create mode) or from the work item detail panel (edit mode). See `spec.backlog.md` and `spec.work_item.md` for the triggering context.
