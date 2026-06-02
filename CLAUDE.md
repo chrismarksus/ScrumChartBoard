@@ -80,7 +80,7 @@ The app is a SPA that renders Scrum metric charts from JSON files. Board data pe
 
 **Starting work — every change should have an issue and a branch:**
 
-Use the `/start-work` slash command — it finds or creates a GitHub issue and checks out a correctly-named feature branch:
+Use the `/start-work` command (typically run by the human or via host-level integration) — it finds or creates a GitHub issue and checks out a correctly-named feature branch:
 ```
 /start-work add dark mode to landing page
 # → creates issue #42, checks out feat/42-dark-mode-landing-page
@@ -109,7 +109,7 @@ Check that the most recent run shows `completed` / `success`. If it failed, open
 
 **Releasing (triggers GitHub Pages deployment):**
 
-Use the `/release` slash command — it runs lint + tests, bumps the version, commits, pushes, and creates the GitHub release in one guided flow:
+Use the `/release` command (typically run by the human or via host-level integration) — it runs lint + tests, bumps the version, commits, pushes, and creates the GitHub release in one guided flow:
 ```
 /release 0.3.0
 ```
@@ -122,9 +122,13 @@ Glob `specs/` to find current spec files.
 
 ## Custom slash commands (`.claude/commands/`)
 
-- `/spec-lint` — checks all specs for broken cross-references, undefined behaviors, and contradictions
-- `/new-spec <name>` — scaffolds a new spec file and updates the tab bar spec if applicable
-- `/spec-to-tasks <spec file>` — generates an implementation task list from a spec and files it as a GitHub enhancement issue
+These are AI-executable commands defined as Markdown instruction files. They focus on the spec-driven development process:
+
+- `/spec-lint` — reads every spec and reports broken cross-references, orphaned specs, undefined behaviors (e.g. shortcuts), missing sections, and contradictions.
+- `/new-spec <name>` — scaffolds `specs/spec.<name>.md` from the standard template and (for tab-related features) updates the tab bar spec.
+- `/spec-to-tasks <spec-file>` — converts a spec + its cross-references into a concrete task list and files it as a GitHub enhancement issue via `gh`.
+
+Higher-level workflow commands such as `/start-work` (create issue + branch) and `/release` (bump version, tag, publish) are documented in the Workflow section above. They are typically initiated by the human (or provided as host-level skills outside this repo's `.claude/commands/`) rather than as local AI command files. This keeps per-conversation context lean.
 
 ## Code style
 

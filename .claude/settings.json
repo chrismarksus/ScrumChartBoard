@@ -7,7 +7,7 @@
           {
             "type": "command",
             "if": "Bash(git push*)",
-            "command": "npm run lint > /dev/null 2>&1 && npm test > /dev/null 2>&1 || echo '{\"continue\":false,\"stopReason\":\"Pre-push checks failed — run npm run lint && npm test to see errors.\"}'",
+            "command": "npm run lint > /dev/null 2>&1 && npm test > /dev/null 2>&1 || echo '{\"continue\":false,\"stopReason\":\"Pre-push checks failed — run 'npm run lint && npm test' locally to see the errors.\"}'",
             "timeout": 120,
             "statusMessage": "Running lint + tests before push..."
           }
@@ -20,7 +20,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 -c \"\nimport sys, json\nd = json.load(sys.stdin)\nf = d.get('tool_input', {}).get('file_path', '')\nif '/specs/spec.' in f:\n    print('{\\\"systemMessage\\\": \\\"Spec file changed \\u2014 consider running /spec-lint to check for inconsistencies.\\\"}')\n\" 2>/dev/null || true",
+            "command": "node .claude/spec-change-hook.mjs 2>/dev/null || true",
             "statusMessage": "Checking for spec changes..."
           }
         ]
