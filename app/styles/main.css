@@ -581,6 +581,20 @@ p.updatedBy {
   align-items: center;
   gap: 14px;
 }
+
+.top-actions .editor-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: color 160ms ease, background 160ms ease;
+}
+.top-actions .editor-link:hover {
+  color: var(--text-primary);
+  background: var(--surface-2);
+}
 .cta-solid {
   font-size: 13px;
   font-weight: 600;

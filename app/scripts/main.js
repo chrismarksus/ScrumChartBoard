@@ -13,6 +13,16 @@ import BoardAdapter from './BoardAdapter.js';
 
 new ThemeSwitcher().setup();
 
+// Update the JSON Editor nav link (added in dashboard.html topbar) to preserve
+// the current query params (?team, ?project, ?apiBase, etc.) for seamless context.
+(function updateEditorNavLink() {
+  const link = document.getElementById('editor-nav-link');
+  if (link && location.search) {
+    link.href = `editor.html${location.search}`;
+    link.title = 'Open the form-based JSON editor for the current team/project';
+  }
+})();
+
 let board = null;
 let planner = null;
 let timeline = null;

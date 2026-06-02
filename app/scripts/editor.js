@@ -713,6 +713,16 @@ function init() {
     if (el) el.addEventListener('keydown', (e) => { if (e.key === 'Enter') loadData(); });
   });
 
+  // Make "Open dashboard" link preserve current query params (team/project/apiBase)
+  // so navigation is seamless when coming from the main app or a specific project.
+  const dashLink = $('#open-dashboard-link');
+  if (dashLink) {
+    const params = location.search || '';
+    if (params) {
+      dashLink.href = `dashboard.html${params}`;
+    }
+  }
+
   // live preview on tab switch already handled
   console.log('[editor] ready (vanilla, no jQuery)');
 }
