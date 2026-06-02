@@ -11,6 +11,10 @@ I use this to track team stats at work, as a practice project to stay current in
 :globe_with_meridians: [chrismarksus.github.io/ScrumChartBoard](https://chrismarksus.github.io/ScrumChartBoard/) — landing page
 :bar_chart: [Dashboard with sample data](https://chrismarksus.github.io/ScrumChartBoard/?team=abc&project=sample)
 
+## Product Roadmap & Specs
+
+High-level product direction, data unification strategy (chart JSONs vs. interactive board/planner), and phased roadmap (open-core self-host polish → hosted freemium cloud with the tiers described on the landing page) live in [`specs/spec.roadmap.md`](specs/spec.roadmap.md). Detailed feature specs for pages and cross-cutting concerns are the other `spec.*.md` files in `specs/`. New work should align with the roadmap and have (or update) a spec.
+
 ## Using the project
 
 :file_folder: [Get the latest release](https://github.com/chrismarksus/ScrumChartBoard/releases)
