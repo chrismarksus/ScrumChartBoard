@@ -33,6 +33,7 @@ jobs:
       - name: Run Claude Code
         id: claude
         uses: anthropics/claude-code-action@v1
+        continue-on-error: true
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
@@ -47,4 +48,7 @@ jobs:
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
           # claude_args: '--allowed-tools Bash(gh pr *)'
+
+    # continue-on-error prevents token/session limits from failing interactive @claude
+    # usages. Claude is optional enhancement, not a gate on PRs/deploys. Main CI must pass.
 
