@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  scrumchartboard:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      # Optional: set a default apiBase if you want sync always on
+      # - DEFAULT_API_BASE=http://localhost:8080
+    volumes:
+      # Persist board data (cards, intervals, timelines) across restarts
+      - board-data:/app/server/data
+    restart: unless-stopped
+
+volumes:
+  board-data:

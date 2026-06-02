@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Self-host packaging (Phase 1 start): Dockerfile (multi-stage build of client + server) + docker-compose.yml for one-command self-host (SPA + /board API + samples + persistent data volume on single port 8080).
+- Enhanced `server/index.js` to serve the built `dist/` SPA (with teams/ samples fallback) + SPA catch-all alongside the existing board API. Updated startup logs and added /teams middleware.
+- Docs: README + CONTRIBUTIONS updated with Docker self-host instructions + `?apiBase` usage for sync.
+
+This makes a non-technical user able to `docker-compose up --build` and have a full working instance (with board sync) in < 5 minutes. Addresses Phase 1 "one-command self-host story".
+
 ## [0.3.0] - 2026-06-02
 
 ### Added

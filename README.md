@@ -155,6 +155,34 @@ See [DATA_FORMAT.md](DATA_FORMAT.md) for the full JSON schema for `dashboard.jso
 
 ---
 
+## Self-host with Docker (one-command for full experience)
+
+For a complete self-hosted instance (SPA + board sync API + sample data) with persistent storage:
+
+```bash
+# Build and run (first time)
+docker-compose up --build
+
+# Subsequent runs
+docker-compose up
+```
+
+Then open http://localhost:8080?team=abc&project=sample
+
+- The built SPA is served at the root.
+- Live board/planner/timeline edits sync if you append `&apiBase=http://localhost:8080` (or just use the board tab for local-only).
+- Board data is persisted in the `board-data` volume.
+- Samples (CSV + starter JSONs) are included.
+
+See `docker-compose.yml` and `Dockerfile` for details. You can also run the server directly after `npm run build`:
+
+```bash
+node server/index.js
+# then visit http://localhost:3001?team=abc&project=sample&apiBase=http://localhost:3001
+```
+
+---
+
 ## Built With
 
 * [Node.js](https://nodejs.org/) — runtime and dependency management
