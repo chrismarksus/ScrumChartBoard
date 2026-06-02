@@ -34,6 +34,7 @@ jobs:
       - name: Run Claude Code Review
         id: claude-review
         uses: anthropics/claude-code-action@v1
+        continue-on-error: true
         with:
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           plugin_marketplaces: 'https://github.com/anthropics/claude-code.git'
@@ -41,4 +42,10 @@ jobs:
           prompt: '/code-review:code-review ${{ github.repository }}/pull/${{ github.event.pull_request.number }}'
           # See https://github.com/anthropics/claude-code-action/blob/main/docs/usage.md
           # or https://code.claude.com/docs/en/cli-reference for available options
+
+    # Note: continue-on-error ensures token/session limits or other transient Claude issues
+    # do not cause a failing "claude-review" check that blocks PR merge/deploy.
+    # The main CI (lint/tests/build/visual) is independent and must still pass.
+    # For interactive reviews, use @claude mentions (see claude.yml). Manual review/merge
+    # by maintainers is always possible if Claude is unavailable.
 
