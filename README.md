@@ -38,7 +38,14 @@ The update release does not include a `teams/` folder.
 
 Copy the **contents** of the uncompressed folder — do not copy over the folder itself or you will overwrite the `teams/` directory and lose your data.
 
-A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashboard.json` / `project.json` / `intervals.json` via forms with live preview and per-section Copy buttons (no more hand-editing). In dev: `/editor.html?team=abc&project=sample`. Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.). Board has an **Export JSON** button (backlog header) that emits the three JSON files from live cards+plan via the adapter (roundtrip to static or editor). Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 0 details.
+A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashboard.json` / `project.json` / `intervals.json` via forms with live preview and per-section Copy buttons (no more hand-editing). 
+
+**Navigation in the product:**
+- From the main dashboard (loaded with `?team=...&project=...`), click the **"JSON Editor"** link in the topbar (appears next to the palette switcher). It preserves your current params.
+- Or visit directly: `/editor.html?team=abc&project=sample`
+- The editor has a reciprocal "Open dashboard" link that also preserves context.
+
+Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.). Board has an **Export JSON** button (backlog header) that emits the three JSON files from live cards+plan via the adapter (roundtrip to static or editor). Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 0 details.
 
 ---
 

@@ -32,7 +32,7 @@ http://localhost:9000?team=abc&project=sample
 
 - Use `&tab=board|planner|timeline|dashboard` to deep-link a specific tab (URL updates on click, other params like `&apiBase=...` are preserved).
 - The Board tab supports CSV import (with downloadable sample CSVs next to the button), drag-and-drop, inline title editing (dblclick), filter, and "Export JSON" (produces the three legacy files from live data).
-- Visit the JSON Editor at `/editor.html?team=abc&project=sample` for form-based editing of the legacy JSONs + CSV import for types/status + "Download JSON files".
+- From the main dashboard (after loading with `?team=...&project=...`), use the **"JSON Editor"** link in the topbar (next to the palette switcher) to jump to the form editor. The link preserves your current team/project/apiBase. You can also visit `/editor.html?team=abc&project=sample` directly. The editor has a reciprocal "Open dashboard" link.
 - For self-host server sync: append `&apiBase=http://localhost:3001` (or your server). A sync badge appears; board changes POST automatically. Start the companion server with `node server/index.js` (port 3001).
 
 The server watches source files and hot-reloads on changes.
