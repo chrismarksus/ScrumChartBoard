@@ -124,8 +124,8 @@ Goal: A self-host user can create a project and see both live planning and rich 
 - Add `?tab=` URL support + preserve params + load precedence (per main_tabbar.md; currently no URL sync at all). ✅ done (pushState on clicks, read on load with precedence, coexists with team/project/apiBase, early class application to avoid FOUC).
 - Small polish from board/planner specs now called out in roadmap: card editing (title/type/points), delete confirmations, basic search/filter on backlog. ✅ done (dblclick title edit; confirm before all deletes for cards/intervals/themes; live title+type filter input on backlog that preserves other UX).
 - Full ship/reconcile of board feature (update/close #85): complete REST wiring details if needed, polish export UI (currently in Board; could add to Editor too).
-- Docs updates across README, DATA_FORMAT (add board Store schema + CSV samples), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109). (CHANGELOG.md added; deprecation notes on outdated specs; PR #111 open with updates).
-- Verify end-to-end success criteria (including optional server sync after apiBase wired; also test Export + samples downloads).
+- Docs updates across README, DATA_FORMAT (add board Store schema + CSV samples), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109). (CHANGELOG.md added; full board data model section in DATA_FORMAT; CONTRIBUTIONS running section updated; deprecation notes on outdated specs; PR #111 open + comments with progress).
+- Verify end-to-end success criteria (including optional server sync after apiBase wired; also test Export + samples downloads). ✅ in-session (dev 9000 + api 3001 launched, confirmed listening/ready, full flow testable with ?team=abc&project=sample&tab=board&apiBase=http://localhost:3001; tasks auto-timed out after 5m).
 
 ✅ Wire `Store.apiBase` (query param + small persisted UI badge; persisted across reloads; syncs on board ops).
 ✅ Export JSON UI implemented (Export JSON button in Board backlog header; uses BoardAdapter.toJsonFiles to download the three JSONs for roundtrip/static use). 
