@@ -14,6 +14,7 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, 'app/dashboard.html'),
         landing: path.resolve(__dirname, 'app/index.html'),
+        editor: path.resolve(__dirname, 'app/editor.html'),
       },
     },
   },

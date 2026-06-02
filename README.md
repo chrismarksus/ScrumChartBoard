@@ -38,6 +38,8 @@ The update release does not include a `teams/` folder.
 
 Copy the **contents** of the uncompressed folder — do not copy over the folder itself or you will overwrite the `teams/` directory and lose your data.
 
+A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashboard.json` / `project.json` / `intervals.json` via forms with live preview and per-section Copy buttons (no more hand-editing). In dev: `/editor.html?team=abc&project=sample`. See the roadmap for Phase 0 details.
+
 ---
 
 ## Getting Started
