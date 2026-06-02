@@ -524,6 +524,10 @@ function bindAddButtons() {
     if (e.target.matches('[data-add="p-cardStatus"]')) addKeyValueRepeat('p-cardStatus-container', 'projectData.cardStatus');
     if (e.target.matches('[data-add="p-timelines"]')) addTimeline();
     if (e.target.matches('[data-add="interval"]')) addInterval();
+    if (e.target.matches('[data-import-csv]')) {
+      const target = e.target.getAttribute('data-import-csv');
+      _importCSVToKeyValue(target);
+    }
   });
 
   // copy buttons
@@ -560,6 +564,83 @@ function bindAddButtons() {
       setTimeout(() => e.target.textContent = orig, 1200);
     }
   });
+}
+
+function parseCSVForEditor(text) {
+  if (!text) return [];
+  const lines = text.replace(/\r/g, '').trim().split('\n');
+  if (lines.length < 2) return [];
+  const headerLine = lines[0];
+  const headers = splitCSVLineEditor(headerLine).map(h => h.toLowerCase().trim());
+  const result = [];
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+    const values = splitCSVLineEditor(line);
+    const row = {};
+    headers.forEach((h, j) => { row[h] = (values[j] || '').trim(); });
+    result.push(row);
+  }
+  return result;
+}
+
+function splitCSVLineEditor(line) {
+  const result = [];
+  let current = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const char = line[i];
+    if (char === '"') {
+      inQuotes = !inQuotes;
+    } else if (char === ',' && !inQuotes) {
+      result.push(current);
+      current = '';
+    } else {
+      current += char;
+    }
+  }
+  result.push(current);
+  return result.map(v => v.replace(/^"|"$/g, '').trim());
+}
+
+function _importCSVToKeyValue(target) {
+  const arrPath = target === 'p-cardTypes' ? 'projectData.cardTypes' : 'projectData.cardStatus';
+  const containerId = target === 'p-cardTypes' ? 'p-cardTypes-container' : 'p-cardStatus-container';
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv,text/csv';
+  input.style.display = 'none';
+  document.body.appendChild(input);
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      document.body.removeChild(input);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const text = ev.target.result;
+      const rows = parseCSVForEditor(text);
+      const arr = getPath(state, arrPath) || [];
+      let added = 0;
+      rows.forEach(r => {
+        const key = r.key || r.type || r.name || r.col1 || r[0] || '';
+        let value = r.value || r.count || r.points || r.col2 || r[1] || '0';
+        value = parseInt(value, 10) || 0;
+        if (key) {
+          arr.push({ key: String(key).trim(), value });
+          added++;
+        }
+      });
+      document.body.removeChild(input);
+      if (added > 0) {
+        renderKeyValueRepeat(containerId, arrPath);
+        updatePreview();
+      }
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 }
 
 function initFromQuery() {

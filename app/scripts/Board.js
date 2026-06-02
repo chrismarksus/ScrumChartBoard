@@ -10,11 +10,13 @@ export default class Board {
     this._store = store;
     this._backlogLimit = PAGE;
     this._sortables = [];
+    this._lastContainerId = null;
   }
 
   render(containerId) {
     const el = document.getElementById(containerId);
     if (!el) return;
+    this._lastContainerId = containerId;
     el.innerHTML = this._html();
     this._bind(el);
     this._initSortable(el);
@@ -34,6 +36,7 @@ export default class Board {
       <div class="board-col-header">
         <span class="board-col-title">${LABELS[status]}</span>
         <span class="board-col-count">${all.length}</span>
+        ${status === 'backlog' ? '<button class="board-import-btn" title="Import cards from CSV (columns: title,type,points,blocked)">Import CSV</button>' : ''}
       </div>
       ${status === 'backlog' ? this._formHtml() : ''}
       <div class="board-col-cards" data-status="${status}">
@@ -112,6 +115,11 @@ export default class Board {
         this.render(el.id);
       });
     });
+
+    const importBtn = el.querySelector('.board-import-btn');
+    if (importBtn) {
+      importBtn.addEventListener('click', () => this._importCSV());
+    }
   }
 
   _initSortable(el) {
@@ -135,5 +143,84 @@ export default class Board {
         }
       }));
     });
+  }
+
+  _parseCSV(text) {
+    if (!text) return [];
+    const lines = text.replace(/\r/g, '').trim().split('\n');
+    if (lines.length < 2) return [];
+    const headerLine = lines[0];
+    const headers = this._splitCSVLine(headerLine).map(h => h.toLowerCase().trim());
+    const result = [];
+    for (let i = 1; i < lines.length; i++) {
+      const line = lines[i].trim();
+      if (!line) continue;
+      const values = this._splitCSVLine(line);
+      const row = {};
+      headers.forEach((h, j) => { row[h] = (values[j] || '').trim(); });
+      result.push(row);
+    }
+    return result;
+  }
+
+  _splitCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+      if (char === '"') {
+        inQuotes = !inQuotes;
+      } else if (char === ',' && !inQuotes) {
+        result.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    result.push(current);
+    return result.map(v => v.replace(/^"|"$/g, '').trim());
+  }
+
+  _importCSV() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.csv,text/csv';
+    input.style.display = 'none';
+    document.body.appendChild(input);
+    input.onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        document.body.removeChild(input);
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const text = ev.target.result;
+        const rows = this._parseCSV(text);
+        let added = 0;
+        rows.forEach(r => {
+          const title = (r.title || r['card title'] || r.name || '').trim();
+          if (!title) return;
+          const type = r.type || r['card type'] || 'Story';
+          let points = parseInt(r.points || r.pts || r.effort || '0', 10);
+          if (isNaN(points)) points = 0;
+          const blockedStr = (r.blocked || r['is blocked'] || '').toLowerCase();
+          const blocked = blockedStr === 'true' || blockedStr === 'yes' || blockedStr === '1';
+          this._store.addCard({ title, type, points, blocked });
+          added++;
+        });
+        document.body.removeChild(input);
+        if (added > 0) {
+          const backlogCount = this._store.getCards().filter(c => c.status === 'backlog').length;
+          if (backlogCount > this._backlogLimit) this._backlogLimit = backlogCount;
+          if (this._lastContainerId) {
+            this.render(this._lastContainerId);
+          }
+        }
+      };
+      reader.readAsText(file);
+    };
+    input.click();
   }
 }
