@@ -28,7 +28,7 @@ Current shipped state (as of Phase 0 progress in workspace):
 - ✅ JSON editor (issue #74, full forms + preview + copy per the spec).
 - ✅ CSV import (cards → Board + into editor for types/status; per roadmap bullet). Plus enhanced downloadable starter sample CSVs (rich data, quoted examples) with "Sample CSV"/"Download sample" links next to every import control.
 - ✅ BoardAdapter (transforms Store data to Model shape so board drives charts; + toJsonFiles helper for export).
-- ✅ Export JSON UI (Export JSON button in Board; downloads the three legacy JSON files from live store data for roundtrips/self-host).
+- ✅ Export JSON UI (Export JSON button in Board + "Download JSON files" button in Editor preview; downloads the three legacy JSON files from live store data or current editor forms for roundtrips/self-host).
 - ✅ `Store.apiBase` wiring ( `?apiBase=...` + persisted + visible sync badge for self-host server sync story).
 - ✅ `?tab=` support (URL reflects active tab + direct links + param preservation + no FOUC; per spec.main_tabbar.md).
 - ✅ Small polish: delete confirmations (cards, intervals, timeline themes), inline title editing (dblclick), basic backlog filter (title/type).
@@ -124,7 +124,7 @@ Goal: A self-host user can create a project and see both live planning and rich 
 - Add `?tab=` URL support + preserve params + load precedence (per main_tabbar.md; currently no URL sync at all). ✅ done (pushState on clicks, read on load with precedence, coexists with team/project/apiBase, early class application to avoid FOUC).
 - Small polish from board/planner specs now called out in roadmap: card editing (title/type/points), delete confirmations, basic search/filter on backlog. ✅ done (dblclick title edit; confirm before all deletes for cards/intervals/themes; live title+type filter input on backlog that preserves other UX).
 - Full ship/reconcile of board feature (update/close #85): complete REST wiring details if needed, polish export UI (currently in Board; could add to Editor too).
-- Docs updates across README, DATA_FORMAT (add board Store schema + CSV samples), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109).
+- Docs updates across README, DATA_FORMAT (add board Store schema + CSV samples), CONTRIBUTIONS, this file (mark progress, add changelog), close related issues (#74, #85, #109). (CHANGELOG.md added; deprecation notes on outdated specs; PR #111 open with updates).
 - Verify end-to-end success criteria (including optional server sync after apiBase wired; also test Export + samples downloads).
 
 ✅ Wire `Store.apiBase` (query param + small persisted UI badge; persisted across reloads; syncs on board ops).
