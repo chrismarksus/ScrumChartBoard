@@ -1173,6 +1173,45 @@ p.updatedBy {
   .timeline-wrap { padding: 16px; }
 }
 
+/* =============================================================
+   JSON Editor (standalone, reuses .shell, .row, .button, vars)
+   ============================================================= */
+.editor-wrap { padding: 24px 0 48px; }
+.editor-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.editor-header h1 { font-size: 1.25rem; margin: 0; }
+.editor-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 16px; }
+.editor-controls input[type="text"] { width: 160px; }
+.editor-tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.editor-tab-btn {
+  appearance: none; background: none; border: 1px solid transparent; padding: 8px 16px;
+  font-family: var(--font-sans); font-size: 0.9rem; color: var(--text-secondary);
+  border-bottom: 3px solid transparent; cursor: pointer;
+}
+.editor-tab-btn.is-active { color: var(--text-primary); border-bottom-color: var(--tab-active); font-weight: 600; }
+.editor-pane { display: none; }
+.editor-pane.is-active { display: block; }
+.editor-form label { display: block; font-size: 0.75rem; color: var(--text-muted); margin: 10px 0 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+.editor-form input[type="text"], .editor-form input[type="number"], .editor-form select {
+  width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); color: var(--text-primary); font-family: var(--font-sans); font-size: 0.9rem;
+}
+.editor-form input:focus, .editor-form select:focus { border-color: var(--tab-active); outline: none; }
+.repeat-section { margin: 12px 0; }
+.repeat-row { display: flex; gap: 6px; align-items: center; margin-bottom: 6px; padding: 6px; background: var(--surface-2); border-radius: 6px; }
+.repeat-row input, .repeat-row select { flex: 1; min-width: 0; }
+.repeat-row .remove-btn { appearance: none; border: none; background: none; color: var(--text-muted); font-size: 1.1rem; line-height: 1; cursor: pointer; padding: 2px 6px; }
+.repeat-row .remove-btn:hover { color: var(--c-hover); }
+.add-btn { font-size: 0.8rem; padding: 4px 10px; margin-top: 4px; }
+.editor-preview { position: sticky; top: 24px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-card); padding: 12px; box-shadow: var(--shadow-card); }
+.editor-preview pre { margin: 0; font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.3; max-height: 520px; overflow: auto; background: var(--surface-2); padding: 10px; border-radius: 6px; white-space: pre; }
+.editor-preview .preview-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+.editor-copy-btn { font-size: 0.7rem; padding: 2px 8px; }
+.editor-note { font-size: 0.75rem; color: var(--text-muted); margin-top: 12px; }
+.collapsible { border: 1px solid var(--border-subtle); border-radius: 6px; margin-bottom: 8px; background: var(--surface-2); }
+.collapsible summary { padding: 8px 10px; cursor: pointer; font-weight: 500; user-select: none; }
+.collapsible[open] summary { border-bottom: 1px solid var(--border-subtle); }
+.collapsible-body { padding: 8px 10px; }
+
 /* ============================================================= */
 /* Tab bar                                                       */
 /* ============================================================= */
