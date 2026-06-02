@@ -10,6 +10,7 @@ export default class Board {
   constructor(store) {
     this._store = store;
     this._backlogLimit = PAGE;
+    this._backlogFilter = '';
     this._sortables = [];
     this._lastContainerId = null;
   }
@@ -30,7 +31,11 @@ export default class Board {
   }
 
   _colHtml(status) {
-    const all = this._store.getCards().filter(c => c.status === status);
+    let all = this._store.getCards().filter(c => c.status === status);
+    if (status === 'backlog' && this._backlogFilter) {
+      const f = this._backlogFilter.toLowerCase();
+      all = all.filter(c => (c.title || '').toLowerCase().includes(f) || (c.type || '').toLowerCase().includes(f));
+    }
     const visible = status === 'backlog' ? all.slice(0, this._backlogLimit) : all;
     const remaining = status === 'backlog' ? all.length - this._backlogLimit : 0;
     return `<div class="board-col">
@@ -38,6 +43,7 @@ export default class Board {
         <span class="board-col-title">${LABELS[status]}</span>
         <span class="board-col-count">${all.length}</span>
         ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked)">Sample CSV</a><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button>' : ''}
+        ${status === 'backlog' ? `<input class="board-filter" type="text" placeholder="Filter backlog..." value="${this._backlogFilter || ''}">` : ''}
       </div>
       ${status === 'backlog' ? this._formHtml() : ''}
       <div class="board-col-cards" data-status="${status}">
@@ -64,7 +70,7 @@ export default class Board {
         <span class="board-card-type">${card.type || 'Story'}</span>
         ${card.points ? `<span class="board-card-points">${card.points}</span>` : ''}
       </div>
-      <div class="board-card-title">${this._esc(card.title)}</div>
+      <div class="board-card-title" data-editable-title="${card.id}">${this._esc(card.title)}</div>
       <div class="board-card-footer">
         <label class="board-card-blocked-label">
           <input type="checkbox" class="board-card-blocked-cb" data-id="${card.id}"${card.blocked ? ' checked' : ''}> Blocked
@@ -112,6 +118,7 @@ export default class Board {
 
     el.querySelectorAll('.board-card-delete').forEach(btn => {
       btn.addEventListener('click', e => {
+        if (typeof confirm === 'function' && !confirm('Delete this card?')) return;
         this._store.removeCard(e.target.dataset.id);
         this.render(el.id);
       });
@@ -125,6 +132,45 @@ export default class Board {
     if (exportBtn) {
       exportBtn.addEventListener('click', () => this._exportBoardJson());
     }
+
+    // Small polish: backlog filter input (live, case-insensitive on title/type)
+    const filterInput = el.querySelector('.board-filter');
+    if (filterInput) {
+      filterInput.addEventListener('input', (e) => {
+        this._backlogFilter = e.target.value || '';
+        // reset limit so user sees results from top of (filtered) backlog
+        this._backlogLimit = PAGE;
+        if (this._lastContainerId) this.render(this._lastContainerId);
+      });
+    }
+
+    // Small polish: dblclick title to edit inline (title only for now; type/points via re-add or future)
+    el.querySelectorAll('.board-card-title[data-editable-title]').forEach(titleEl => {
+      titleEl.addEventListener('dblclick', () => {
+        const id = titleEl.dataset.editableTitle;
+        const current = this._store.getCards().find(c => c.id === id);
+        if (!current) return;
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = current.title || '';
+        input.style.width = '100%';
+        titleEl.replaceWith(input);
+        input.focus();
+        input.select();
+        const commit = () => {
+          const newTitle = input.value.trim();
+          if (newTitle && newTitle !== current.title) {
+            this._store.updateCard(id, { title: newTitle });
+          }
+          if (this._lastContainerId) this.render(this._lastContainerId);
+        };
+        input.addEventListener('blur', commit);
+        input.addEventListener('keydown', (ev) => {
+          if (ev.key === 'Enter') { ev.preventDefault(); commit(); }
+          if (ev.key === 'Escape') { if (this._lastContainerId) this.render(this._lastContainerId); }
+        });
+      });
+    });
   }
 
   _initSortable(el) {

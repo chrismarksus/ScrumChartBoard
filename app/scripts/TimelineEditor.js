@@ -158,6 +158,7 @@ export default class TimelineEditor {
 
     el.querySelectorAll('.tl-del-btn').forEach(btn => {
       btn.addEventListener('click', e => {
+        if (typeof confirm === 'function' && !confirm('Delete this theme?')) return;
         this._store.removeTimeline(e.target.dataset.id);
         this.render(el.id);
       });
