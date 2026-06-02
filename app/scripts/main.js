@@ -9,6 +9,7 @@ import Store from './Store.js';
 import Board from './Board.js';
 import IntervalPlanner from './IntervalPlanner.js';
 import TimelineEditor from './TimelineEditor.js';
+import BoardAdapter from './BoardAdapter.js';
 
 new ThemeSwitcher().setup();
 
@@ -61,7 +62,7 @@ let timeline = null;
     }
     const getData = new GetData(team, project);
     getData.setup().then(([dashboard, project, intervals]) => {
-      const board = dashboard[0];
+      let modelInput = dashboard[0];
 
       const lastModifiedIntervals = intervals[1].headers.get('Last-Modified');
       const dateIntervals = new Date(lastModifiedIntervals);
@@ -70,15 +71,34 @@ let timeline = null;
       const dateProject = new Date(lastModifiedProject);
 
       if(dateIntervals > dateProject){
-        board.updatedDate = helper.mmddyyyy(lastModifiedIntervals);
+        modelInput.updatedDate = helper.mmddyyyy(lastModifiedIntervals);
       } else if(dateIntervals <= dateProject){
-        board.updatedDate = helper.mmddyyyy(lastModifiedProject);
+        modelInput.updatedDate = helper.mmddyyyy(lastModifiedProject);
       }
 
-      board.project = project[0].project;
-      board.intervals = intervals[0].intervals;
+      modelInput.project = project[0].project;
+      modelInput.intervals = intervals[0].intervals;
 
-      const model = new Model(board);
+      // Phase 0: BoardAdapter - if the interactive board has data (cards, intervals, or timelines),
+      // derive/enrich the dashboard data from it so charts reflect live board state.
+      // This is the key unification: create/edit via editor + board/CSV, see rich charts.
+      try {
+        const storeSnapshot = {
+          cards: store.getCards(),
+          intervals: store.getIntervals(),
+          timelines: store.getTimelines()
+        };
+        const hasBoardData = (storeSnapshot.cards && storeSnapshot.cards.length > 0) ||
+                             (storeSnapshot.intervals && storeSnapshot.intervals.length > 0) ||
+                             (storeSnapshot.timelines && storeSnapshot.timelines.length > 0);
+        if (hasBoardData) {
+          modelInput = BoardAdapter.toDashboardData(storeSnapshot, modelInput);
+        }
+      } catch (e) {
+        console.warn('BoardAdapter failed, falling back to JSON data', e);
+      }
+
+      const model = new Model(modelInput);
       const main = new Scrum('main', model);
       main.setup();
       window.addEventListener('pagehide', main.destroy);
