@@ -21,7 +21,7 @@ High-level product direction, data unification strategy (chart JSONs vs. interac
 
 :file_folder: [Get the latest release](https://github.com/chrismarksus/ScrumChartBoard/releases)
 
-### Self-host in < 5 minutes (Docker recommended for Phase 1)
+### Self-host in < 5 minutes (Docker)
 
 ```bash
 git clone https://github.com/chrismarksus/ScrumChartBoard.git
@@ -71,9 +71,9 @@ A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashb
 
 Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.; updated samples include status + intervalId for roundtrip). Board supports **Export Cards CSV** (with status/intervalId), **Export JSON** (the 3 legacy files via adapter for static/editor), and **Export/Import State** (full {cards,intervals,timelines} JSON for perfect roundtrip/backup).
 
-**GitHub import (Phase 1)**: In Board backlog or JSON Editor, click "Import GitHub", enter `owner/repo` (e.g. try a public repo with open issues). Optional personal access token (PAT, repo scope) for private repos or to bypass rate limits. Open issues (PRs skipped) become backlog cards: first matching label sets type (bug→Bug, enhancement→Story, chore→Task, etc.; falls back to 'Story' or raw label), points parsed from title like `(5)`, `(3 pts)`, `[8]`, or body fallback. Then drag to plan or Export State / use Editor "Download 3 JSONs" for charts. Pure client fetch, no server proxy.
+**GitHub import (landed in Phase 1)**: In Board backlog or JSON Editor, click "Import GitHub", enter `owner/repo` (e.g. try a public repo with open issues). Optional personal access token (PAT, repo scope) for private repos or to bypass rate limits. Open issues (PRs skipped) become backlog cards: first matching label sets type (bug→Bug, enhancement→Story, chore→Task, etc.; falls back to 'Story' or raw label), points parsed from title like `(5)`, `(3 pts)`, `[8]`, or body fallback. Then drag to plan or Export State / use Editor "Download 3 JSONs" for charts. Pure client fetch, no server proxy.
 
-Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 1 roundtrip details.
+Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See `specs/spec.roadmap.md` for Phase 1 roundtrip (now complete) and Phase 2+ details.
 
 ---
 
@@ -235,7 +235,7 @@ node server/index.js
 
 For plain static hosting (no board sync): just serve the `dist/` folder contents and use localStorage-only board + Export JSON for the classic 3-file dashboard path.
 
-See DATA_FORMAT.md, the roadmap, and CONTRIBUTIONS.md for more. The goal for Phase 1 is a non-technical ScrumMaster up and planning with charts in <15 minutes.
+See DATA_FORMAT.md, the roadmap, and CONTRIBUTIONS.md for more. Phase 1 (self-host packaging + roundtrip + capacity/velocity/GH import) shipped in v0.4.0; a non-technical ScrumMaster can now self-host a useful instance in <5 minutes with Docker (goal achieved). Phase 2 focuses on hosted cloud accounts/projects.
 
 ---
 

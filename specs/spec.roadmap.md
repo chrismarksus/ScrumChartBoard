@@ -9,7 +9,7 @@ ScrumChartBoard is a chart-first Scrum metrics dashboard with an expanding inter
 
 This top-level spec defines the product direction, data strategy, phasing, and governance for specs. It is the single source of truth that all feature specs (`spec.*.md`) and implementation work must align with. See also `spec.landing.md` (marketing vision and pricing), `spec.main_tabbar.md` (navigation policy), and the detailed page specs.
 
-Current shipped state (as of v0.3.0 + Phase 1 start on branch):
+Current shipped state (as of Phase 1 complete / v0.4.0):
 - Landing page with hero, feature illustrations, palette switcher, and pricing stubs (updated with muted "Coming soon" paid tiers per design).
 - Four-tab app (Board, Interval Planner, Timeline, Dashboard) — only completed, fully specced pages appear (per `spec.main_tabbar.md`).
 - `Store.js` + `Board.js` + `IntervalPlanner.js` + `TimelineEditor.js` with localStorage persistence and optional REST sync (`Store.apiBase`).
@@ -21,10 +21,10 @@ Current shipped state (as of v0.3.0 + Phase 1 start on branch):
 - BoardAdapter + toJsonFiles helper (export of board state to 3-JSON format); Export JSON button in Board UI. Plus new Export/Import full state JSON and cards CSV for roundtrips.
 - `Store.apiBase` wired via `?apiBase=` query + local persist + visible badge (enables live sync to self-host server/).
 - `?tab=` support: URL now reflects the active tab (pushState on click, read on load with precedence over defaults, preserves team/project/apiBase etc.). Early class application prevents FOUC of the wrong panel.
-- Self-host packaging: Dockerfile + docker-compose for combined SPA + API (one-command, persistent data).
-- Round-trip import/export started (CSV bidirectional for cards+assignments; full board state JSON roundtrip).
-- Phase 1 in-progress (this branch): most items complete (capacity/velocity full + tests; packaging full with Docker+compose+server SPA serve; roundtrip full incl. state/CSV/GH; editor as hub + GH load; landing proof points + README quickstart advanced; GH import fully shipped with editor support, heuristics, 285 tests, docs). All gated (lint/test/build), multiple commits/pushes on feat/phase1-selfhost-packaging (PR #113). Next: any final E2E self-host verification or landing hero polish.
-- (See \"Current shipped state (as of v0.3.0 + Phase 1 progress)\" and \"Phase 0 Completed\" + Phase 1 bullets below for the consolidated list; duplicate enumeration cleaned.)
+- Self-host packaging: Dockerfile + docker-compose for combined SPA + API (one-command, persistent data). CI has Docker build job for ongoing packaging verification.
+- Round-trip import/export complete (CSV bidirectional for cards+assignments; full board state JSON roundtrip; GH import as bootstrap).
+- Phase 1 complete (PR #113): capacity/velocity full + tests; packaging full with Docker+compose+server SPA serve + .dockerignore; roundtrip full incl. state/CSV/GH + Editor hub; landing proof points + README quickstart + E2E verification (server parity + Docker commands documented); GH import fully shipped with editor support, heuristics, 285 tests, docs. All gated (lint/test/build), multiple commits/pushes. 0.4.0 prepped (package.json, CHANGELOG).
+- (See "Phase 0 Completed", "Phase 1 Completed", and the Phase sections below for details; duplicate enumeration cleaned.)
 
 **Note on spec drift**: Some specs pre-date the interactive board work (`spec.persistence.md`, `spec.backlog.md`, `spec.work_item*.md`, placeholder `spec.planner.md`). The shipped card model (UUIDs, statuses `backlog|todo|inprogress|done`, `intervalId`, etc.) differs from the older integer-ID work-item schema. Reconciliation notes + deprecation guidance were added during Phase 0 (see DATA_FORMAT + roadmap updates in v0.3.0).
 
@@ -38,7 +38,15 @@ Current shipped state (as of v0.3.0 + Phase 1 start on branch):
 - ✅ Small polish: delete confirmations (cards, intervals, timeline themes), inline title editing (dblclick), basic backlog filter (title/type).
 - Core Board/Planner/Timeline + tab bar + Store + server (from prior work; tests/build clean).
 
-Phase 0 is complete (delivered in v0.3.0 via PR #111). See the "Phase 0 Completed" list and "Current shipped state" for delivered items; remaining work is in Phase 1+.
+Phase 0 is complete (delivered in v0.3.0 via PR #111). See the "Phase 0 Completed" list and "Current shipped state" for delivered items; remaining work is in Phase 2+.
+
+### Phase 1 Completed (as of v0.4.0 / PR #113)
+- ✅ Round-trip (CSV bidirectional + full state JSON + GH import bootstrap + Editor "Load board state" / "Download 3 JSONs").
+- ✅ Planner: interval editing (name/dates), capacity (per-interval + warnings banner/lanes for non-done overcommit), velocity suggestions ("Use ~N" from history).
+- ✅ Self-host packaging: Dockerfile (multi-stage), docker-compose (SPA+API+volume on :8080), server serves dist/ + samples + /board; one-command `docker compose up --build`; E2E parity verified + CI Docker job.
+- ✅ GitHub import (Board + standalone Editor; heuristics for labels→type + points from title/body; tests + docs).
+- ✅ Editor as roundtrip hub + landing proof points updated (Open tier reflects shipped; doh-strip claim updated).
+- ✅ 0.4.0 release prep: CHANGELOG, package.json, roadmap/ docs / README updates; 285 tests, lint clean.
 
 ---
 
@@ -133,9 +141,9 @@ Until unification lands, board data remains a parallel planning tool whose outpu
 
 ✅ All sub-items (apiBase, Export, samples, editor, ?tab=, polish, deprecations, docs) shipped.
 
-Phase 0 success criteria met. Moving to Phase 1 packaging & self-host polish in next cycle. See "Phase 0 Completed" list above for the full delivered set.
+Phase 0 success criteria met. Phase 1 (self-host packaging, roundtrip, capacity/velocity, GH import, editor hub) shipped in v0.4.0 / PR #113. See "Phase 0 Completed" and "Phase 1 Completed" lists above/below for delivered; next is Phase 2 (hosted cloud foundation).
 
-### Phase 1 — Self-Host Complete & Packaging
+### Phase 1 Completed — Self-Host Complete & Packaging (v0.4.0 / PR #113)
 
 - Round-trip import/export (CSV ↔ full project state including historical metrics). ✅ (enhanced cards CSV bidirectional with status/intervalId; full state JSON export/import in Board + Store + editor; samples/docs updated; GH import as additional bootstrap path).
 - Finish remaining MVP items from existing specs (editing intervals/themes, capacity warnings, etc.). ✅ (interval name/dates + capacity editing + dynamic over-allocation warnings banner + per-lane indicators; non-done committed vs per-interval capacity; replaces basic >40).
