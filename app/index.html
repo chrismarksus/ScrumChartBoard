@@ -124,7 +124,7 @@
     <div class="doh-card">
       <div>
         <h2>Stop seeing <span class="doh">Doh</span><small>There is no data available! …said no team using us, ever.</small></h2>
-        <p>Other dashboards greet you with empty states and missing JSON. ScrumChartBoard greets you with charts — import via single CSV (or JSON state roundtrip from the interactive board/planner). Self-host with Docker in minutes; charts reflect live planning data. Forty seconds to first burnup.</p>
+        <p>Other dashboards greet you with empty states and missing JSON. ScrumChartBoard greets you with charts — import via single CSV, full board state roundtrip, or <strong>GitHub issues</strong> (public repo → backlog cards in one click, with label→type + points heuristics; also in the Editor). Interactive Board + Planner (capacity warnings, velocity \"Use suggested\"), Timeline. Self-host with one <code>docker-compose up --build</code> (&lt;5 min); charts + planner live from board data via BoardAdapter. Forty seconds to first burnup.</p>
         <a href="./dashboard.html?team=abc&project=sample" class="doh-link">See the import flow →</a>
       </div>
       <div class="doh-visual">
@@ -364,11 +364,11 @@
         <div class="price-name">Open</div>
         <div class="price-num">$0<span class="unit">/forever</span></div>
         <ul class="price-feat-list">
-          <li>Self-host (Docker + server) + MIT</li>
-          <li>Board + Planner + Timeline (capacity warnings)</li>
-          <li>CSV + JSON state roundtrip import/export</li>
-          <li>JSON Editor (forms + live preview)</li>
-          <li>All 7 charts (board-driven via adapter)</li>
+          <li>Self-host (Docker + server) + MIT — &lt;5 min to running instance</li>
+          <li>Board + Planner + Timeline (capacity warnings + velocity suggestions)</li>
+          <li>GitHub import (issues → cards, editor + board), CSV + full state roundtrip</li>
+          <li>JSON Editor (forms + live preview + \"Load board state\" + \"Import from GitHub\")</li>
+          <li>All 7 charts (board-driven via adapter; live from planning data)</li>
           <li>4 palettes, deep links, optional sync</li>
           <li>Community support</li>
         </ul>
