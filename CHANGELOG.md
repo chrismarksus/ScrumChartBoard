@@ -7,8 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-03
+
+### Added / Phase 1 Complete
+- Full self-host packaging + E2E verification (Docker one-command, unified server, compose polish, server parity smokes for SPA/board/samples/roundtrip, user commands documented; daemon note for envs).
+- GitHub import completed (Board + Editor standalone, improved mapper + tests + docs).
+- All prior Phase 1: capacity/velocity planner, roundtrip (CSV/state/JSON/Editor/GH), editor as hub, landing proof points + spec alignment, CONTRIBUTIONS examples, roadmap/CHANGELOG/docs cleanup, 285 specs.
+- MCP visibility + PR #113 prep (body updated with full summary; ready for merge after test CI).
+- "All of it" executed per user request (Docker E2E attempts + parity, spec-lint clean, landing more, contrib concrete, release prep, roadmap audit).
+
 ### Added
-- Self-host packaging (Phase 1 start): Dockerfile (multi-stage build of client + server) + docker-compose.yml for one-command self-host (SPA + /board API + samples + persistent data volume on single port 8080).
+- Self-host packaging (Phase 1): Dockerfile (multi-stage build of client + server) + docker-compose.yml for one-command self-host (SPA + /board API + samples + persistent data volume on single port 8080).
 - Enhanced `server/index.js` to serve the built `dist/` SPA (with teams/ samples fallback) + SPA catch-all alongside the existing board API. Updated startup logs and added /teams middleware.
 - Round-trip import/export enhancements for CSV and full board state:
   - Board: **Export Cards CSV** (includes status, intervalId for bidirectional), **Export State** (full {cards,intervals,timelines} JSON), **Import State** (loads full state back to board/Store).

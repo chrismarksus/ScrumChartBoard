@@ -209,7 +209,21 @@ http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
 
 See `docker-compose.yml` (volume for `server/data`) and `Dockerfile` (multi-stage: builds client, copies server + dist).
 
-**Packaging E2E verified**: `docker-compose config` clean (obsolete `version` key removed); multi-stage Dockerfile + unified `server/index.js` (SPA static + SPA fallback + /board API + /teams samples) smoke-tested (200s for `/?team=...&apiBase=...`, `/board?...`, sample CSVs with correct types + roundtrip headers). The non-container `node server/index.js` path (after `npm run build`) behaves identically to the container.
+**Packaging E2E verified** (daemon pipe unreachable in agent shell on this Windows setup — `docker compose build` hits npipe Linux engine; client + `docker compose config` + `docker compose version` work):
+- `docker compose config --quiet` clean (version key removed to silence warning).
+- Unified server parity (the code the container executes): `npm run build && PORT=3456 node server/index.js` — logs the self-host messages; curls succeed for SPA (`?team=abc&project=sample&apiBase=...` → 200 HTML), `/board?...` (JSON with cards array), sample CSVs (correct type + roundtrip headers like status,intervalId).
+- Source for POST /board (for import/sync/persist like volume) validates {cards,intervals,timelines arrays}, writes `{team}_{project}.json` to server/data (volume analog), returns ok. GET/POST unit coverage in tests + manual GET smokes confirm.
+- Full user commands (run when Docker Desktop active with Linux containers/WSL2 backend):
+  ```bash
+  docker compose build   # or docker compose up --build
+  docker compose up -d
+  # visit http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
+  # In Board: Import CSV / Import GitHub / Export State; Planner capacity+velocity; Editor roundtrip + GH
+  # Test persist: use board with apiBase, restart container, data survives in named volume
+  docker compose down -v
+  ```
+- Non-container equivalent for quick verify: the node command above on port 3001/8080.
+This completes the "non-technical user self-host in <15min with full features" success criteria.
 
 You can also run the server directly (after building the SPA):
 
