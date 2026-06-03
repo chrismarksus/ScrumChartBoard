@@ -1,5 +1,8 @@
 // editor.js — vanilla JS JSON editor for the three data files (no jQuery)
 // Mirrors the detailed spec from GitHub issue #74.
+// Phase 1: now also supports loading board state JSON for roundtrip -> derived 3-JSON via BoardAdapter.
+
+import BoardAdapter from './BoardAdapter.js';
 
 const state = {
   team: '',
@@ -19,7 +22,8 @@ const state = {
     backlog: '',
     timelines: []         // [{title, timeline: [{label, status, days, start}]}]
   },
-  intervals: []           // full interval objects as per DATA_FORMAT (arrays preserved)
+  intervals: [],           // full interval objects as per DATA_FORMAT (arrays preserved)
+  boardState: null         // {cards, intervals, timelines} loaded for roundtrip/derived export (Phase 1 editor primary)
 };
 
 let currentTab = 'dashboard';
@@ -566,6 +570,9 @@ function bindAddButtons() {
     if (e.target.id === 'download-files-btn') {
       downloadEditorFiles();
     }
+    if (e.target.id === 'download-board-derived-btn') {
+      downloadBoardDerived();
+    }
   });
 }
 
@@ -602,6 +609,61 @@ function downloadEditorFiles() {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   });
+}
+
+/**
+ * Phase 1 editor improvement: load full board state exported from the interactive board
+ * (Export State button produces {cards,intervals,timelines}). Enables editor as roundtrip hub.
+ */
+async function loadBoardState(file) {
+  try {
+    const text = await file.text();
+    const snap = JSON.parse(text);
+    if (!snap || !Array.isArray(snap.cards)) {
+      throw new Error('Invalid board state file (expected {cards, intervals?, timelines?})');
+    }
+    state.boardState = {
+      cards: snap.cards || [],
+      intervals: snap.intervals || [],
+      timelines: snap.timelines || []
+    };
+    const st = $('#load-status');
+    if (st) st.textContent = `Board state loaded ✓ (${state.boardState.cards.length} cards, ${state.boardState.intervals.length} intervals). Click "Download 3 JSONs (from board)" below.`;
+  } catch (e) {
+    const st = $('#load-status');
+    if (st) st.textContent = 'Board state load failed: ' + (e.message || e);
+  }
+}
+
+function downloadBoardDerived() {
+  if (!state.boardState) {
+    const st = $('#load-status');
+    if (st) st.textContent = 'Load a board state JSON first (use the "Load board state" button).';
+    return;
+  }
+  try {
+    const derived = BoardAdapter.toJsonFiles(state.boardState);
+    // derived: { dashboard, project: { project: ... }, intervals: { intervals } }
+    const files = [
+      { name: 'dashboard.json', data: derived.dashboard },
+      { name: 'project.json', data: derived.project },
+      { name: 'intervals.json', data: derived.intervals }
+    ];
+    files.forEach(({ name, data }) => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  } catch (e) {
+    const st = $('#load-status');
+    if (st) st.textContent = 'Derived export failed: ' + (e.message || e);
+  }
 }
 
 function parseCSVForEditor(text) {
@@ -696,6 +758,24 @@ function initFromQuery() {
 function init() {
   // bind load
   $('#load-btn').addEventListener('click', loadData);
+
+  // Phase 1: board state load for editor-as-primary roundtrip hub
+  const loadBoardBtn = $('#load-board-btn');
+  const boardFileInput = $('#board-state-file');
+  if (loadBoardBtn && boardFileInput) {
+    loadBoardBtn.addEventListener('click', () => boardFileInput.click());
+    boardFileInput.addEventListener('change', () => {
+      const f = boardFileInput.files && boardFileInput.files[0];
+      if (f) loadBoardState(f);
+      // reset so same file can be chosen again
+      boardFileInput.value = '';
+    });
+  }
+
+  const downloadDerivedBtn = $('#download-board-derived-btn');
+  if (downloadDerivedBtn) {
+    downloadDerivedBtn.addEventListener('click', downloadBoardDerived);
+  }
 
   bindTabs();
   bindAddButtons();
