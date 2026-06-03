@@ -61,3 +61,23 @@ jobs:
         with:
           name: visual-diffs
           path: screenshots/diff/
+
+  docker:
+    runs-on: ubuntu-latest
+    # Verifies the Phase 1 self-host packaging (Dockerfile + compose) builds and produces a runnable unified SPA+API container.
+    # Provides ongoing CI guarantee for the one-command self-host story (even as we enter Phase 2). Includes quick smoke for E2E verification of the packaged result.
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Verify Docker packaging (build + basic self-host smoke)
+        run: |
+          docker compose version
+          docker compose build --progress=plain
+          # Quick containerized self-host E2E smoke (SPA + /board API + samples path)
+          docker compose up -d
+          timeout 45 bash -c 'until curl -sf http://localhost:8080 >/dev/null; do sleep 1; done' || { docker compose logs --tail=50; false; }
+          curl -sf 'http://localhost:8080?team=abc&project=sample' | head -c 300 > /dev/null && echo "✓ SPA served"
+          curl -sf 'http://localhost:8080/board?team=abc&project=sample' | head -c 100 > /dev/null && echo "✓ Board API responded"
+          curl -sfI 'http://localhost:8080/teams/abc/sample-cards.csv' | grep -q '200 OK' && echo "✓ Samples served"
+          docker compose down -v
+        # Not required (test job is the gate per branch protection), but visible in PR checks for packaging health.
