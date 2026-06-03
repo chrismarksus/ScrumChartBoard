@@ -224,7 +224,10 @@ export default class IntervalPlanner {
           const capInput = el.querySelector('.planner-f-capacity');
           if (capInput && sug > 0) {
             capInput.value = sug;
-            capInput.dispatchEvent(new Event('input', { bubbles: true })); // in case future listeners
+            // dispatch only for potential future listeners; guard for jsdom in unit tests
+            if (typeof capInput.dispatchEvent === 'function') {
+              try { capInput.dispatchEvent(new Event('input', { bubbles: true })); } catch {}
+            }
           }
         });
       }
