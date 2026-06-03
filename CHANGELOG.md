@@ -7,6 +7,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-06-03
+
+### Added / Phase 1 Complete
+- Full self-host packaging + E2E verification (Docker one-command, unified server, compose polish, server parity smokes for SPA/board/samples/roundtrip, user commands documented; daemon note for envs).
+- GitHub import completed (Board + Editor standalone, improved mapper + tests + docs).
+- All prior Phase 1: capacity/velocity planner, roundtrip (CSV/state/JSON/Editor/GH), editor as hub, landing proof points + spec alignment, CONTRIBUTIONS examples, roadmap/CHANGELOG/docs cleanup, 285 specs.
+- MCP visibility + PR #113 prep (body updated with full summary; ready for merge after test CI).
+- "All of it" executed per user request (Docker E2E attempts + parity, spec-lint clean, landing more, contrib concrete, release prep, roadmap audit).
+
+### Added
+- Self-host packaging (Phase 1): Dockerfile (multi-stage build of client + server) + docker-compose.yml for one-command self-host (SPA + /board API + samples + persistent data volume on single port 8080).
+- Enhanced `server/index.js` to serve the built `dist/` SPA (with teams/ samples fallback) + SPA catch-all alongside the existing board API. Updated startup logs and added /teams middleware.
+- Round-trip import/export enhancements for CSV and full board state:
+  - Board: **Export Cards CSV** (includes status, intervalId for bidirectional), **Export State** (full {cards,intervals,timelines} JSON), **Import State** (loads full state back to board/Store).
+  - CSV import now respects `status` and `intervalId` columns (in addition to title/type/points/blocked).
+  - Updated starter samples to demonstrate roundtrip columns.
+- Interval editing in Planner (MVP remaining): dblclick name or ✎ button to edit name/dates inline with save/cancel. Basic ⚠ over-commit warning for lanes >40 pts.
+- Planner capacity warnings (Phase 1): intervals now support `capacity` (pts) via create form and edit. Non-blocking warnings: top banner + lane ⚠ when non-done committed points exceed capacity. Dynamic "X pts / CAP" display. Recomputes on drag, add, delete, status-affecting changes (reflected on tab visit). Pure helpers + live render.
+- Editor as primary (Phase 1): added "Load board state" (accepts full state export JSON) + "Download 3 JSONs (from board)" in editor. Uses BoardAdapter.toJsonFiles to derive the legacy dashboard/project/intervals from board cards+assignments. Editor lede/notes updated; now a roundtrip hub for planning -> charts.
+- Landing proof points (Phase 1): updated Open tier feature list and "import" claim to reflect shipped self-host Docker, interactive planner w/ capacity, CSV+state roundtrip, editor, board->charts adapter. (Paid tiers remain "Coming soon" per design.)
+- Velocity suggestions (Phase 1): computeSuggestedCapacity (avg historical completed pts) + actionable "Use ~N" button in +New Interval form (fills capacity); dynamic text/placeholder; empty tip; test. Complements capacity warnings.
+- GitHub import (Phase 1): "Import GitHub" button in Board backlog + standalone in JSON Editor ("Import from GitHub"). Inline mini-form (repo + opt PAT). Client fetch open issues (per_page=100, skips PRs). Improved heuristics in shared `mapGitHubIssueToCard`: scans *all* labels (bug/defect→Bug, enhancement/feature/story→Story, task/chore→Task, spike→Spike; default 'Story' or raw label); points from title ( (N), (N pts), [N], Npts ) with body fallback. Error UX for 401/403/404/429. 8+ unit tests for mapper + exposed for reuse. Cards always land in backlog (drag to plan). Update docs (README/CONTRIBUTIONS) + editor notes. Pure client, no new deps.
+- Docs: README + DATA_FORMAT + CONTRIBUTIONS + CHANGELOG + roadmap updated.
+- Store: added `importState(data)` helper for clean roundtrips.
+- Minor editor UI notes for roundtrip.
+
+This enables CSV ↔ board planning state roundtrip (planning data) + JSON state backup/restore + editor as roundtrip hub (board state -> 3 JSONs), finishes MVP interval editing + adds usable capacity warnings for planning. Packaging + roundtrip + capacity + editor polish + landing proof points + velocity + GitHub import (with editor support + tests) + edits advance Phase 1 self-host. GitHub import gives instant bootstrap from existing repos without manual CSV/JSON entry.
+
+### Changed
+- Board backlog header buttons now include CSV export, state export/import for better roundtrip UX (existing Export JSON for legacy charts remains).
+
+This makes a non-technical user able to `docker-compose up --build` and have a full working instance (with board sync) in < 5 minutes. Addresses Phase 1 "one-command self-host story".
+
 ## [0.3.0] - 2026-06-02
 
 ### Added

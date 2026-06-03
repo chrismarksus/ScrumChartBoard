@@ -5,6 +5,7 @@ export default class TimelineEditor {
   constructor(store) {
     this._store = store;
     this._showAddForm = false;
+    this._editingId = null;
   }
 
   render(containerId) {
@@ -62,8 +63,15 @@ export default class TimelineEditor {
   }
 
   _rowHtml(theme, intervals) {
+    const isEditing = this._editingId === theme.id;
+    let nameCell = '';
+    if (isEditing) {
+      nameCell = `<td class="tl-name"><input class="tl-edit-name" type="text" value="${this._esc(theme.name)}" data-id="${theme.id}"><button class="tl-save-edit" data-id="${theme.id}">Save</button><button class="tl-cancel-edit" data-id="${theme.id}">Cancel</button></td>`;
+    } else {
+      nameCell = `<td class="tl-name" data-editable="${theme.id}">${this._esc(theme.name)} <button class="tl-edit-btn" data-id="${theme.id}" title="Edit name">✎</button></td>`;
+    }
     return `<tr data-id="${theme.id}">
-      <td class="tl-name">${this._esc(theme.name)}</td>
+      ${nameCell}
       <td class="tl-status">
         <button class="tl-status-btn tl-status-${theme.status}" data-id="${theme.id}">
           ${STATUS_LABELS[theme.status] || 'To Do'}
@@ -160,6 +168,38 @@ export default class TimelineEditor {
       btn.addEventListener('click', e => {
         if (typeof confirm === 'function' && !confirm('Delete this theme?')) return;
         this._store.removeTimeline(e.target.dataset.id);
+        this.render(el.id);
+      });
+    });
+
+    // Theme name editing
+    el.querySelectorAll('.tl-edit-btn').forEach(btn => {
+      btn.addEventListener('click', e => {
+        this._editingId = e.target.dataset.id;
+        this.render(el.id);
+      });
+    });
+    el.querySelectorAll('.tl-name[data-editable]').forEach(td => {
+      td.addEventListener('dblclick', e => {
+        this._editingId = e.target.dataset.editable;
+        this.render(el.id);
+      });
+    });
+    el.querySelectorAll('.tl-save-edit').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        const input = el.querySelector(`.tl-edit-name[data-id="${id}"]`);
+        if (input) {
+          const newName = input.value.trim();
+          if (newName) this._store.updateTimeline(id, { name: newName });
+        }
+        this._editingId = null;
+        this.render(el.id);
+      });
+    });
+    el.querySelectorAll('.tl-cancel-edit').forEach(btn => {
+      btn.addEventListener('click', e => {
+        this._editingId = null;
         this.render(el.id);
       });
     });

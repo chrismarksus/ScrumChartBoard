@@ -155,4 +155,74 @@ describe('IntervalPlanner', function () {
       assert.isNull(store.getCards()[0].intervalId);
     });
   });
+
+  describe('capacity (Phase 1)', function () {
+    it('supports capacity on create via form', function () {
+      planner._showForm = true;
+      planner.render('panel-planner');
+      document.querySelector('.planner-f-name').value = 'Sprint C';
+      document.querySelector('.planner-f-capacity').value = '13';
+      document.querySelector('.planner-new-form').dispatchEvent(
+        new window.Event('submit', { bubbles: true })
+      );
+      const iv = store.getIntervals()[0];
+      assert.equal(iv.name, 'Sprint C');
+      assert.equal(iv.capacity, 13);
+    });
+
+    it('renders capacity in lane pts as "X pts / CAP" and shows over warning banner + icon when exceeded (non-done)', function () {
+      const iv = store.addInterval({ name: 'Sprint Cap', capacity: 5 });
+      store.addCard({ title: 'Big', points: 8, intervalId: iv.id, status: 'todo' }); // committed
+      planner.render('panel-planner');
+      const ptsEl = document.querySelector('.planner-lane-pts');
+      assert.include(ptsEl.textContent, '8 pts / 5');
+      // banner
+      assert.ok(document.querySelector('.capacity-warning'));
+      assert.include(document.querySelector('.capacity-warning').textContent, 'Over-allocated on Sprint Cap by 3');
+      // lane warning icon present
+      assert.ok(document.querySelector('.planner-warning'));
+    });
+
+    it('does not count done cards toward committed for capacity warnings', function () {
+      const iv = store.addInterval({ name: 'Sprint Cap2', capacity: 5 });
+      store.addCard({ title: 'Big', points: 8, intervalId: iv.id, status: 'done' });
+      planner.render('panel-planner');
+      // no over warning because done excluded
+      assert.isNull(document.querySelector('.capacity-warning'));
+      const ptsEl = document.querySelector('.planner-lane-pts');
+      assert.include(ptsEl.textContent, '8 pts / 5'); // still shows total, but warning not triggered
+    });
+
+    it('save edit persists capacity change', function () {
+      const iv = store.addInterval({ name: 'Sprint E', capacity: 10 });
+      planner._editingId = iv.id;
+      planner.render('panel-planner');
+      const capInput = document.querySelector('.planner-edit-capacity');
+      capInput.value = '4';
+      document.querySelector('.planner-save-edit').dispatchEvent(
+        new window.Event('click', { bubbles: true })
+      );
+      const updated = store.getIntervals().find(i => i.id === iv.id);
+      assert.equal(updated.capacity, 4);
+    });
+
+    it('suggest button fills capacity input from historical done points (velocity)', function () {
+      // Seed history: one interval with done cards totaling 13 pts
+      const past = store.addInterval({ name: 'Past Sprint' });
+      const d1 = store.addCard({ title: 'D1', points: 8, status: 'done' });
+      const d2 = store.addCard({ title: 'D2', points: 5, status: 'done' });
+      store.updateCard(d1.id, { intervalId: past.id });
+      store.updateCard(d2.id, { intervalId: past.id });
+      // Form open
+      planner._showForm = true;
+      planner.render('panel-planner');
+      const cap = document.querySelector('.planner-f-capacity');
+      const btn = document.querySelector('.planner-suggest-cap');
+      assert.ok(btn);
+      // Initially no value
+      assert.equal(cap.value, '');
+      btn.dispatchEvent(new window.Event('click', { bubbles: true }));
+      assert.equal(cap.value, '13'); // avg of the only past completed
+    });
+  });
 });

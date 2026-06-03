@@ -92,6 +92,15 @@ Clicking `×` calls `Store.removeCard()` and re-renders the board. There is no c
 
 Every mutation (add, update, remove) calls `Store._save()`, which writes to `localStorage` and fires a `POST /board` to the REST server if `Store.apiBase` is set. Failures are silently ignored.
 
+### Import (CSV / GitHub / State, Phase 1)
+
+Board backlog supports:
+- Import CSV (title/type/points/blocked/status/intervalId; quote-aware parser; downloadable rich sample CSVs).
+- "Import GitHub" (inline form: owner/repo + optional PAT; fetches open issues, skips PRs; label scan for type (bug→Bug etc, default Story), points from (N)/[N]/Npts in title or body; always lands in backlog).
+- Import State (full {cards,intervals,timelines} JSON roundtrip from Export State).
+
+Standalone equivalent in JSON Editor ("Import from GitHub", Load board state). Uses shared mapper for consistency. See Board.js (mapGitHubIssueToCard + _import*), editor.js, Store.importState, samples/, and roadmap for details. Pure client, no server proxy.
+
 ---
 
 ## Out of Scope for MVP

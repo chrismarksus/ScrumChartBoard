@@ -1,11 +1,11 @@
-title,type,points,blocked
-"Add login page with OAuth",Story,8,false
-"Payment gateway bug on submit",Bug,3,true
-"Dashboard charts polish",Task,2,false
-"Spike: evaluate new charting libs",Spike,1,false
-"User profile page improvements",Story,5,false
-"Fix mobile responsive layout issues",Bug,2,false
-"Add CSV import button to backlog",Task,4,false
-"Performance audit for slow sprints",Spike,3,false
-"Export board to PDF report",Task,5,false
-"Investigate flaky test failures",Bug,1,true
+title,type,points,blocked,status,intervalId
+"Add login page with OAuth",Story,8,false,backlog,
+"Payment gateway bug on submit",Bug,3,true,todo,
+"Dashboard charts polish",Task,2,false,inprogress,
+"Spike: evaluate new charting libs",Spike,1,false,done,
+"User profile page improvements",Story,5,false,backlog,
+"Fix mobile responsive layout issues",Bug,2,false,todo,
+"Add CSV import button to backlog",Task,4,false,inprogress,
+"Performance audit for slow sprints",Spike,3,false,done,
+"Export board to PDF report",Task,5,false,backlog,
+"Investigate flaky test failures",Bug,1,true,todo,

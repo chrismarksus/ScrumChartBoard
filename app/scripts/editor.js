@@ -1,5 +1,9 @@
 // editor.js — vanilla JS JSON editor for the three data files (no jQuery)
 // Mirrors the detailed spec from GitHub issue #74.
+// Phase 1: now also supports loading board state JSON for roundtrip -> derived 3-JSON via BoardAdapter.
+
+import BoardAdapter from './BoardAdapter.js';
+import { mapGitHubIssueToCard } from './Board.js';
 
 const state = {
   team: '',
@@ -19,7 +23,8 @@ const state = {
     backlog: '',
     timelines: []         // [{title, timeline: [{label, status, days, start}]}]
   },
-  intervals: []           // full interval objects as per DATA_FORMAT (arrays preserved)
+  intervals: [],           // full interval objects as per DATA_FORMAT (arrays preserved)
+  boardState: null         // {cards, intervals, timelines} loaded for roundtrip/derived export (Phase 1 editor primary)
 };
 
 let currentTab = 'dashboard';
@@ -566,6 +571,9 @@ function bindAddButtons() {
     if (e.target.id === 'download-files-btn') {
       downloadEditorFiles();
     }
+    if (e.target.id === 'download-board-derived-btn') {
+      downloadBoardDerived();
+    }
   });
 }
 
@@ -601,6 +609,146 @@ function downloadEditorFiles() {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+  });
+}
+
+/**
+ * Phase 1 editor improvement: load full board state exported from the interactive board
+ * (Export State button produces {cards,intervals,timelines}). Enables editor as roundtrip hub.
+ */
+async function loadBoardState(file) {
+  try {
+    const text = await file.text();
+    const snap = JSON.parse(text);
+    if (!snap || !Array.isArray(snap.cards)) {
+      throw new Error('Invalid board state file (expected {cards, intervals?, timelines?})');
+    }
+    state.boardState = {
+      cards: snap.cards || [],
+      intervals: snap.intervals || [],
+      timelines: snap.timelines || []
+    };
+    const st = $('#load-status');
+    if (st) st.textContent = `Board state loaded ✓ (${state.boardState.cards.length} cards, ${state.boardState.intervals.length} intervals). Click "Download 3 JSONs (from board)" below.`;
+  } catch (e) {
+    const st = $('#load-status');
+    if (st) st.textContent = 'Board state load failed: ' + (e.message || e);
+  }
+}
+
+function downloadBoardDerived() {
+  if (!state.boardState) {
+    const st = $('#load-status');
+    if (st) st.textContent = 'Load a board state JSON first (use the "Load board state" button).';
+    return;
+  }
+  try {
+    const derived = BoardAdapter.toJsonFiles(state.boardState);
+    // derived: { dashboard, project: { project: ... }, intervals: { intervals } }
+    const files = [
+      { name: 'dashboard.json', data: derived.dashboard },
+      { name: 'project.json', data: derived.project },
+      { name: 'intervals.json', data: derived.intervals }
+    ];
+    files.forEach(({ name, data }) => {
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = name;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  } catch (e) {
+    const st = $('#load-status');
+    if (st) st.textContent = 'Derived export failed: ' + (e.message || e);
+  }
+}
+
+/**
+ * Phase 1: standalone GitHub import in editor (no Board/Store needed).
+ * Creates inline form, fetches, maps via shared mapGitHubIssueToCard, sets boardState
+ * so "Download 3 JSONs (from board)" works immediately. Cards go to backlog in derived data.
+ */
+function setupGitHubImportInEditor() {
+  const btn = $('#load-gh-btn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    // remove prior form if any
+    const prior = document.getElementById('gh-import-form-editor');
+    if (prior) prior.remove();
+
+    const wrap = document.createElement('div');
+    wrap.id = 'gh-import-form-editor';
+    wrap.style.cssText = 'margin:8px 0 4px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);font-size:12px;max-width:520px;';
+    wrap.innerHTML = `
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <input id="gh-repo-ed" type="text" placeholder="owner/repo (e.g. facebook/react)" style="flex:1;min-width:160px;font-size:12px;padding:4px;">
+        <input id="gh-token-ed" type="password" placeholder="token (opt)" style="width:110px;font-size:12px;padding:4px;">
+        <button id="gh-go-ed" class="button" style="padding:2px 8px;font-size:11px;">Import</button>
+        <button id="gh-cancel-ed" class="button" style="padding:2px 6px;font-size:11px;">Cancel</button>
+      </div>
+      <div id="gh-status-ed" style="margin-top:4px;color:var(--text-muted);font-size:11px;"></div>
+    `;
+    // insert after the controls row
+    const controls = document.querySelector('.editor-controls');
+    if (controls && controls.parentNode) {
+      controls.parentNode.insertBefore(wrap, controls.nextSibling);
+    } else {
+      btn.parentNode.insertBefore(wrap, btn.nextSibling);
+    }
+
+    const repoIn = wrap.querySelector('#gh-repo-ed');
+    const tokIn = wrap.querySelector('#gh-token-ed');
+    const go = wrap.querySelector('#gh-go-ed');
+    const cancel = wrap.querySelector('#gh-cancel-ed');
+    const st = wrap.querySelector('#gh-status-ed');
+
+    cancel.addEventListener('click', () => wrap.remove());
+
+    go.addEventListener('click', async () => {
+      const repo = (repoIn.value || '').trim();
+      if (!repo || !repo.includes('/')) { st.textContent = 'Enter owner/repo'; return; }
+      const token = (tokIn.value || '').trim();
+      const headers = { 'Accept': 'application/vnd.github+json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      st.textContent = 'Fetching issues...';
+      go.disabled = true;
+
+      try {
+        const url = `https://api.github.com/repos/${encodeURIComponent(repo)}/issues?state=open&per_page=100`;
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) throw new Error(`Auth error ${res.status} — use PAT`);
+          if (res.status === 404) throw new Error('Repo not found (private?)');
+          if (res.status === 429) throw new Error('Rate limited — wait or add PAT');
+          throw new Error(`GitHub ${res.status}`);
+        }
+        const issues = await res.json();
+        const cards = [];
+        (issues || []).forEach(iss => {
+          const c = mapGitHubIssueToCard(iss);
+          if (c) cards.push(c);
+        });
+        if (cards.length === 0) {
+          st.textContent = 'No issues imported (all PRs or no titles).';
+          go.disabled = false;
+          return;
+        }
+        state.boardState = { cards, intervals: [], timelines: [] };
+        const loadSt = $('#load-status');
+        if (loadSt) loadSt.textContent = `GitHub loaded ✓ ${cards.length} cards as board state. Click "Download 3 JSONs (from board)" to get derived JSONs for charts.`;
+        wrap.remove();
+      } catch (e) {
+        st.textContent = 'Failed: ' + (e.message || e);
+        go.disabled = false;
+      }
+    });
+
+    setTimeout(() => repoIn && repoIn.focus(), 0);
   });
 }
 
@@ -696,6 +844,27 @@ function initFromQuery() {
 function init() {
   // bind load
   $('#load-btn').addEventListener('click', loadData);
+
+  // Phase 1: board state load for editor-as-primary roundtrip hub
+  const loadBoardBtn = $('#load-board-btn');
+  const boardFileInput = $('#board-state-file');
+  if (loadBoardBtn && boardFileInput) {
+    loadBoardBtn.addEventListener('click', () => boardFileInput.click());
+    boardFileInput.addEventListener('change', () => {
+      const f = boardFileInput.files && boardFileInput.files[0];
+      if (f) loadBoardState(f);
+      // reset so same file can be chosen again
+      boardFileInput.value = '';
+    });
+  }
+
+  const downloadDerivedBtn = $('#download-board-derived-btn');
+  if (downloadDerivedBtn) {
+    downloadDerivedBtn.addEventListener('click', downloadBoardDerived);
+  }
+
+  // Phase 1: GitHub import standalone support in editor (re-uses mapper, sets boardState for derived download)
+  setupGitHubImportInEditor();
 
   bindTabs();
   bindAddButtons();

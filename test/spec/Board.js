@@ -186,4 +186,57 @@ describe('Board', function () {
       assert.equal(document.querySelectorAll('.board-card').length, 1);
     });
   });
+
+  describe('GitHub import mapper (mapGitHubIssueToCard)', function () {
+    it('returns null for PRs', function () {
+      const pr = { title: 'Fix it', pull_request: { url: 'x' } };
+      assert.isNull(mapGitHubIssueToCard(pr));
+    });
+
+    it('returns null for empty title', function () {
+      assert.isNull(mapGitHubIssueToCard({ title: '   ' }));
+    });
+
+    it('defaults to Story when no labels', function () {
+      const c = mapGitHubIssueToCard({ title: 'Do the thing (5)' });
+      assert.equal(c.type, 'Story');
+      assert.equal(c.points, 5);
+      assert.equal(c.status, 'backlog');
+    });
+
+    it('maps common labels to canonical types (scans all labels)', function () {
+      const bug = mapGitHubIssueToCard({ title: 'Crash', labels: [{ name: 'defect' }, { name: 'priority' }] });
+      assert.equal(bug.type, 'Bug');
+      const story = mapGitHubIssueToCard({ title: 'Add auth', labels: [{ name: 'enhancement' }] });
+      assert.equal(story.type, 'Story');
+      const task = mapGitHubIssueToCard({ title: 'Update deps', labels: [{ name: 'chore' }] });
+      assert.equal(task.type, 'Task');
+      const spike = mapGitHubIssueToCard({ title: 'Research X', labels: [{ name: 'spike' }] });
+      assert.equal(spike.type, 'Spike');
+    });
+
+    it('falls back to raw label name when no keyword match', function () {
+      const c = mapGitHubIssueToCard({ title: 'Triage', labels: [{ name: 'needs-triage' }] });
+      assert.equal(c.type, 'needs-triage');
+    });
+
+    it('parses points from title (parens, brackets, pts suffix)', function () {
+      assert.equal(mapGitHubIssueToCard({ title: 'Foo (8)' }).points, 8);
+      assert.equal(mapGitHubIssueToCard({ title: 'Bar (3 pts)' }).points, 3);
+      assert.equal(mapGitHubIssueToCard({ title: 'Baz [13]' }).points, 13);
+      assert.equal(mapGitHubIssueToCard({ title: 'Qux 5pts' }).points, 5);
+    });
+
+    it('falls back to body for points if absent from title', function () {
+      const c = mapGitHubIssueToCard({ title: 'No num here', body: 'Estimate: (21)' });
+      assert.equal(c.points, 21);
+    });
+
+    it('produces minimal card fields for Store.addCard', function () {
+      const c = mapGitHubIssueToCard({ title: 'X (2)', labels: [{ name: 'bug' }] });
+      assert.deepEqual(Object.keys(c).sort(), ['blocked', 'intervalId', 'points', 'status', 'title', 'type']);
+      assert.equal(c.blocked, false);
+      assert.equal(c.intervalId, null);
+    });
+  });
 });

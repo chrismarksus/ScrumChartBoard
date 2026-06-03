@@ -124,7 +124,7 @@
     <div class="doh-card">
       <div>
         <h2>Stop seeing <span class="doh">Doh</span><small>There is no data available! …said no team using us, ever.</small></h2>
-        <p>Other dashboards greet you with empty states and missing JSON. ScrumChartBoard greets you with charts — auto-imported from Jira, Linear, or a single CSV. Forty seconds from sign-up to first burnup.</p>
+        <p>Other dashboards greet you with empty states and missing JSON. ScrumChartBoard greets you with charts — import via single CSV, full board state roundtrip, or <strong>GitHub issues</strong> (public repo → backlog cards in one click, with label→type + points heuristics; also in the Editor). Interactive Board + Planner (capacity warnings, velocity "Use suggested"), Timeline. Self-host with one <code>docker compose up --build</code> (&lt;5 min to running instance with volume persist); charts + planner live from board data via BoardAdapter. Forty seconds to first burnup. Phase 1 open core complete.</p>
         <a href="./dashboard.html?team=abc&project=sample" class="doh-link">See the import flow →</a>
       </div>
       <div class="doh-visual">
@@ -364,16 +364,20 @@
         <div class="price-name">Open</div>
         <div class="price-num">$0<span class="unit">/forever</span></div>
         <ul class="price-feat-list">
-          <li>Self-host, MIT license</li>
-          <li>All 7 charts &amp; 4 palettes</li>
-          <li>CSV import</li>
+          <li>Self-host (Docker + server) + MIT — &lt;5 min to running instance</li>
+          <li>Board + Planner + Timeline (capacity warnings + velocity suggestions)</li>
+          <li>GitHub import (issues → cards, editor + board), CSV + full state roundtrip</li>
+          <li>JSON Editor (forms + live preview + \"Load board state\" + \"Import from GitHub\")</li>
+          <li>All 7 charts (board-driven via adapter; live from planning data)</li>
+          <li>4 palettes, deep links, optional sync</li>
           <li>Community support</li>
         </ul>
-        <a class="cta-secondary" href="#" style="text-align:center;display:block">Clone the repo</a>
+        <a class="cta-secondary" href="https://github.com/chrismarksus/ScrumChartBoard" style="text-align:center;display:block">Clone the repo</a>
       </div>
-      <div class="price-card is-featured">
+      <div class="price-card is-featured is-disabled">
+        <div class="price-disabled-tag">Coming soon</div>
         <div class="price-name">Team</div>
-        <div class="price-num">$##<span class="unit">/seat/mo</span></div>
+        <div class="price-num">$12<span class="unit">/seat/mo</span></div>
         <ul class="price-feat-list">
           <li>Hosted cloud, SSO</li>
           <li>Jira &amp; Linear sync</li>
@@ -386,7 +390,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
       </div>
-      <div class="price-card">
+      <div class="price-card is-disabled">
+        <div class="price-disabled-tag">Coming soon</div>
         <div class="price-name">Studio</div>
         <div class="price-num">Talk<span class="unit">to us</span></div>
         <ul class="price-feat-list">

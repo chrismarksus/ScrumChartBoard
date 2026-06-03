@@ -38,7 +38,7 @@
   <div class="editor-head">
     <div class="editor-eyebrow">Data tool · No build step</div>
     <h1 class="editor-title">Shape your <em>sprint</em> data.</h1>
-    <p class="editor-lede">Fill the forms, watch the JSON build live, then copy it straight into your <code>teams/</code> files. Three documents — dashboard, project, intervals — one tidy workflow.</p>
+    <p class="editor-lede">Fill the forms (or load board state / import GitHub), watch the JSON build live, then copy/download straight into <code>teams/</code> or self-host. Editor now primary for both chart config and board-derived data. Load board state or "Import from GitHub" then "Download 3 JSONs (from board)" for roundtrip/bootstrap. BoardAdapter unifies planning state into the rich charts.</p>
   </div>
 
   <!-- Load bar -->
@@ -52,6 +52,9 @@
       <input id="project-input" type="text" placeholder="sample" value="sample">
     </div>
     <button id="load-btn" class="button button-primary">Load existing</button>
+    <button id="load-board-btn" class="button" title="Load exported full board state JSON (cards+intervals+timelines from Board &gt; Export State) to enable derived 3-JSON download for charts/roundtrip. Makes Editor primary for both config and board-derived data.">Load board state</button>
+    <button id="load-gh-btn" class="button" title="Import open GitHub issues as cards (backlog), then derive 3 JSONs for charts via BoardAdapter. Public repos work; optional PAT for private/rate limits. Pure client-side.">Import from GitHub</button>
+    <input id="board-state-file" type="file" accept="application/json,.json" style="display:none">
     <span id="load-status"></span>
   </div>
 
@@ -139,9 +142,10 @@
           <span id="preview-label">Preview</span>
           <button id="copy-preview-btn" class="editor-copy-btn">Copy</button>
           <button id="download-files-btn" class="editor-copy-btn" style="margin-left:4px;">Download files</button>
+          <button id="download-board-derived-btn" class="editor-copy-btn" style="margin-left:4px;" title="Derive + download the 3 JSON files (dashboard/project/intervals) from a loaded board state using BoardAdapter (for roundtrips from planning to charts)">Download 3 JSONs (from board)</button>
         </div>
         <pre id="preview-json">{}</pre>
-        <p class="editor-note">Preview updates live. Use the tab-specific Copy buttons (or this one) and paste into the matching .json file.</p>
+        <p class="editor-note">Preview updates live. Download files = from these forms. "Download 3 JSONs (from board)" = derived via BoardAdapter from a loaded board state (use Load board state or Import from GitHub above first). Full roundtrip + bootstrap: plan/export in Board, or import GitHub issues here, derive the JSONs, drop into teams/ or self-host for charts.</p>
       </div>
     </div>
   </div>

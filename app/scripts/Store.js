@@ -100,6 +100,21 @@ export default class Store {
     this._data.timelines = this._data.timelines.filter(t => t.id !== id);
     this._save();
   }
+
+  /**
+   * Import full state for roundtrip (e.g. from exported board-full-state.json).
+   * Replaces current cards, intervals, timelines.
+   */
+  importState(data) {
+    if (data && Array.isArray(data.cards) && Array.isArray(data.intervals) && Array.isArray(data.timelines)) {
+      this._data = {
+        cards: data.cards,
+        intervals: data.intervals,
+        timelines: data.timelines
+      };
+      this._save();
+    }
+  }
 }
 
 Store.apiBase = null;

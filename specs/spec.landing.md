@@ -174,3 +174,5 @@ Two CSS breakpoints in `landing.css`:
 - No server-side rendering or SEO meta tags beyond the `<title>`
 
 See `spec.roadmap.md` for the high-level product roadmap, data strategy, and phasing that delivers the vision (including the pricing tiers and import promises) described on this page.
+
+**Phase 1 shipped note (open core)**: As of the current build, the Open tier self-host/Docker experience is fully live and verified (one-command `docker compose up --build`, unified SPA+API+board sync on one port, volume persist, GitHub import as cards in Board+Editor, capacity warnings + velocity suggestions in Planner, full CSV/state/JSON roundtrip via BoardAdapter + Editor hub, live board-driven charts). The landing page copy and proof points (doh-strip, Open tier list) reflect this. Team/Studio tiers and some links remain placeholders per the pricing design. Update this spec if marketing copy for hosted tiers changes.

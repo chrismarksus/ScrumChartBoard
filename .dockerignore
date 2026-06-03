@@ -1,0 +1,10 @@
+# Exclude from Docker build context for speed and to avoid overwriting installed deps
+node_modules
+dist
+.git
+.gitignore
+*.log
+artifacts
+screenshots
+.claude/settings.local.json
+# server/node_modules will be installed fresh inside image

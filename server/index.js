@@ -73,11 +73,49 @@ app.post('/board', (req, res) => {
   }
 });
 
+// Serve sample teams/ data (json + csv) for the legacy GetData paths.
+// Prefers dist/teams (after `npm run build`), falls back to test/teams for local self-host without build.
+app.use('/teams', (req, res, next) => {
+  let filePath = path.join(__dirname, '../dist/teams', req.url);
+  if (!fs.existsSync(filePath) || !fs.statSync(filePath).isFile()) {
+    filePath = path.join(process.cwd(), 'test/teams', req.url);
+  }
+  if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+    const ext = path.extname(filePath);
+    let contentType = 'application/octet-stream';
+    if (ext === '.json') contentType = 'application/json';
+    else if (ext === '.csv') contentType = 'text/csv; charset=utf-8';
+    res.setHeader('Content-Type', contentType);
+    res.end(fs.readFileSync(filePath));
+  } else {
+    next();
+  }
+});
+
+// Serve the built static SPA (dist/) + API on the *same port* for easy self-host.
+// Place *after* API routes so /board etc are handled by the API handlers above.
+// SPA fallback serves index.html for client-side routes.
+const distPath = path.join(__dirname, '../dist');
+if (fs.existsSync(distPath)) {
+  app.use(express.static(distPath, { index: false }));
+  app.get('*', (req, res) => {
+    // Don't catch API paths
+    if (req.path.startsWith('/board') || req.path.startsWith('/teams')) {
+      return res.status(404).json({ error: 'Not found' });
+    }
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
 app.listen(PORT, () => {
   console.log(`ScrumChartBoard server listening on http://localhost:${PORT}`);
   console.log(`Data directory: ${DATA_DIR}`);
+  if (fs.existsSync(distPath)) {
+    console.log(`Also serving built SPA from dist/ (open http://localhost:${PORT}?team=abc&project=sample )`);
+    console.log(`For live board sync from the SPA, use ?apiBase=http://localhost:${PORT}`);
+  }
 });
 
 module.exports = app;

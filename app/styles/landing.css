@@ -663,3 +663,53 @@ body {
   .palette-row, .price-row { grid-template-columns: 1fr; }
   .switcher-group { display: none; }
 }
+
+/* === Muted / disabled pricing cards (added from design deliverable) ===
+   The HTML now uses .is-featured.is-disabled on Team and .is-disabled on Studio
+   (with .price-disabled-tag "Coming soon").
+   These rules make the paid tiers look muted/inactive while keeping the visual design.
+*/
+.price-card.is-disabled,
+.price-card.is-disabled.is-featured {
+  position: relative;
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border-color: var(--border-subtle);
+  box-shadow: none;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.price-card.is-disabled .price-name,
+.price-card.is-disabled.is-featured .price-name,
+.price-card.is-disabled .price-num,
+.price-card.is-disabled.is-featured .price-num,
+.price-card.is-disabled .price-num .unit,
+.price-card.is-disabled .price-feat-list li,
+.price-card.is-disabled.is-featured .price-feat-list li {
+  color: var(--text-muted);
+}
+.price-card.is-disabled .price-feat-list li::before,
+.price-card.is-disabled.is-featured .price-feat-list li::before {
+  color: var(--text-muted);
+}
+.price-card.is-disabled .cta-primary,
+.price-card.is-disabled .cta-secondary,
+.price-card.is-disabled.is-featured .cta-primary {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+.price-card.is-disabled .price-disabled-tag {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 4px 10px;
+}

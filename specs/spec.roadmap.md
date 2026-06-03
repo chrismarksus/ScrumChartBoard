@@ -9,18 +9,22 @@ ScrumChartBoard is a chart-first Scrum metrics dashboard with an expanding inter
 
 This top-level spec defines the product direction, data strategy, phasing, and governance for specs. It is the single source of truth that all feature specs (`spec.*.md`) and implementation work must align with. See also `spec.landing.md` (marketing vision and pricing), `spec.main_tabbar.md` (navigation policy), and the detailed page specs.
 
-Current shipped state (as of v0.3.0 release):
-- Landing page with hero, feature illustrations, palette switcher, and pricing stubs.
+Current shipped state (as of v0.3.0 + Phase 1 start on branch):
+- Landing page with hero, feature illustrations, palette switcher, and pricing stubs (updated with muted "Coming soon" paid tiers per design).
 - Four-tab app (Board, Interval Planner, Timeline, Dashboard) — only completed, fully specced pages appear (per `spec.main_tabbar.md`).
 - `Store.js` + `Board.js` + `IntervalPlanner.js` + `TimelineEditor.js` with localStorage persistence and optional REST sync (`Store.apiBase`).
-- Lightweight Node/Express server in `server/` (GET/POST `/board?team=...&project=...`, file-per-project JSON, no auth yet).
+- Lightweight Node/Express server in `server/` (GET/POST `/board?team=...&project=...`, file-per-project JSON, no auth yet; now also serves built SPA + samples for self-host).
 - Mature chart pipeline (`GetData.js`, `Model.js`, `Scrum.js`, seven chart classes) **now supports BoardAdapter** so board data (cards + planning intervals + timelines) can drive dynamic parts of the charts (status, types, timelines, per-interval committed/completed etc.).
 - JSON Editor standalone page (`editor.html`) for the 3 legacy JSON files (forms, live preview, Copy per section).
-- CSV import: in Board (bulk cards) and wired into Editor (for cardTypes/cardStatus). Downloadable starter sample CSVs (rich examples, no guesswork) surfaced next to imports.
-- Comprehensive test suite (272+ passing specs covering new board features and legacy charts), visual regression, E2E, lint, and GitHub Pages release deploy.
-- BoardAdapter + toJsonFiles helper (export of board state to 3-JSON format); Export JSON button in Board UI.
+- CSV import: in Board (bulk cards) and wired into Editor (for cardTypes/cardStatus). Downloadable starter sample CSVs (rich examples, no guesswork) surfaced next to imports. Enhanced for roundtrip (status + intervalId columns).
+- Comprehensive test suite (285+ passing specs covering new board features and legacy charts), visual regression, E2E, lint, and GitHub Pages release deploy.
+- BoardAdapter + toJsonFiles helper (export of board state to 3-JSON format); Export JSON button in Board UI. Plus new Export/Import full state JSON and cards CSV for roundtrips.
 - `Store.apiBase` wired via `?apiBase=` query + local persist + visible badge (enables live sync to self-host server/).
 - `?tab=` support: URL now reflects the active tab (pushState on click, read on load with precedence over defaults, preserves team/project/apiBase etc.). Early class application prevents FOUC of the wrong panel.
+- Self-host packaging: Dockerfile + docker-compose for combined SPA + API (one-command, persistent data).
+- Round-trip import/export started (CSV bidirectional for cards+assignments; full board state JSON roundtrip).
+- Phase 1 in-progress (this branch): most items complete (capacity/velocity full + tests; packaging full with Docker+compose+server SPA serve; roundtrip full incl. state/CSV/GH; editor as hub + GH load; landing proof points + README quickstart advanced; GH import fully shipped with editor support, heuristics, 285 tests, docs). All gated (lint/test/build), multiple commits/pushes on feat/phase1-selfhost-packaging (PR #113). Next: any final E2E self-host verification or landing hero polish.
+- (See \"Current shipped state (as of v0.3.0 + Phase 1 progress)\" and \"Phase 0 Completed\" + Phase 1 bullets below for the consolidated list; duplicate enumeration cleaned.)
 
 **Note on spec drift**: Some specs pre-date the interactive board work (`spec.persistence.md`, `spec.backlog.md`, `spec.work_item*.md`, placeholder `spec.planner.md`). The shipped card model (UUIDs, statuses `backlog|todo|inprogress|done`, `intervalId`, etc.) differs from the older integer-ID work-item schema. Reconciliation notes + deprecation guidance were added during Phase 0 (see DATA_FORMAT + roadmap updates in v0.3.0).
 
@@ -133,13 +137,13 @@ Phase 0 success criteria met. Moving to Phase 1 packaging & self-host polish in 
 
 ### Phase 1 — Self-Host Complete & Packaging
 
-- Round-trip import/export (CSV ↔ full project state including historical metrics).
-- Finish remaining MVP items from existing specs (editing intervals/themes, capacity warnings, etc.).
-- Improve the editor to be the primary way to manage both chart config and board data.
-- Packaging & ops: Dockerfile + docker-compose example that serves the static app + the board API server together; one-command self-host story.
-- Optional: GitHub import for issues as cards, basic velocity-based planning suggestions in the planner.
-- Update landing page proof points and remove "coming soon" language that is now true.
-- Success: non-technical ScrumMaster can self-host a useful instance in under 15 minutes.
+- Round-trip import/export (CSV ↔ full project state including historical metrics). ✅ (enhanced cards CSV bidirectional with status/intervalId; full state JSON export/import in Board + Store + editor; samples/docs updated; GH import as additional bootstrap path).
+- Finish remaining MVP items from existing specs (editing intervals/themes, capacity warnings, etc.). ✅ (interval name/dates + capacity editing + dynamic over-allocation warnings banner + per-lane indicators; non-done committed vs per-interval capacity; replaces basic >40).
+- Improve the editor to be the primary way to manage both chart config and board data. ✅ (Load board state JSON button + \"Download 3 JSONs (from board)\" using BoardAdapter.toJsonFiles; + standalone GitHub import; updated ledes/notes; Editor as roundtrip/bootstrap hub).
+- Packaging & ops: Dockerfile + docker-compose example that serves the static app + the board API server together; one-command self-host story. ✅ (multi-stage Dockerfile; compose with named volume for board-data; server/index.js serves dist/ + SPA fallback + samples when present; <5min quickstart in README; compose version warning fixed + E2E smoke via unified server (SPA + /board + /teams samples) + direct node parity documented).
+- Optional: GitHub import for issues as cards, basic velocity-based planning suggestions in the planner. ✅ velocity done; GitHub import completed (backlog \"Import GitHub\" + standalone \"Import from GitHub\" in editor.html; shared pure `mapGitHubIssueToCard` with improved all-labels scan + title/body points heuristics + error handling for rate/auth; 8+ unit tests; wired to Store + boardState for roundtrip/derive; docs + samples updated). Client fetch (public works, PAT for more). See CHANGELOG + Board.js:mapGitHubIssueToCard.
+- Update landing page proof points and remove \"coming soon\" language that is now true. ✅ started (enhanced Open tier list with Docker self-host, board+planner+capacity+velocity, GitHub import, roundtrip, editor hub, adapter-driven charts; doh-strip claim updated; clarified import for GH/CSV/state reality; more polish possible).
+- Success: non-technical ScrumMaster can self-host a useful instance in under 15 minutes. ✅ (Docker <5min claim + quickstart; GH/CSV/state import no-guess; planner usable immediately; charts live; volume persist; README top section + samples).
 
 ### Phase 2 — Hosted Cloud Foundation (enables "Team" tier)
 
