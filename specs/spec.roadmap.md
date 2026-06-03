@@ -23,6 +23,7 @@ Current shipped state (as of v0.3.0 + Phase 1 start on branch):
 - `?tab=` support: URL now reflects the active tab (pushState on click, read on load with precedence over defaults, preserves team/project/apiBase etc.). Early class application prevents FOUC of the wrong panel.
 - Self-host packaging: Dockerfile + docker-compose for combined SPA + API (one-command, persistent data).
 - Round-trip import/export started (CSV bidirectional for cards+assignments; full board state JSON roundtrip).
+- Phase 1 in-progress (this branch): planner capacity warnings + velocity "Use suggested" (actionable); editor Load board state + "Download 3 JSONs (from board)"; basic GitHub import (inline form); landing + prominent README self-host quickstart/docs. All gated (lint/test/build), multiple commits/pushes.
 - Four-tab app (Board, Interval Planner, Timeline, Dashboard) — only completed, fully specced pages appear (per `spec.main_tabbar.md`).
 - `Store.js` + `Board.js` + `IntervalPlanner.js` + `TimelineEditor.js` with localStorage persistence and optional REST sync (`Store.apiBase`).
 - Lightweight Node/Express server in `server/` (GET/POST `/board?team=...&project=...`, file-per-project JSON, no auth yet).
