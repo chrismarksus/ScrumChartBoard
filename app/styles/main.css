@@ -1082,6 +1082,30 @@ p.updatedBy {
   padding: 24px 0;
   margin: 0;
 }
+.planner-edit-lane, .planner-save-edit, .planner-cancel-edit {
+  font-size: 11px;
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.planner-edit-lane:hover { color: var(--text-primary); }
+.planner-edit-name, .planner-edit-start, .planner-edit-end {
+  font-size: 11px;
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface-2);
+}
+.planner-warning {
+  font-size: 10px;
+  color: #d97757;
+  margin-left: 4px;
+}
+.planner-save-edit { background: var(--c-done); color: var(--surface); border-color: var(--c-done); }
+.planner-cancel-edit:hover { color: var(--c-hover); }
 
 @media (max-width: 768px) {
   .planner-layout { flex-direction: column; }

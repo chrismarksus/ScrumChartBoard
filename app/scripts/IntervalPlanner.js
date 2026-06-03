@@ -5,6 +5,7 @@ export default class IntervalPlanner {
     this._store = store;
     this._sortables = [];
     this._showForm = false;
+    this._editingId = null;  // for inline interval editing
   }
 
   render(containerId) {
@@ -57,14 +58,31 @@ export default class IntervalPlanner {
   _laneHtml(iv) {
     const cards = this._store.getCards().filter(c => c.intervalId === iv.id);
     const pts = cards.reduce((s, c) => s + (c.points || 0), 0);
-    return `<div class="planner-lane${iv.active ? ' is-active' : ''}">
-      <div class="planner-lane-header">
-        <span class="planner-lane-name">${this._esc(iv.name)}</span>
-        ${iv.startDate ? `<span class="planner-lane-dates">${iv.startDate} – ${iv.endDate || ''}</span>` : ''}
-        <span class="planner-lane-pts">${pts} pts</span>
+    const isEditing = this._editingId === iv.id;
+    let header = '';
+    if (isEditing) {
+      header = `<div class="planner-lane-header">
+        <input class="planner-edit-name" type="text" value="${this._esc(iv.name)}" data-id="${iv.id}">
+        <input class="planner-edit-start" type="date" value="${iv.startDate || ''}" data-id="${iv.id}">
+        <input class="planner-edit-end" type="date" value="${iv.endDate || ''}" data-id="${iv.id}">
+        <button class="planner-save-edit" data-id="${iv.id}">Save</button>
+        <button class="planner-cancel-edit" data-id="${iv.id}">Cancel</button>
         <button class="planner-active-btn${iv.active ? ' is-active' : ''}" data-id="${iv.id}">${iv.active ? 'Active ✓' : 'Set active'}</button>
         <button class="planner-del-lane" data-id="${iv.id}">×</button>
-      </div>
+      </div>`;
+    } else {
+      header = `<div class="planner-lane-header">
+        <span class="planner-lane-name" data-editable="${iv.id}">${this._esc(iv.name)}</span>
+        ${iv.startDate ? `<span class="planner-lane-dates">${iv.startDate} – ${iv.endDate || ''}</span>` : ''}
+        <span class="planner-lane-pts">${pts} pts</span>
+        ${pts > 40 ? '<span class="planner-warning" title=\'High commitment — check capacity\'>⚠</span>' : ''}
+        <button class="planner-edit-lane" data-id="${iv.id}" title='Edit name/dates'>✎</button>
+        <button class="planner-active-btn${iv.active ? ' is-active' : ''}" data-id="${iv.id}">${iv.active ? 'Active ✓' : 'Set active'}</button>
+        <button class="planner-del-lane" data-id="${iv.id}">×</button>
+      </div>`;
+    }
+    return `<div class="planner-lane${iv.active ? ' is-active' : ''}">
+      ${header}
       <div class="planner-drop-zone" data-interval-id="${iv.id}">
         ${cards.map(c => this._cardHtml(c)).join('')}
       </div>
@@ -129,6 +147,42 @@ export default class IntervalPlanner {
           .filter(c => c.intervalId === id)
           .forEach(c => this._store.updateCard(c.id, { intervalId: null }));
         this._store.removeInterval(id);
+        this.render(el.id);
+      });
+    });
+
+    // Editing intervals (name/dates)
+    el.querySelectorAll('.planner-edit-lane').forEach(btn => {
+      btn.addEventListener('click', e => {
+        this._editingId = e.target.dataset.id;
+        this.render(el.id);
+      });
+    });
+
+    el.querySelectorAll('.planner-lane-name[data-editable]').forEach(span => {
+      span.addEventListener('dblclick', e => {
+        this._editingId = e.target.dataset.editable;
+        this.render(el.id);
+      });
+    });
+
+    el.querySelectorAll('.planner-save-edit').forEach(btn => {
+      btn.addEventListener('click', e => {
+        const id = e.target.dataset.id;
+        const name = el.querySelector(`.planner-edit-name[data-id="${id}"]`).value.trim();
+        const start = el.querySelector(`.planner-edit-start[data-id="${id}"]`).value;
+        const end = el.querySelector(`.planner-edit-end[data-id="${id}"]`).value;
+        if (name) {
+          this._store.updateInterval(id, { name, startDate: start, endDate: end });
+        }
+        this._editingId = null;
+        this.render(el.id);
+      });
+    });
+
+    el.querySelectorAll('.planner-cancel-edit').forEach(btn => {
+      btn.addEventListener('click', e => {
+        this._editingId = null;
         this.render(el.id);
       });
     });
