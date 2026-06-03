@@ -34,8 +34,9 @@ Open http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
 - Full SPA (landing + 4-tab app with Board/Planner/Timeline/Dashboard) + REST board sync on one port.
 - Persistent board data via volume.
 - Click "Import CSV" in Board backlog → choose the downloadable sample or your data.
+- Or "Import GitHub" (public repo owner/repo + optional PAT) — pulls open issues into backlog cards (labels→type, (N)/[N]→points heuristics). Works in Board and standalone in the JSON Editor.
 - Use Interval Planner for capacity warnings + velocity suggestions (historical avg done pts).
-- Full roundtrip: Export/Import State (JSON) or Cards CSV; JSON Editor for forms.
+- Full roundtrip: Export/Import State (JSON) or Cards CSV; JSON Editor for forms + GitHub bootstrap.
 - See live charts update from board data.
 
 Non-technical users: one command + browser. Data survives restarts in the named volume.
@@ -68,7 +69,11 @@ A standalone **JSON Editor** (app/editor.html) is included to create/edit `dashb
 - Or visit directly: `/editor.html?team=abc&project=sample`
 - The editor has a reciprocal "Open dashboard" link that also preserves context.
 
-Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.; updated samples include status + intervalId for roundtrip). Board supports **Export Cards CSV** (with status/intervalId), **Export JSON** (the 3 legacy files via adapter for static/editor), and **Export/Import State** (full {cards,intervals,timelines} JSON for perfect roundtrip/backup). Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 1 roundtrip details.
+Downloadable sample CSVs are provided next to the Import CSV buttons (in Board backlog and Editor repeats) to show exact formats (rich examples with quoting, types, blocked etc.; updated samples include status + intervalId for roundtrip). Board supports **Export Cards CSV** (with status/intervalId), **Export JSON** (the 3 legacy files via adapter for static/editor), and **Export/Import State** (full {cards,intervals,timelines} JSON for perfect roundtrip/backup).
+
+**GitHub import (Phase 1)**: In Board backlog or JSON Editor, click "Import GitHub", enter `owner/repo` (e.g. try a public repo with open issues). Optional personal access token (PAT, repo scope) for private repos or to bypass rate limits. Open issues (PRs skipped) become backlog cards: first matching label sets type (bug→Bug, enhancement→Story, chore→Task, etc.; falls back to 'Story' or raw label), points parsed from title like `(5)`, `(3 pts)`, `[8]`, or body fallback. Then drag to plan or Export State / use Editor "Download 3 JSONs" for charts. Pure client fetch, no server proxy.
+
+Use `?apiBase=http://...` (persisted) to point board edits at your self-host server/. See the roadmap for Phase 1 roundtrip details.
 
 ---
 
@@ -198,7 +203,8 @@ http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
 - `?apiBase=...` (or the badge) enables live sync of board/planner/timeline mutations to the companion server (POST/GET /board).
 - Board data (cards + intervals + timelines) persisted in the `board-data` Docker volume.
 - Samples + CSVs included for instant import (Board backlog → Import CSV or use downloadable links).
-- Use the standalone JSON Editor (`/editor.html?...`) for form-based config + "Load board state" / "Download 3 JSONs (from board)" roundtrip via BoardAdapter.
+- "Import GitHub" in Board or Editor: bootstrap cards from any public repo's open issues (PAT opt for private).
+- Use the standalone JSON Editor (`/editor.html?...`) for form-based config + "Load board state" / "Download 3 JSONs (from board)" + GitHub import roundtrip/bootstrap via BoardAdapter.
 - Export State / Import State from Board for full portable backups.
 
 See `docker-compose.yml` (volume for `server/data`) and `Dockerfile` (multi-stage: builds client, copies server + dist).

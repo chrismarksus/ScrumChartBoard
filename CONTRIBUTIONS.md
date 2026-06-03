@@ -31,7 +31,7 @@ http://localhost:9000?team=abc&project=sample
 ```
 
 - Use `&tab=board|planner|timeline|dashboard` to deep-link a specific tab (URL updates on click, other params like `&apiBase=...` are preserved).
-- The Board tab supports CSV import (with downloadable sample CSVs next to the button), drag-and-drop, inline title editing (dblclick), filter, and "Export JSON" (produces the three legacy files from live data).
+- The Board tab supports CSV import (with downloadable sample CSVs next to the button), "Import GitHub" (owner/repo + opt PAT; issues → backlog cards with label heuristics + points from title), drag-and-drop, inline title editing (dblclick), filter, and "Export JSON" (produces the three legacy files from live data). GitHub import is also available standalone from the JSON Editor.
 - From the main dashboard (after loading with `?team=...&project=...`), use the **"JSON Editor"** link in the topbar (next to the palette switcher) to jump to the form editor. The link preserves your current team/project/apiBase. You can also visit `/editor.html?team=abc&project=sample` directly. The editor has a reciprocal "Open dashboard" link.
 - For self-host server sync: append `&apiBase=http://localhost:3001` (or your server). A sync badge appears; board changes POST automatically. Start the companion server with `node server/index.js` (port 3001).
 - For easy full self-host (SPA + API + samples + persistence in one container): see the Docker section in README.md. `docker-compose up --build` then http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080 .

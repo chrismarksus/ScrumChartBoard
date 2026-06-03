@@ -42,7 +42,7 @@ export default class Board {
       <div class="board-col-header">
         <span class="board-col-title">${LABELS[status]}</span>
         <span class="board-col-count">${all.length}</span>
-        ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked,status?,intervalId? for roundtrip)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked,status,intervalId)">Sample CSV</a><button class="board-import-btn" data-action="github" title="Import open issues from a public (or token-auth) GitHub repo as cards. Basic title + labels-as-type support. (Phase 1 optional)">Import GitHub</button><button class="board-import-btn" data-action="export-csv" title="Export current cards as CSV (with status, intervalId for roundtrip import)." style="margin-left:4px;">Export Cards CSV</button><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button><button class="board-import-btn" data-action="export-state" title="Export full board state {cards,intervals,timelines} as JSON for backup/roundtrip." style="margin-left:4px;">Export State</button><button class="board-import-btn" data-action="import-state" title="Import full board state JSON (replaces current planning data)." style="margin-left:4px;">Import State</button>' : ''}
+        ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked,status?,intervalId? for roundtrip)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked,status,intervalId)">Sample CSV</a><button class="board-import-btn" data-action="github" title="Import open issues from a public (or token-auth) GitHub repo as cards. Labels map to type (bug->Bug, etc); (N) or [N] in title/body for points. Imports to backlog.">Import GitHub</button><button class="board-import-btn" data-action="export-csv" title="Export current cards as CSV (with status, intervalId for roundtrip import)." style="margin-left:4px;">Export Cards CSV</button><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button><button class="board-import-btn" data-action="export-state" title="Export full board state {cards,intervals,timelines} as JSON for backup/roundtrip." style="margin-left:4px;">Export State</button><button class="board-import-btn" data-action="import-state" title="Import full board state JSON (replaces current planning data)." style="margin-left:4px;">Import State</button>' : ''}
         ${status === 'backlog' ? `<input class="board-filter" type="text" placeholder="Filter backlog..." value="${this._backlogFilter || ''}">` : ''}
       </div>
       ${status === 'backlog' ? this._formHtml() : ''}
@@ -295,8 +295,8 @@ export default class Board {
   }
 
   async _importFromGitHub() {
-    // Basic GitHub import (Phase 1 optional, improved): public repos work unauth; PAT for private/higher limits.
-    // Inline mini-form (better than prompts) in the backlog column.
+    // GitHub import (Phase 1): public repos work unauth; PAT for private/higher limits/rate.
+    // Inline mini-form (better than prompts) in the backlog column. Uses shared mapper for type/points heuristics.
     const col = document.querySelector('.board-col-cards[data-status="backlog"]');
     if (!col) return;
     // Remove any prior gh form
@@ -308,7 +308,7 @@ export default class Board {
     form.innerHTML = `
       <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
         <input id="gh-repo" type="text" placeholder="owner/repo (e.g. facebook/react)" style="flex:1;min-width:160px;font-size:12px;padding:4px;">
-        <input id="gh-token" type="password" placeholder="token (opt)" style="width:120px;font-size:12px;padding:4px;">
+        <input id="gh-token" type="password" placeholder="token (opt, for private/rate)" style="width:120px;font-size:12px;padding:4px;">
         <button id="gh-go" class="board-import-btn" style="padding:4px 10px;">Go</button>
         <button id="gh-cancel" class="board-import-btn" style="padding:4px 8px;">Cancel</button>
       </div>
@@ -330,28 +330,28 @@ export default class Board {
       st.textContent = 'Fetching...';
       goBtn.disabled = true;
       try {
-        const url = `https://api.github.com/repos/${encodeURIComponent(repo)}/issues?state=open&per_page=30`;
+        const url = `https://api.github.com/repos/${encodeURIComponent(repo)}/issues?state=open&per_page=100`;
         const res = await fetch(url, { headers });
-        if (!res.ok) throw new Error(`GitHub ${res.status}`);
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            throw new Error(`GitHub ${res.status} (bad token or private repo; use PAT with repo scope)`);
+          }
+          if (res.status === 404) {
+            throw new Error('GitHub 404 (repo not found or private without PAT)');
+          }
+          if (res.status === 429) {
+            throw new Error('GitHub rate limit (429). Wait or provide PAT for higher limits.');
+          }
+          throw new Error(`GitHub ${res.status}`);
+        }
         const issues = await res.json();
         let added = 0;
         (issues || []).forEach(iss => {
-          if (iss.pull_request) return;
-          const title = (iss.title || '').trim();
-          if (!title) return;
-          let type = 'Issue';
-          if (iss.labels && iss.labels.length) {
-            const l = iss.labels[0].name || '';
-            if (/bug/i.test(l)) type = 'Bug';
-            else if (/enhance|feature|story/i.test(l)) type = 'Story';
-            else if (/task|chore/i.test(l)) type = 'Task';
-            else type = l;
+          const c = mapGitHubIssueToCard(iss);
+          if (c) {
+            this._store.addCard(c);
+            added++;
           }
-          let points = 0;
-          const m = title.match(/\((\d+)\s*(?:pts?|points?)?\)/i) || title.match(/\[(\d+)\]/);
-          if (m) points = parseInt(m[1], 10) || 0;
-          this._store.addCard({ title, type, points, blocked: false, status: 'backlog', intervalId: null });
-          added++;
         });
         form.remove();
         if (added > 0) {
@@ -359,10 +359,15 @@ export default class Board {
           if (backlogCount > this._backlogLimit) this._backlogLimit = backlogCount;
           if (this._lastContainerId) this.render(this._lastContainerId);
         } else {
-          st.textContent = 'No issues imported.';
+          // show transient note (re-render will clear form area)
+          const note = document.createElement('div');
+          note.style.cssText = 'margin:4px 0;font-size:11px;color:var(--text-muted);';
+          note.textContent = 'No open issues imported (or all were PRs).';
+          col.parentNode.insertBefore(note, col);
+          setTimeout(() => note.remove(), 2200);
         }
       } catch (e) {
-        st.textContent = 'Failed: ' + (e.message || e) + ' (public ok; PAT for private)';
+        st.textContent = 'Failed: ' + (e.message || e);
         goBtn.disabled = false;
       }
     });
@@ -488,4 +493,51 @@ export default class Board {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
+}
+
+/**
+ * Pure mapper: GitHub issue -> board card shape.
+ * Exported for reuse (e.g. editor standalone GH import) and unit testing.
+ * Heuristics:
+ *  - Skip PRs
+ *  - Type: scan labels for bug/defect->Bug, enhance/feature/story->Story, task/chore->Task, spike->Spike; else first label or 'Story'
+ *  - Points: (N), (N pts), [N], Npts from title, fallback body
+ */
+export function mapGitHubIssueToCard(issue) {
+  if (!issue || issue.pull_request) return null;
+  const title = String(issue.title || '').trim();
+  if (!title) return null;
+
+  // Derive type from labels (scan all for best match); default Story for plain issues
+  let type = 'Story';
+  const labels = (issue.labels || []).map(l => String((l && l.name) || '').toLowerCase());
+  if (labels.some(l => /bug|defect|error|fix/i.test(l))) {
+    type = 'Bug';
+  } else if (labels.some(l => /enhanc|feature|story|epic|user story/i.test(l))) {
+    type = 'Story';
+  } else if (labels.some(l => /task|chore|implement/i.test(l))) {
+    type = 'Task';
+  } else if (labels.some(l => /spike|invest|research|proto/i.test(l))) {
+    type = 'Spike';
+  } else if (labels.length) {
+    const raw = issue.labels[0].name || '';
+    if (raw && raw.length <= 24) type = raw;
+  }
+
+  // Points: title preferred, then body. Flexible patterns.
+  let points = 0;
+  let m = title.match(/\((\d+)\s*(?:pts?|points?)?\s*\)/i) ||
+          title.match(/\[(\d+)\s*(?:pts?)?\s*\]/i) ||
+          title.match(/\b(\d+)\s*pts?\b/i);
+  if (m) {
+    points = parseInt(m[1], 10) || 0;
+  } else if (issue.body) {
+    const body = String(issue.body);
+    m = body.match(/\((\d+)\s*(?:pts?|points?)?\s*\)/i) ||
+        body.match(/\[(\d+)\s*(?:pts?)?\s*\]/i) ||
+        body.match(/\b(\d+)\s*pts?\b/i);
+    if (m) points = parseInt(m[1], 10) || 0;
+  }
+
+  return { title, type, points, blocked: false, status: 'backlog', intervalId: null };
 }

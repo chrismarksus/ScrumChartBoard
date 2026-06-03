@@ -881,6 +881,24 @@ p.updatedBy {
 }
 .board-import-btn:hover { background: var(--border); color: var(--text-primary); }
 
+/* GitHub import mini-forms (board + editor standalone) */
+#gh-import-form,
+#gh-import-form-editor {
+  font-family: inherit;
+}
+#gh-import-form input,
+#gh-import-form-editor input {
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+#gh-import-form input:focus,
+#gh-import-form-editor input:focus {
+  border-color: var(--c-default);
+  outline: none;
+}
+
 @media (max-width: 960px) {
   .board-columns { grid-template-columns: repeat(2, 1fr); }
 }

@@ -3,6 +3,7 @@
 // Phase 1: now also supports loading board state JSON for roundtrip -> derived 3-JSON via BoardAdapter.
 
 import BoardAdapter from './BoardAdapter.js';
+import { mapGitHubIssueToCard } from './Board.js';
 
 const state = {
   team: '',
@@ -666,6 +667,91 @@ function downloadBoardDerived() {
   }
 }
 
+/**
+ * Phase 1: standalone GitHub import in editor (no Board/Store needed).
+ * Creates inline form, fetches, maps via shared mapGitHubIssueToCard, sets boardState
+ * so "Download 3 JSONs (from board)" works immediately. Cards go to backlog in derived data.
+ */
+function setupGitHubImportInEditor() {
+  const btn = $('#load-gh-btn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    // remove prior form if any
+    const prior = document.getElementById('gh-import-form-editor');
+    if (prior) prior.remove();
+
+    const wrap = document.createElement('div');
+    wrap.id = 'gh-import-form-editor';
+    wrap.style.cssText = 'margin:8px 0 4px;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);font-size:12px;max-width:520px;';
+    wrap.innerHTML = `
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <input id="gh-repo-ed" type="text" placeholder="owner/repo (e.g. facebook/react)" style="flex:1;min-width:160px;font-size:12px;padding:4px;">
+        <input id="gh-token-ed" type="password" placeholder="token (opt)" style="width:110px;font-size:12px;padding:4px;">
+        <button id="gh-go-ed" class="button" style="padding:2px 8px;font-size:11px;">Import</button>
+        <button id="gh-cancel-ed" class="button" style="padding:2px 6px;font-size:11px;">Cancel</button>
+      </div>
+      <div id="gh-status-ed" style="margin-top:4px;color:var(--text-muted);font-size:11px;"></div>
+    `;
+    // insert after the controls row
+    const controls = document.querySelector('.editor-controls');
+    if (controls && controls.parentNode) {
+      controls.parentNode.insertBefore(wrap, controls.nextSibling);
+    } else {
+      btn.parentNode.insertBefore(wrap, btn.nextSibling);
+    }
+
+    const repoIn = wrap.querySelector('#gh-repo-ed');
+    const tokIn = wrap.querySelector('#gh-token-ed');
+    const go = wrap.querySelector('#gh-go-ed');
+    const cancel = wrap.querySelector('#gh-cancel-ed');
+    const st = wrap.querySelector('#gh-status-ed');
+
+    cancel.addEventListener('click', () => wrap.remove());
+
+    go.addEventListener('click', async () => {
+      const repo = (repoIn.value || '').trim();
+      if (!repo || !repo.includes('/')) { st.textContent = 'Enter owner/repo'; return; }
+      const token = (tokIn.value || '').trim();
+      const headers = { 'Accept': 'application/vnd.github+json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      st.textContent = 'Fetching issues...';
+      go.disabled = true;
+
+      try {
+        const url = `https://api.github.com/repos/${encodeURIComponent(repo)}/issues?state=open&per_page=100`;
+        const res = await fetch(url, { headers });
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) throw new Error(`Auth error ${res.status} — use PAT`);
+          if (res.status === 404) throw new Error('Repo not found (private?)');
+          if (res.status === 429) throw new Error('Rate limited — wait or add PAT');
+          throw new Error(`GitHub ${res.status}`);
+        }
+        const issues = await res.json();
+        const cards = [];
+        (issues || []).forEach(iss => {
+          const c = mapGitHubIssueToCard(iss);
+          if (c) cards.push(c);
+        });
+        if (cards.length === 0) {
+          st.textContent = 'No issues imported (all PRs or no titles).';
+          go.disabled = false;
+          return;
+        }
+        state.boardState = { cards, intervals: [], timelines: [] };
+        const loadSt = $('#load-status');
+        if (loadSt) loadSt.textContent = `GitHub loaded ✓ ${cards.length} cards as board state. Click "Download 3 JSONs (from board)" to get derived JSONs for charts.`;
+        wrap.remove();
+      } catch (e) {
+        st.textContent = 'Failed: ' + (e.message || e);
+        go.disabled = false;
+      }
+    });
+
+    setTimeout(() => repoIn && repoIn.focus(), 0);
+  });
+}
+
 function parseCSVForEditor(text) {
   if (!text) return [];
   const lines = text.replace(/\r/g, '').trim().split('\n');
@@ -776,6 +862,9 @@ function init() {
   if (downloadDerivedBtn) {
     downloadDerivedBtn.addEventListener('click', downloadBoardDerived);
   }
+
+  // Phase 1: GitHub import standalone support in editor (re-uses mapper, sets boardState for derived download)
+  setupGitHubImportInEditor();
 
   bindTabs();
   bindAddButtons();

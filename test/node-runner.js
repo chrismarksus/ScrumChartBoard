@@ -67,7 +67,9 @@ require('@babel/register')({
 const srcDir = path.join(__dirname, '../app/scripts');
 global.Colors         = require(path.join(srcDir, 'Colors.js')).default;
 global.Store            = require(path.join(srcDir, 'Store.js')).default;
-global.Board            = require(path.join(srcDir, 'Board.js')).default;
+const boardMod = require(path.join(srcDir, 'Board.js'));
+global.Board            = boardMod.default;
+global.mapGitHubIssueToCard = boardMod.mapGitHubIssueToCard;
 global.IntervalPlanner  = require(path.join(srcDir, 'IntervalPlanner.js')).default;
 global.TimelineEditor   = require(path.join(srcDir, 'TimelineEditor.js')).default;
 global.ThemeSwitcher  = require(path.join(srcDir, 'ThemeSwitcher.js')).default;
