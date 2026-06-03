@@ -1219,6 +1219,34 @@ p.updatedBy {
 .tl-empty-row { text-align: center; color: var(--text-muted); padding: 24px; }
 .tl-muted { color: var(--text-muted); font-size: 12px; }
 .tl-name { font-weight: 500; color: var(--text-primary); }
+.tl-edit-btn {
+  font-size: 10px;
+  padding: 1px 4px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  color: var(--text-muted);
+  cursor: pointer;
+  margin-left: 4px;
+}
+.tl-edit-btn:hover { color: var(--text-primary); }
+.tl-edit-name {
+  font-size: 12px;
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+.tl-save-edit, .tl-cancel-edit {
+  font-size: 10px;
+  padding: 1px 4px;
+  margin-left: 2px;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: var(--surface);
+  cursor: pointer;
+}
+.tl-save-edit { background: var(--c-done); color: var(--surface); border-color: var(--c-done); }
+.tl-cancel-edit:hover { color: var(--c-hover); }
 
 @media (max-width: 768px) {
   .timeline-wrap { padding: 16px; }
