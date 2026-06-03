@@ -295,56 +295,79 @@ export default class Board {
   }
 
   async _importFromGitHub() {
-    // Basic GitHub import (Phase 1 optional): public repos work unauthenticated; supply PAT for private/rate limits.
-    const repo = prompt('GitHub repo (owner/name, e.g. "facebook/react") for open issues import:');
-    if (!repo || !repo.includes('/')) return;
-    const token = prompt('GitHub token (optional, for private repos or higher rate limit; leave blank for public):', '');
-    const headers = { 'Accept': 'application/vnd.github+json' };
-    if (token) headers['Authorization'] = `Bearer ${token.trim()}`;
-    const statusEl = document.createElement('span');
-    statusEl.style.marginLeft = '8px';
-    statusEl.textContent = 'Fetching issues...';
-    // Find a place to show status (backlog header area if possible)
-    const header = document.querySelector('.board-col-header');
-    if (header) header.appendChild(statusEl);
-    try {
-      const url = `https://api.github.com/repos/${encodeURIComponent(repo)}/issues?state=open&per_page=30`;
-      const res = await fetch(url, { headers });
-      if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
-      const issues = await res.json();
-      let added = 0;
-      (issues || []).forEach(iss => {
-        if (iss.pull_request) return; // skip PRs (they appear in /issues)
-        const title = (iss.title || '').trim();
-        if (!title) return;
-        // Simple type from first label or "Issue"
-        let type = 'Issue';
-        if (iss.labels && iss.labels.length) {
-          const l = iss.labels[0].name || '';
-          if (/bug/i.test(l)) type = 'Bug';
-          else if (/enhance|feature|story/i.test(l)) type = 'Story';
-          else if (/task|chore/i.test(l)) type = 'Task';
-          else type = l;
+    // Basic GitHub import (Phase 1 optional, improved): public repos work unauth; PAT for private/higher limits.
+    // Inline mini-form (better than prompts) in the backlog column.
+    const col = document.querySelector('.board-col-cards[data-status="backlog"]');
+    if (!col) return;
+    // Remove any prior gh form
+    const prior = document.getElementById('gh-import-form');
+    if (prior) prior.remove();
+    const form = document.createElement('div');
+    form.id = 'gh-import-form';
+    form.style.cssText = 'margin:8px 0;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--surface-2);font-size:12px;';
+    form.innerHTML = `
+      <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+        <input id="gh-repo" type="text" placeholder="owner/repo (e.g. facebook/react)" style="flex:1;min-width:160px;font-size:12px;padding:4px;">
+        <input id="gh-token" type="password" placeholder="token (opt)" style="width:120px;font-size:12px;padding:4px;">
+        <button id="gh-go" class="board-import-btn" style="padding:4px 10px;">Go</button>
+        <button id="gh-cancel" class="board-import-btn" style="padding:4px 8px;">Cancel</button>
+      </div>
+      <div id="gh-status" style="margin-top:4px;color:var(--text-muted);"></div>
+    `;
+    col.parentNode.insertBefore(form, col);
+    const repoIn = form.querySelector('#gh-repo');
+    const tokIn = form.querySelector('#gh-token');
+    const goBtn = form.querySelector('#gh-go');
+    const cancelBtn = form.querySelector('#gh-cancel');
+    const st = form.querySelector('#gh-status');
+    cancelBtn.addEventListener('click', () => form.remove());
+    goBtn.addEventListener('click', async () => {
+      const repo = (repoIn.value || '').trim();
+      if (!repo || !repo.includes('/')) { st.textContent = 'Enter owner/repo'; return; }
+      const token = (tokIn.value || '').trim();
+      const headers = { 'Accept': 'application/vnd.github+json' };
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+      st.textContent = 'Fetching...';
+      goBtn.disabled = true;
+      try {
+        const url = `https://api.github.com/repos/${encodeURIComponent(repo)}/issues?state=open&per_page=30`;
+        const res = await fetch(url, { headers });
+        if (!res.ok) throw new Error(`GitHub ${res.status}`);
+        const issues = await res.json();
+        let added = 0;
+        (issues || []).forEach(iss => {
+          if (iss.pull_request) return;
+          const title = (iss.title || '').trim();
+          if (!title) return;
+          let type = 'Issue';
+          if (iss.labels && iss.labels.length) {
+            const l = iss.labels[0].name || '';
+            if (/bug/i.test(l)) type = 'Bug';
+            else if (/enhance|feature|story/i.test(l)) type = 'Story';
+            else if (/task|chore/i.test(l)) type = 'Task';
+            else type = l;
+          }
+          let points = 0;
+          const m = title.match(/\((\d+)\s*(?:pts?|points?)?\)/i) || title.match(/\[(\d+)\]/);
+          if (m) points = parseInt(m[1], 10) || 0;
+          this._store.addCard({ title, type, points, blocked: false, status: 'backlog', intervalId: null });
+          added++;
+        });
+        form.remove();
+        if (added > 0) {
+          const backlogCount = this._store.getCards().filter(c => c.status === 'backlog').length;
+          if (backlogCount > this._backlogLimit) this._backlogLimit = backlogCount;
+          if (this._lastContainerId) this.render(this._lastContainerId);
+        } else {
+          st.textContent = 'No issues imported.';
         }
-        // Optional points from title e.g. "Foo (5)" or "(8pts)"
-        let points = 0;
-        const m = title.match(/\((\d+)\s*(?:pts?|points?)?\)/i) || title.match(/\[(\d+)\]/);
-        if (m) points = parseInt(m[1], 10) || 0;
-        this._store.addCard({ title, type, points, blocked: false, status: 'backlog', intervalId: null });
-        added++;
-      });
-      if (statusEl && statusEl.parentNode) statusEl.parentNode.removeChild(statusEl);
-      if (added > 0) {
-        const backlogCount = this._store.getCards().filter(c => c.status === 'backlog').length;
-        if (backlogCount > this._backlogLimit) this._backlogLimit = backlogCount;
-        if (this._lastContainerId) this.render(this._lastContainerId);
-      } else {
-        alert('No open issues imported (or all were PRs).');
+      } catch (e) {
+        st.textContent = 'Failed: ' + (e.message || e) + ' (public ok; PAT for private)';
+        goBtn.disabled = false;
       }
-    } catch (e) {
-      if (statusEl && statusEl.parentNode) statusEl.parentNode.removeChild(statusEl);
-      alert('GitHub import failed: ' + (e.message || e) + '\n\nNote: public repos work without token; private need a PAT with repo scope. Browser CORS is supported for GitHub API reads.');
-    }
+    });
+    // focus
+    setTimeout(() => repoIn.focus(), 0);
   }
 
   _exportBoardJson() {
