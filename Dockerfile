@@ -19,15 +19,16 @@ RUN npm run build
 FROM node:24-alpine
 WORKDIR /app
 
-# Install only production deps for the server
+# Install only production deps for the server (cache manifests, then source after to protect node_modules)
 COPY server/package*.json ./server/
 RUN cd server && npm ci --production
 
 # Copy built client
 COPY --from=builder /app/dist ./dist
 
-# Copy server source and any needed public/test data for samples
-COPY server ./server
+# Copy server source *explicitly* (index.js) AFTER npm ci. Whole-dir COPY server ./server after install would replace dir tree and drop node_modules (no express in final image).
+# .dockerignore also helps avoid sending host node_modules into context.
+COPY server/index.js ./server/index.js
 COPY test/teams ./test/teams
 # public/ may contain additional static if used
 
