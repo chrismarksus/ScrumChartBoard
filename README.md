@@ -209,7 +209,7 @@ http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
 
 See `docker-compose.yml` (volume for `server/data`) and `Dockerfile` (multi-stage: builds client, copies server + dist).
 
-**Packaging E2E verified** (daemon pipe unreachable in agent shell on this Windows setup — `docker compose build` hits npipe Linux engine; client + `docker compose config` + `docker compose version` work):
+**Packaging E2E verified** (daemon pipe unreachable in agent shell on this Windows setup — `docker compose build` hits "failed to connect to the docker API at npipe:////./pipe/dockerDesktopLinuxEngine; ... The system cannot find the file specified" (full bg task log captured); client + `docker compose config` + `docker compose version` work):
 - `docker compose config --quiet` clean (version key removed to silence warning).
 - Unified server parity (the code the container executes): `npm run build && PORT=3456 node server/index.js` — logs the self-host messages; curls succeed for SPA (`?team=abc&project=sample&apiBase=...` → 200 HTML), `/board?...` (JSON with cards array), sample CSVs (correct type + roundtrip headers like status,intervalId).
 - Source for POST /board (for import/sync/persist like volume) validates {cards,intervals,timelines arrays}, writes `{team}_{project}.json` to server/data (volume analog), returns ok. GET/POST unit coverage in tests + manual GET smokes confirm.
