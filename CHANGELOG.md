@@ -17,11 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Interval editing in Planner (MVP remaining): dblclick name or ✎ button to edit name/dates inline with save/cancel. Basic ⚠ over-commit warning for lanes >40 pts.
 - Planner capacity warnings (Phase 1): intervals now support `capacity` (pts) via create form and edit. Non-blocking warnings: top banner + lane ⚠ when non-done committed points exceed capacity. Dynamic "X pts / CAP" display. Recomputes on drag, add, delete, status-affecting changes (reflected on tab visit). Pure helpers + live render.
 - Editor as primary (Phase 1): added "Load board state" (accepts full state export JSON) + "Download 3 JSONs (from board)" in editor. Uses BoardAdapter.toJsonFiles to derive the legacy dashboard/project/intervals from board cards+assignments. Editor lede/notes updated; now a roundtrip hub for planning -> charts.
+- Landing proof points (Phase 1): updated Open tier feature list and "import" claim to reflect shipped self-host Docker, interactive planner w/ capacity, CSV+state roundtrip, editor, board->charts adapter. (Paid tiers remain "Coming soon" per design.)
 - Docs: README + DATA_FORMAT + CONTRIBUTIONS + CHANGELOG + roadmap updated.
 - Store: added `importState(data)` helper for clean roundtrips.
 - Minor editor UI notes for roundtrip.
 
-This enables CSV ↔ board planning state roundtrip (planning data) + JSON state backup/restore + editor as roundtrip hub (board state -> 3 JSONs), finishes MVP interval editing + adds usable capacity warnings for planning. Packaging + roundtrip + capacity + editor polish + edits advance Phase 1 self-host.
+This enables CSV ↔ board planning state roundtrip (planning data) + JSON state backup/restore + editor as roundtrip hub (board state -> 3 JSONs), finishes MVP interval editing + adds usable capacity warnings for planning. Packaging + roundtrip + capacity + editor polish + landing proof points + edits advance Phase 1 self-host.
 
 ### Changed
 - Board backlog header buttons now include CSV export, state export/import for better roundtrip UX (existing Export JSON for legacy charts remains).

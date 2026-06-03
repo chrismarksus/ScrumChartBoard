@@ -150,7 +150,7 @@ Phase 0 success criteria met. Moving to Phase 1 packaging & self-host polish in 
 - Improve the editor to be the primary way to manage both chart config and board data. ✅ started (Load board state JSON button + "Download 3 JSONs (from board)" using BoardAdapter.toJsonFiles for roundtrip; updated lede/notes; makes Editor a hub for board->charts without leaving the form tool).
 - Packaging & ops: Dockerfile + docker-compose example that serves the static app + the board API server together; one-command self-host story.
 - Optional: GitHub import for issues as cards, basic velocity-based planning suggestions in the planner.
-- Update landing page proof points and remove "coming soon" language that is now true.
+- Update landing page proof points and remove "coming soon" language that is now true. ✅ started (enhanced Open tier list with Docker self-host, board+planner+capacity, roundtrip, editor, adapter-driven charts; clarified import claim for CSV+board roundtrip reality).
 - Success: non-technical ScrumMaster can self-host a useful instance in under 15 minutes.
 
 ### Phase 2 — Hosted Cloud Foundation (enables "Team" tier)
