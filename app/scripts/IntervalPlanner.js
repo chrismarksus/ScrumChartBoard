@@ -28,6 +28,18 @@ function checkCapacity(intervals, cards) {
     }));
 }
 
+// Basic velocity suggestion (Phase 1 optional): avg completed (done) points across intervals that have history.
+function computeSuggestedCapacity(intervals, cards) {
+  const completed = intervals.map(iv => {
+    return cards
+      .filter(c => c.intervalId === iv.id && c.status === 'done')
+      .reduce((s, c) => s + (c.points || 0), 0);
+  }).filter(v => v > 0);
+  if (!completed.length) return 0;
+  const sum = completed.reduce((a, b) => a + b, 0);
+  return Math.round(sum / completed.length);
+}
+
 export default class IntervalPlanner {
   constructor(store) {
     this._store = store;
@@ -48,6 +60,14 @@ export default class IntervalPlanner {
     const warns = checkCapacity(intervals, cards);
     if (warns.length) {
       this._renderCapacityWarnings(warns, el);
+    }
+    // Basic velocity suggestion (start of optional Phase 1 item): improve placeholder when form open
+    if (this._showForm) {
+      const sug = computeSuggestedCapacity(intervals, cards);
+      const cap = el.querySelector('.planner-f-capacity');
+      if (cap && sug > 0) {
+        cap.placeholder = `Capacity (pts; ~${sug} avg done from history)`;
+      }
     }
   }
 
