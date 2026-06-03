@@ -209,6 +209,8 @@ http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
 
 See `docker-compose.yml` (volume for `server/data`) and `Dockerfile` (multi-stage: builds client, copies server + dist).
 
+**Packaging E2E verified**: `docker-compose config` clean (obsolete `version` key removed); multi-stage Dockerfile + unified `server/index.js` (SPA static + SPA fallback + /board API + /teams samples) smoke-tested (200s for `/?team=...&apiBase=...`, `/board?...`, sample CSVs with correct types + roundtrip headers). The non-container `node server/index.js` path (after `npm run build`) behaves identically to the container.
+
 You can also run the server directly (after building the SPA):
 
 ```bash
