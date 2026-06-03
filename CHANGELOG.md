@@ -19,11 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Editor as primary (Phase 1): added "Load board state" (accepts full state export JSON) + "Download 3 JSONs (from board)" in editor. Uses BoardAdapter.toJsonFiles to derive the legacy dashboard/project/intervals from board cards+assignments. Editor lede/notes updated; now a roundtrip hub for planning -> charts.
 - Landing proof points (Phase 1): updated Open tier feature list and "import" claim to reflect shipped self-host Docker, interactive planner w/ capacity, CSV+state roundtrip, editor, board->charts adapter. (Paid tiers remain "Coming soon" per design.)
 - Velocity suggestions (Phase 1): computeSuggestedCapacity (avg historical completed pts) + actionable "Use ~N" button in +New Interval form (fills capacity); dynamic text/placeholder; empty tip; test. Complements capacity warnings.
+- GitHub import (Phase 1 optional, started): "Import GitHub" button in Board backlog. Prompts for owner/repo (+ optional PAT), fetches open issues (skips PRs), creates backlog cards (label-derived type, (N) points heuristic from title). Pure client fetch.
 - Docs: README + DATA_FORMAT + CONTRIBUTIONS + CHANGELOG + roadmap updated.
 - Store: added `importState(data)` helper for clean roundtrips.
 - Minor editor UI notes for roundtrip.
 
-This enables CSV ↔ board planning state roundtrip (planning data) + JSON state backup/restore + editor as roundtrip hub (board state -> 3 JSONs), finishes MVP interval editing + adds usable capacity warnings for planning. Packaging + roundtrip + capacity + editor polish + landing proof points + velocity suggestions + edits advance Phase 1 self-host.
+This enables CSV ↔ board planning state roundtrip (planning data) + JSON state backup/restore + editor as roundtrip hub (board state -> 3 JSONs), finishes MVP interval editing + adds usable capacity warnings for planning. Packaging + roundtrip + capacity + editor polish + landing proof points + velocity + GitHub import start + edits advance Phase 1 self-host.
 
 ### Changed
 - Board backlog header buttons now include CSV export, state export/import for better roundtrip UX (existing Export JSON for legacy charts remains).

@@ -42,7 +42,7 @@ export default class Board {
       <div class="board-col-header">
         <span class="board-col-title">${LABELS[status]}</span>
         <span class="board-col-count">${all.length}</span>
-        ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked,status?,intervalId? for roundtrip)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked,status,intervalId)">Sample CSV</a><button class="board-import-btn" data-action="export-csv" title="Export current cards as CSV (with status, intervalId for roundtrip import)." style="margin-left:4px;">Export Cards CSV</button><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button><button class="board-import-btn" data-action="export-state" title="Export full board state {cards,intervals,timelines} as JSON for backup/roundtrip." style="margin-left:4px;">Export State</button><button class="board-import-btn" data-action="import-state" title="Import full board state JSON (replaces current planning data)." style="margin-left:4px;">Import State</button>' : ''}
+        ${status === 'backlog' ? '<button class="board-import-btn" data-action="csv" title="Import cards from CSV (columns: title,type,points,blocked,status?,intervalId? for roundtrip)">Import CSV</button><a href="samples/sample-board-cards.csv" download class="board-import-btn" style="margin-left:4px;text-decoration:none;" title="Download starter CSV with example cards (title,type,points,blocked,status,intervalId)">Sample CSV</a><button class="board-import-btn" data-action="github" title="Import open issues from a public (or token-auth) GitHub repo as cards. Basic title + labels-as-type support. (Phase 1 optional)">Import GitHub</button><button class="board-import-btn" data-action="export-csv" title="Export current cards as CSV (with status, intervalId for roundtrip import)." style="margin-left:4px;">Export Cards CSV</button><button class="board-import-btn" data-action="export" title="Export current board cards + planner intervals/timelines as the 3 JSON files (dashboard.json, project.json, intervals.json) for static hosting or editor import. Uses live board data via BoardAdapter." style="margin-left:4px;">Export JSON</button><button class="board-import-btn" data-action="export-state" title="Export full board state {cards,intervals,timelines} as JSON for backup/roundtrip." style="margin-left:4px;">Export State</button><button class="board-import-btn" data-action="import-state" title="Import full board state JSON (replaces current planning data)." style="margin-left:4px;">Import State</button>' : ''}
         ${status === 'backlog' ? `<input class="board-filter" type="text" placeholder="Filter backlog..." value="${this._backlogFilter || ''}">` : ''}
       </div>
       ${status === 'backlog' ? this._formHtml() : ''}
@@ -127,6 +127,10 @@ export default class Board {
     const importBtn = el.querySelector('.board-import-btn[data-action="csv"]');
     if (importBtn) {
       importBtn.addEventListener('click', () => this._importCSV());
+    }
+    const ghBtn = el.querySelector('.board-import-btn[data-action="github"]');
+    if (ghBtn) {
+      ghBtn.addEventListener('click', () => this._importFromGitHub());
     }
     const exportBtn = el.querySelector('.board-import-btn[data-action="export"]');
     if (exportBtn) {
@@ -288,6 +292,59 @@ export default class Board {
       reader.readAsText(file);
     };
     input.click();
+  }
+
+  async _importFromGitHub() {
+    // Basic GitHub import (Phase 1 optional): public repos work unauthenticated; supply PAT for private/rate limits.
+    const repo = prompt('GitHub repo (owner/name, e.g. "facebook/react") for open issues import:');
+    if (!repo || !repo.includes('/')) return;
+    const token = prompt('GitHub token (optional, for private repos or higher rate limit; leave blank for public):', '');
+    const headers = { 'Accept': 'application/vnd.github+json' };
+    if (token) headers['Authorization'] = `Bearer ${token.trim()}`;
+    const statusEl = document.createElement('span');
+    statusEl.style.marginLeft = '8px';
+    statusEl.textContent = 'Fetching issues...';
+    // Find a place to show status (backlog header area if possible)
+    const header = document.querySelector('.board-col-header');
+    if (header) header.appendChild(statusEl);
+    try {
+      const url = `https://api.github.com/repos/${encodeURIComponent(repo)}/issues?state=open&per_page=30`;
+      const res = await fetch(url, { headers });
+      if (!res.ok) throw new Error(`GitHub API ${res.status}: ${res.statusText}`);
+      const issues = await res.json();
+      let added = 0;
+      (issues || []).forEach(iss => {
+        if (iss.pull_request) return; // skip PRs (they appear in /issues)
+        const title = (iss.title || '').trim();
+        if (!title) return;
+        // Simple type from first label or "Issue"
+        let type = 'Issue';
+        if (iss.labels && iss.labels.length) {
+          const l = iss.labels[0].name || '';
+          if (/bug/i.test(l)) type = 'Bug';
+          else if (/enhance|feature|story/i.test(l)) type = 'Story';
+          else if (/task|chore/i.test(l)) type = 'Task';
+          else type = l;
+        }
+        // Optional points from title e.g. "Foo (5)" or "(8pts)"
+        let points = 0;
+        const m = title.match(/\((\d+)\s*(?:pts?|points?)?\)/i) || title.match(/\[(\d+)\]/);
+        if (m) points = parseInt(m[1], 10) || 0;
+        this._store.addCard({ title, type, points, blocked: false, status: 'backlog', intervalId: null });
+        added++;
+      });
+      if (statusEl && statusEl.parentNode) statusEl.parentNode.removeChild(statusEl);
+      if (added > 0) {
+        const backlogCount = this._store.getCards().filter(c => c.status === 'backlog').length;
+        if (backlogCount > this._backlogLimit) this._backlogLimit = backlogCount;
+        if (this._lastContainerId) this.render(this._lastContainerId);
+      } else {
+        alert('No open issues imported (or all were PRs).');
+      }
+    } catch (e) {
+      if (statusEl && statusEl.parentNode) statusEl.parentNode.removeChild(statusEl);
+      alert('GitHub import failed: ' + (e.message || e) + '\n\nNote: public repos work without token; private need a PAT with repo scope. Browser CORS is supported for GitHub API reads.');
+    }
   }
 
   _exportBoardJson() {
