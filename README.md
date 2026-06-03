@@ -1,10 +1,12 @@
 # ScrumChartBoard
 
-A no-database web app that renders charts to visualize data a scrum master would care about. It loads three JSON files into the browser via fetch and renders Scrum metric charts using Chart.js.
+See the sprint, not the noise.
 
-This project started as a single HTML page with links to images generated in Excel. I eventually started filling out JSON files and having JavaScript render the charts. I still use Excel to generate backlog data that I transfer to JSON files in the `teams/` folder manually.
+Interactive board + planner (with capacity warnings and velocity suggestions) + rich Chart.js dashboard (7 charts) that can derive live from your planning data. Self-hostable with one Docker command (SPA + sync API + persistent board data). CSV/JSON roundtrip, form-based JSON editor, 4 palettes, deep links. Open core (MIT); cloud tiers coming.
 
-I use this to track team stats at work, as a practice project to stay current in JavaScript development, and to explore best practices in Scrum, DevOps, and Continuous Delivery.
+Originally a static 3-JSON dashboard; now a full self-hostable planning + metrics surface. Board data is primary; legacy JSONs and static hosting remain fully supported via adapters and exports.
+
+I use this to track team stats at work, as a practice project, and to explore Scrum + DevOps tooling.
 
 ## Live demo
 
@@ -19,7 +21,28 @@ High-level product direction, data unification strategy (chart JSONs vs. interac
 
 :file_folder: [Get the latest release](https://github.com/chrismarksus/ScrumChartBoard/releases)
 
-### First time
+### Self-host in < 5 minutes (Docker recommended for Phase 1)
+
+```bash
+git clone https://github.com/chrismarksus/ScrumChartBoard.git
+cd ScrumChartBoard
+docker-compose up --build
+```
+
+Open http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
+
+- Full SPA (landing + 4-tab app with Board/Planner/Timeline/Dashboard) + REST board sync on one port.
+- Persistent board data via volume.
+- Click "Import CSV" in Board backlog → choose the downloadable sample or your data.
+- Use Interval Planner for capacity warnings + velocity suggestions (historical avg done pts).
+- Full roundtrip: Export/Import State (JSON) or Cards CSV; JSON Editor for forms.
+- See live charts update from board data.
+
+Non-technical users: one command + browser. Data survives restarts in the named volume.
+
+See the Docker section below for production notes and the plain `node server/index.js` path.
+
+### First time (static files)
 
 The starter release includes a `teams/` folder with sample data. Use that as a model for your own team data.
 
@@ -167,19 +190,30 @@ docker-compose up --build
 docker-compose up
 ```
 
-Then open http://localhost:8080?team=abc&project=sample
+Then open:
 
-- The built SPA is served at the root.
-- Live board/planner/timeline edits sync if you append `&apiBase=http://localhost:8080` (or just use the board tab for local-only).
-- Board data is persisted in the `board-data` volume.
-- Samples (CSV + starter JSONs) are included.
+http://localhost:8080?team=abc&project=sample&apiBase=http://localhost:8080
 
-See `docker-compose.yml` and `Dockerfile` for details. You can also run the server directly after `npm run build`:
+- Built SPA (landing + tabs: Board, Interval Planner with capacity warnings + velocity "Use suggested", Timeline, Dashboard charts) served at `/`.
+- `?apiBase=...` (or the badge) enables live sync of board/planner/timeline mutations to the companion server (POST/GET /board).
+- Board data (cards + intervals + timelines) persisted in the `board-data` Docker volume.
+- Samples + CSVs included for instant import (Board backlog → Import CSV or use downloadable links).
+- Use the standalone JSON Editor (`/editor.html?...`) for form-based config + "Load board state" / "Download 3 JSONs (from board)" roundtrip via BoardAdapter.
+- Export State / Import State from Board for full portable backups.
+
+See `docker-compose.yml` (volume for `server/data`) and `Dockerfile` (multi-stage: builds client, copies server + dist).
+
+You can also run the server directly (after building the SPA):
 
 ```bash
+npm run build
 node server/index.js
-# then visit http://localhost:3001?team=abc&project=sample&apiBase=http://localhost:3001
+# visit http://localhost:3001?team=abc&project=sample&apiBase=http://localhost:3001
 ```
+
+For plain static hosting (no board sync): just serve the `dist/` folder contents and use localStorage-only board + Export JSON for the classic 3-file dashboard path.
+
+See DATA_FORMAT.md, the roadmap, and CONTRIBUTIONS.md for more. The goal for Phase 1 is a non-technical ScrumMaster up and planning with charts in <15 minutes.
 
 ---
 
