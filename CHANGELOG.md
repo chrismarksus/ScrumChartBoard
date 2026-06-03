@@ -14,10 +14,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Board: **Export Cards CSV** (includes status, intervalId for bidirectional), **Export State** (full {cards,intervals,timelines} JSON), **Import State** (loads full state back to board/Store).
   - CSV import now respects `status` and `intervalId` columns (in addition to title/type/points/blocked).
   - Updated starter samples to demonstrate roundtrip columns.
-- Docs: README + DATA_FORMAT + CONTRIBUTIONS updated for new CSV columns, state export/import, and self-host Docker.
+- Interval editing in Planner (MVP remaining): dblclick name or ✎ button to edit name/dates inline with save/cancel. Basic ⚠ over-commit warning for lanes >40 pts.
+- Docs: README + DATA_FORMAT + CONTRIBUTIONS + CHANGELOG + roadmap updated.
 - Store: added `importState(data)` helper for clean roundtrips.
+- Minor editor UI notes for roundtrip.
 
-This enables CSV ↔ full project state roundtrip (planning data) + JSON state backup/restore, advancing Phase 1. Packaging + this gets closer to seamless self-host experience.
+This enables CSV ↔ board planning state roundtrip (planning data) + JSON state backup/restore, finishes MVP interval editing. Packaging + roundtrip + edits advance Phase 1 self-host.
 
 ### Changed
 - Board backlog header buttons now include CSV export, state export/import for better roundtrip UX (existing Export JSON for legacy charts remains).
