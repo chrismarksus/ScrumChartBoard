@@ -110,9 +110,11 @@ Every mutation calls `Store._save()` — writes to `localStorage` and fires a si
 
 ## Out of Scope for MVP
 
-- Editing an interval's name or dates after creation
-- Confirmation before deleting an interval
+- Confirmation before deleting an interval (added in board/planner polish)
 - Reordering intervals
-- Capacity warnings (over-committed point totals)
 - Velocity-based recommended point targets
 - Filtering cards in the Unassigned panel
+
+**Phase 1 additions (finished remaining MVP items):**
+- Editing interval name/dates + capacity (inline ✎ or dblclick; capacity field supported in create/edit and used for warnings).
+- Capacity warnings: banner + lane icons when non-done committed points exceed the interval's `capacity` (pts). Warnings are non-blocking and recompute on render (drag/status changes reflected on tab switch or planner actions). See roadmap.
