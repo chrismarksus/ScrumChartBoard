@@ -205,5 +205,24 @@ describe('IntervalPlanner', function () {
       const updated = store.getIntervals().find(i => i.id === iv.id);
       assert.equal(updated.capacity, 4);
     });
+
+    it('suggest button fills capacity input from historical done points (velocity)', function () {
+      // Seed history: one interval with done cards totaling 13 pts
+      const past = store.addInterval({ name: 'Past Sprint' });
+      const d1 = store.addCard({ title: 'D1', points: 8, status: 'done' });
+      const d2 = store.addCard({ title: 'D2', points: 5, status: 'done' });
+      store.updateCard(d1.id, { intervalId: past.id });
+      store.updateCard(d2.id, { intervalId: past.id });
+      // Form open
+      planner._showForm = true;
+      planner.render('panel-planner');
+      const cap = document.querySelector('.planner-f-capacity');
+      const btn = document.querySelector('.planner-suggest-cap');
+      assert.ok(btn);
+      // Initially no value
+      assert.equal(cap.value, '');
+      btn.dispatchEvent(new window.Event('click', { bubbles: true }));
+      assert.equal(cap.value, '13'); // avg of the only past completed
+    });
   });
 });

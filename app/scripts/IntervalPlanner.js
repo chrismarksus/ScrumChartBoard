@@ -61,12 +61,16 @@ export default class IntervalPlanner {
     if (warns.length) {
       this._renderCapacityWarnings(warns, el);
     }
-    // Basic velocity suggestion (start of optional Phase 1 item): improve placeholder when form open
+    // Basic velocity suggestion (Phase 1): actionable fill + hint when form open
     if (this._showForm) {
       const sug = computeSuggestedCapacity(intervals, cards);
       const cap = el.querySelector('.planner-f-capacity');
-      if (cap && sug > 0) {
-        cap.placeholder = `Capacity (pts; ~${sug} avg done from history)`;
+      const sugBtn = el.querySelector('.planner-suggest-cap');
+      if (sug > 0) {
+        if (cap) cap.placeholder = `Capacity (pts; ~${sug} from history)`;
+        if (sugBtn) sugBtn.textContent = `Use ~${sug}`;
+      } else if (sugBtn) {
+        sugBtn.textContent = 'Use suggested';
       }
     }
   }
@@ -112,7 +116,7 @@ export default class IntervalPlanner {
         <div class="planner-lanes">
           ${intervals.length
             ? intervals.map(iv => this._laneHtml(iv)).join('')
-            : '<p class="planner-empty">No intervals yet — click <strong>+ New Interval</strong> to create one.</p>'
+            : '<p class="planner-empty">No intervals yet — click <strong>+ New Interval</strong> to create one.<br><small>Tip: finish some cards (status=done) then velocity suggestions will appear in the form.</small></p>'
           }
         </div>
       </div>
@@ -125,6 +129,7 @@ export default class IntervalPlanner {
       <input class="planner-f-start" type="date" title="Start date">
       <input class="planner-f-end" type="date" title="End date">
       <input class="planner-f-capacity" type="number" min="0" step="1" placeholder="Capacity (pts)" title="Optional capacity in points">
+      <button type="button" class="planner-suggest-cap" title="Use average completed points from past intervals (velocity hint)">Use suggested</button>
       <button type="submit" class="planner-f-submit">Create</button>
       <button type="button" class="planner-f-cancel">Cancel</button>
     </form>`;
@@ -208,6 +213,21 @@ export default class IntervalPlanner {
         this._showForm = false;
         this.render(el.id);
       });
+
+      // Velocity suggestion: actionable "Use suggested" button fills capacity from historical avg done pts
+      const suggestBtn = el.querySelector('.planner-suggest-cap');
+      if (suggestBtn) {
+        suggestBtn.addEventListener('click', () => {
+          const intervals = this._store.getIntervals();
+          const cards = this._store.getCards();
+          const sug = computeSuggestedCapacity(intervals, cards);
+          const capInput = el.querySelector('.planner-f-capacity');
+          if (capInput && sug > 0) {
+            capInput.value = sug;
+            capInput.dispatchEvent(new Event('input', { bubbles: true })); // in case future listeners
+          }
+        });
+      }
     }
 
     el.querySelectorAll('.planner-active-btn').forEach(btn => {

@@ -975,6 +975,22 @@ p.updatedBy {
 }
 .planner-f-cancel:hover, .timeline-f-cancel:hover { opacity: 0.7; }
 
+.planner-suggest-cap {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  padding: 6px 10px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.planner-suggest-cap:hover {
+  color: var(--text-primary);
+  border-color: var(--tab-active);
+}
+
 .planner-layout {
   display: flex;
   gap: 20px;
